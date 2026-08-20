@@ -37,28 +37,37 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
   // Fetch backend technical analysis on symbol change
   useEffect(() => {
     if (!symbol) return;
+    setTechAnalysis(null);
+    setSupportResistance(null);
+    let isCurrent = true;
+
     api.getTechnicalAnalysis(symbol)
       .then(res => {
-        setTechAnalysis(res.data?.latest_indicators || null);
-        setSupportResistance({
-          support_levels: res.data?.support_levels || [],
-          resistance_levels: res.data?.resistance_levels || []
-        });
+        if (isCurrent) {
+          setTechAnalysis(res.data?.latest_indicators || null);
+          setSupportResistance({
+            support_levels: res.data?.support_levels || [],
+            resistance_levels: res.data?.resistance_levels || []
+          });
+        }
       })
       .catch(() => {});
+
+    return () => { isCurrent = false; };
   }, [symbol]);
 
   // Real-time WebSocket Subscription
   useEffect(() => {
     if (!symbol) return;
+    setLiveTick(null); // Clear stale tick from previous symbol
     const wsUrl = getWebSocketUrl(symbol);
     const ws = new WebSocket(wsUrl);
-
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data && data.price) {
+        if (data && data.price && (!data.symbol || data.symbol.toUpperCase() === symbol.toUpperCase())) {
+
           setLiveTick(data);
           // Update lightweight-charts live candle
           if (candleSeriesRef.current) {
@@ -87,6 +96,7 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
     // Clean up existing chart
     if (chartRef.current) {
       chartRef.current.remove();
+      chartRef.current = null;
     }
 
     const chart = createChart(chartContainerRef.current, {
@@ -133,23 +143,37 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
     });
     volumeSeriesRef.current = volumeSeries;
 
-    // Format data for lightweight-charts
-    const formattedCandles = historyData.map(d => ({
-      time: typeof d.date === 'string' ? d.date.split('T')[0] : d.date,
-      open: parseFloat(d.open),
-      high: parseFloat(d.high),
-      low: parseFloat(d.low),
-      close: parseFloat(d.close),
-    })).filter(c => c.time && !isNaN(c.close)).sort((a, b) => (a.time > b.time ? 1 : -1));
+    // Format data safely for lightweight-charts (de-duplicate & strictly sort by date)
+    const uniqueCandles = new Map();
+    const uniqueVolume = new Map();
 
-    const formattedVolume = historyData.map(d => ({
-      time: typeof d.date === 'string' ? d.date.split('T')[0] : d.date,
-      value: parseFloat(d.volume || 0),
-      color: parseFloat(d.close) >= parseFloat(d.open) ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'
-    })).filter(v => v.time && !isNaN(v.value)).sort((a, b) => (a.time > b.time ? 1 : -1));
+    historyData.forEach(d => {
+      if (!d || !d.date) return;
+      const dateStr = typeof d.date === 'string' ? d.date.split('T')[0] : (d.date.isoformat ? d.date.isoformat().split('T')[0] : String(d.date));
+      const closePrice = parseFloat(d.close);
+      if (dateStr && !isNaN(closePrice)) {
+        uniqueCandles.set(dateStr, {
+          time: dateStr,
+          open: parseFloat(d.open),
+          high: parseFloat(d.high),
+          low: parseFloat(d.low),
+          close: closePrice,
+        });
+        uniqueVolume.set(dateStr, {
+          time: dateStr,
+          value: parseFloat(d.volume || 0),
+          color: closePrice >= parseFloat(d.open) ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'
+        });
+      }
+    });
 
-    candleSeries.setData(formattedCandles);
-    volumeSeries.setData(formattedVolume);
+    const formattedCandles = Array.from(uniqueCandles.values()).sort((a, b) => (a.time > b.time ? 1 : -1));
+    const formattedVolume = Array.from(uniqueVolume.values()).sort((a, b) => (a.time > b.time ? 1 : -1));
+
+    if (formattedCandles.length > 0) {
+      candleSeries.setData(formattedCandles);
+      volumeSeries.setData(formattedVolume);
+    }
 
     // Render Overlay Indicators
     indicatorSeriesRef.current = [];
@@ -189,27 +213,34 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
     chart.timeScale().fitContent();
 
     const handleResize = () => {
-      if (chartContainerRef.current) {
-        chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+      if (chartContainerRef.current && chartRef.current) {
+        chartRef.current.applyOptions({ width: chartContainerRef.current.clientWidth });
       }
     };
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      chart.remove();
+      if (chartRef.current) {
+        chartRef.current.remove();
+        chartRef.current = null;
+      }
     };
   }, [historyData, indicators]);
 
-  // Derived Header Metrics
-  const latestPriceVal = liveTick?.price || (historyData.length > 0 ? historyData[historyData.length - 1].close : 0);
+  // Derived Header Metrics with strict symbol validation
+  const validLiveTick = (liveTick && liveTick.symbol && liveTick.symbol.toUpperCase() === symbol.toUpperCase()) ? liveTick : null;
+  const validPredictionData = (predictionData && predictionData.symbol && predictionData.symbol.toUpperCase() === symbol.toUpperCase()) ? predictionData : null;
+
+  const latestPriceVal = validLiveTick?.price || (historyData.length > 0 ? historyData[historyData.length - 1].close : (validPredictionData?.latest_price || 0));
   const prevPriceVal = historyData.length > 1 ? historyData[historyData.length - 2].close : latestPriceVal;
   const priceChange = latestPriceVal - prevPriceVal;
   const pctChange = prevPriceVal !== 0 ? (priceChange / prevPriceVal) * 100 : 0;
   const isPos = priceChange >= 0;
 
-  const dataStatus = liveTick?.data_status || predictionData?.quote_info?.data_status || "HISTORICAL";
-  const providerName = liveTick?.provider || predictionData?.quote_info?.provider || "Finnhub";
+  const dataStatus = validLiveTick?.data_status || validPredictionData?.quote_info?.data_status || "HISTORICAL";
+  const providerName = validLiveTick?.provider || validPredictionData?.quote_info?.provider || "Finnhub";
+
 
   const statusBadgeStyle = 
     dataStatus === "LIVE" ? { bg: 'rgba(16, 185, 129, 0.15)', color: 'var(--up-green)', label: `🟢 LIVE (${providerName})` } :

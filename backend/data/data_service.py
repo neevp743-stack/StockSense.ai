@@ -102,6 +102,8 @@ def fetch_historical_data(symbol: str, period: str = "5y", start: Optional[str] 
 
     return df
 
+from backend.cache import history_cache
+
 def save_prices_to_db(df: pd.DataFrame, db: Optional[Session] = None) -> int:
     """Saves/upserts cleaned historical prices to SQLite database."""
     if df is None or df.empty:
@@ -114,7 +116,9 @@ def save_prices_to_db(df: pd.DataFrame, db: Optional[Session] = None) -> int:
 
     try:
         count = 0
+        symbol_name = None
         for _, row in df.iterrows():
+            symbol_name = row["symbol"]
             stmt = sqlite_upsert(StockPrice).values(
                 symbol=row["symbol"],
                 date=row["date"],
@@ -137,23 +141,40 @@ def save_prices_to_db(df: pd.DataFrame, db: Optional[Session] = None) -> int:
             db.execute(stmt)
             count += 1
         db.commit()
+        if symbol_name:
+            history_cache.invalidate(symbol_name.upper().strip())
         return count
     finally:
         if close_db:
             db.close()
 
-def get_historical_data_from_db(symbol: str, db: Optional[Session] = None) -> pd.DataFrame:
-    """Retrieves stored historical OHLCV data from SQLite database."""
+def get_historical_data_from_db(symbol: str, db: Optional[Session] = None, limit: Optional[int] = None) -> pd.DataFrame:
+    """Retrieves stored historical OHLCV data from SQLite database with in-memory TTL caching."""
+    symbol_clean = symbol.upper().strip()
+    cache_key = f"hist_{symbol_clean}_{limit or 'all'}"
+    cached_df = history_cache.get(cache_key)
+    if cached_df is not None:
+        return cached_df
+
     close_db = False
     if db is None:
         db = SessionLocal()
         close_db = True
 
     try:
-        symbol_clean = symbol.upper().strip()
-        records = db.query(StockPrice).filter(StockPrice.symbol == symbol_clean).order_by(StockPrice.date.asc()).all()
+        query = db.query(StockPrice).filter(StockPrice.symbol == symbol_clean).order_by(StockPrice.date.asc())
+        if limit and limit > 0:
+            # Query last N records efficiently
+            total = db.query(StockPrice).filter(StockPrice.symbol == symbol_clean).count()
+            offset = max(0, total - limit)
+            records = query.offset(offset).all()
+        else:
+            records = query.all()
+
         if not records:
-            return pd.DataFrame()
+            empty_df = pd.DataFrame()
+            history_cache.set(cache_key, empty_df, ttl_seconds=60)
+            return empty_df
 
         data = [{
             "symbol": r.symbol,
@@ -166,28 +187,30 @@ def get_historical_data_from_db(symbol: str, db: Optional[Session] = None) -> pd
         } for r in records]
 
         df = pd.DataFrame(data)
+        history_cache.set(cache_key, df, ttl_seconds=300)
         return df
     finally:
         if close_db:
             db.close()
 
-def ensure_historical_data_in_db(symbol: str, db: Optional[Session] = None, period: str = "2y") -> pd.DataFrame:
+def ensure_historical_data_in_db(symbol: str, db: Optional[Session] = None, period: str = "2y", limit: Optional[int] = None) -> pd.DataFrame:
     """
     Ensures historical OHLCV market data exists in SQLite DB for symbol.
     If DB is empty for symbol, fetches real historical data from provider on-the-fly and saves to DB.
     Never fabricates synthetic prices.
     """
     symbol_clean = symbol.upper().strip()
-    df = get_historical_data_from_db(symbol_clean, db=db)
+    df = get_historical_data_from_db(symbol_clean, db=db, limit=limit)
     if df.empty:
         try:
             df_fetched = fetch_historical_data(symbol_clean, period=period)
             save_prices_to_db(df_fetched, db=db)
-            return get_historical_data_from_db(symbol_clean, db=db)
+            return get_historical_data_from_db(symbol_clean, db=db, limit=limit)
         except Exception as e:
             print(f"Unable to fetch historical data on-the-fly for '{symbol_clean}': {e}")
             return pd.DataFrame()
     return df
+
 
 
 def sync_stock_universe(symbols: Optional[List[str]] = None, period: str = "5y") -> Dict[str, Any]:

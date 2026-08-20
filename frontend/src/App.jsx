@@ -36,14 +36,40 @@ export default function App() {
 
   // Load asset data on asset change or model change
   useEffect(() => {
+    let isCurrent = true;
     if (selectedAsset) {
-      loadStockData(selectedAsset, selectedModel);
+      // Immediately reset state so old symbol data is never shown for new symbol
+      setHistoryData([]);
+      setPredictionData(null);
+
+      // Load chart history first for fast UI display
+      api.getHistory(selectedAsset)
+        .then(res => {
+          if (isCurrent) {
+            setHistoryData(res.data.data || []);
+          }
+        })
+        .catch(err => console.error("Failed to load history:", err));
+
+      // Load prediction in parallel
+      api.getPrediction(selectedAsset, selectedModel)
+        .then(res => {
+          if (isCurrent) {
+            setPredictionData(res.data || null);
+          }
+        })
+        .catch(err => console.error("Failed to load prediction:", err));
     }
+
+    return () => {
+      isCurrent = false;
+    };
   }, [selectedAsset, selectedModel]);
 
   useEffect(() => {
     loadGlobalMetrics();
   }, []);
+
 
   const loadAssetsForClass = async (cls) => {
     try {
@@ -58,21 +84,8 @@ export default function App() {
     }
   };
 
-  const loadStockData = async (symbol, modelName) => {
-    try {
-      const [histRes, predRes] = await Promise.all([
-        api.getHistory(symbol).catch(() => ({ data: { data: [] } })),
-        api.getPrediction(symbol, modelName).catch(() => ({ data: null }))
-      ]);
-
-      setHistoryData(histRes.data.data || []);
-      setPredictionData(predRes.data);
-    } catch (err) {
-      console.error("Failed to load asset data:", err);
-    }
-  };
-
   const loadGlobalMetrics = async () => {
+
     try {
       const [perfRes, logsRes] = await Promise.all([
         api.getPerformance().catch(() => ({ data: null })),

@@ -9,14 +9,14 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
 
   React.useEffect(() => {
     if (!symbol) return;
+    setLiveTick(null); // Clear stale tick from previous symbol
     const wsUrl = getWebSocketUrl(symbol);
     const ws = new WebSocket(wsUrl);
-
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data && data.price) {
+        if (data && data.price && (!data.symbol || data.symbol.toUpperCase() === symbol.toUpperCase())) {
           setLiveTick(data);
           setIsPulsing(true);
           setTimeout(() => setIsPulsing(false), 800);
@@ -36,7 +36,17 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
     };
   }, [symbol]);
 
-  if (!prediction || prediction.status === "Model not trained") {
+  if (!prediction) {
+    return (
+      <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '30px' }}>
+        <Cpu size={36} color="var(--accent-cyan)" className="spin" style={{ marginBottom: '12px' }} />
+        <h3 className="heading-font" style={{ fontSize: '1.1rem', marginBottom: '6px' }}>Analyzing {symbol}...</h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem' }}>Computing feature matrix & XGBoost prediction model...</p>
+      </div>
+    );
+  }
+
+  if (prediction.status === "Model not trained") {
     return (
       <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '30px' }}>
         <Cpu size={40} color="var(--text-muted)" style={{ marginBottom: '12px' }} />
@@ -56,7 +66,9 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
   const probDownPct = (prediction.probability_down * 100).toFixed(1);
   const riskCategory = prediction.risk?.risk_category || "MEDIUM";
 
-  const currentPriceVal = liveTick?.price ? liveTick.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : (prediction.latest_price ? prediction.latest_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A');
+  const validLiveTick = (liveTick && liveTick.symbol && liveTick.symbol.toUpperCase() === symbol.toUpperCase()) ? liveTick : null;
+  const currentPriceVal = validLiveTick?.price ? validLiveTick.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : (prediction.latest_price ? prediction.latest_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A');
+
   const quoteInfo = prediction.quote_info || {};
   const dataStatus = liveTick?.data_status || quoteInfo.data_status || "HISTORICAL";
   const lastUpdated = liveTick?.timestamp ? new Date(liveTick.timestamp).toLocaleTimeString() : (quoteInfo.last_updated || new Date().toLocaleTimeString());
