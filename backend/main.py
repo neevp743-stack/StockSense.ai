@@ -105,6 +105,7 @@ def read_root():
     }
 
 @app.get("/health")
+@app.get("/api/health")
 def health_check():
     """GET /health - Standard production health monitoring endpoint."""
     return {
@@ -113,6 +114,7 @@ def health_check():
         "timestamp": datetime.utcnow().isoformat()
     }
 
+@app.get("/system/status")
 @app.get("/api/system/status")
 def get_system_status():
     """GET /api/system/status - Detailed operational status of system components."""
@@ -126,6 +128,7 @@ def get_system_status():
         "model": "XGBoost v1.0",
         "environment": ENVIRONMENT
     }
+
 
 
 from backend.assets.asset_registry import (

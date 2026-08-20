@@ -1,12 +1,25 @@
 import axios from 'axios';
 
-// Environment-aware API Base URL
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+function normalizeApiUrl(rawUrl) {
+
+  if (!rawUrl) return null;
+  let url = rawUrl.trim().replace(/\/+$/, '');
+  if (url.endsWith('/api')) {
+    return url;
+  }
+  return `${url}/api`;
+}
+
+const rawEnvUrl = import.meta.env.VITE_API_BASE_URL;
+
+// Environment-aware API Base URL with automatic /api path normalization
+export const API_BASE_URL = normalizeApiUrl(rawEnvUrl) ||
   (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000/api'
     : 'https://stocksense-ai-backend-sdyo.onrender.com/api');
 
 export const BACKEND_ROOT_URL = API_BASE_URL.replace(/\/api\/?$/, '');
+
 
 // Dynamic WebSocket URL generator based on backend protocol & host
 export function getWebSocketUrl(symbol) {

@@ -13,11 +13,20 @@ export function SystemStatusBanner() {
 
   useEffect(() => {
     api.getSystemStatus()
-      .then(res => setStatus(res.data))
-      .catch(() => {
-        setStatus(prev => ({ ...prev, backend: 'OFFLINE' }));
+      .then(res => {
+        if (res?.data) {
+          setStatus(res.data);
+        }
+      })
+      .catch(err => {
+        console.error("SystemStatusBanner API Error:", err);
+        setStatus(prev => ({
+          ...prev,
+          backend: 'OFFLINE'
+        }));
       });
   }, []);
+
 
   const rtBadgeStyle = 
     status.realtime_status === "LIVE" ? { color: "var(--up-green)", label: "🟢 LIVE" } :
