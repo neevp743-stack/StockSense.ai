@@ -37,8 +37,9 @@ export function SystemStatusBanner() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Server size={14} color="var(--text-muted)" /> Backend: <strong style={{ color: 'var(--up-green)' }}>🟢 {status.backend}</strong>
+          <Server size={14} color="var(--text-muted)" /> Backend: <strong style={{ color: status.backend === 'ONLINE' ? 'var(--up-green)' : 'var(--down-red)' }}>{status.backend === 'ONLINE' ? '🟢 ONLINE' : '🔴 OFFLINE'}</strong>
         </div>
+
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <Database size={14} color="var(--text-muted)" /> Database: <strong style={{ color: 'var(--up-green)' }}>🟢 {status.database}</strong>

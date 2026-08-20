@@ -57,10 +57,12 @@ cors_origins = CORS_ALLOWED_ORIGINS if ENVIRONMENT == "production" else ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 @app.on_event("startup")

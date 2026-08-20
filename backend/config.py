@@ -33,8 +33,9 @@ STALE_TICK_THRESHOLD_SECONDS = int(os.getenv("STALE_TICK_THRESHOLD_SECONDS", "30
 
 # Production Environment & Security
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").strip()
-CORS_ORIGINS_RAW = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000,http://localhost:8000,http://127.0.0.1:5173,http://127.0.0.1:8000")
+CORS_ORIGINS_RAW = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000,http://localhost:8000,http://127.0.0.1:5173,http://127.0.0.1:8000,https://stock-sense-ai-lilac.vercel.app,https://stocksense-ai.vercel.app")
 CORS_ALLOWED_ORIGINS: List[str] = [orig.strip() for orig in CORS_ORIGINS_RAW.split(",") if orig.strip()]
+
 
 
 # Manual fallback parser for root .env if os.getenv was not set by process environment
