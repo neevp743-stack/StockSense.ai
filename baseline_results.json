@@ -1,0 +1,170 @@
+{
+  "RELIANCE": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.46368715083798884,
+    "f1_score": 0.6335877862595419,
+    "roc_auc": 0.5,
+    "brier_score": 0.5363128491620112,
+    "backtest_return": -14.931540261069342
+  },
+  "TCS": {
+    "model": "XGBoost",
+    "accuracy": 0.5083798882681564,
+    "f1_score": 0.36231884057971014,
+    "roc_auc": 0.44254463163188335,
+    "brier_score": 0.25197204587247124,
+    "backtest_return": -16.171377412411765
+  },
+  "INFY": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.4245810055865922,
+    "f1_score": 0.596078431372549,
+    "roc_auc": 0.5,
+    "brier_score": 0.5754189944134078,
+    "backtest_return": -29.17461307800151
+  },
+  "HDFCBANK": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.3743016759776536,
+    "f1_score": 0.5447154471544715,
+    "roc_auc": 0.5,
+    "brier_score": 0.6256983240223464,
+    "backtest_return": -28.14392803598195
+  },
+  "ICICIBANK": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.48044692737430167,
+    "f1_score": 0.6490566037735849,
+    "roc_auc": 0.5,
+    "brier_score": 0.5195530726256983,
+    "backtest_return": 0.6034495149119029
+  },
+  "AAPL": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.5652173913043478,
+    "f1_score": 0.7222222222222222,
+    "roc_auc": 0.5,
+    "brier_score": 0.43478260869565216,
+    "backtest_return": 5.860304198147525
+  },
+  "MSFT": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.5217391304347826,
+    "f1_score": 0.6857142857142857,
+    "roc_auc": 0.5,
+    "brier_score": 0.4782608695652174,
+    "backtest_return": 16.790856840220034
+  },
+  "NVDA": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.463768115942029,
+    "f1_score": 0.6336633663366337,
+    "roc_auc": 0.5,
+    "brier_score": 0.5362318840579711,
+    "backtest_return": 0.10304362260838387
+  },
+  "AMZN": {
+    "model": "XGBoost",
+    "accuracy": 0.4057971014492754,
+    "f1_score": 0.5773195876288659,
+    "roc_auc": 0.31724137931034485,
+    "brier_score": 0.2753803577122047,
+    "backtest_return": -5.406335969567387
+  },
+  "GOOGL": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.4492753623188406,
+    "f1_score": 0.62,
+    "roc_auc": 0.5,
+    "brier_score": 0.5507246376811594,
+    "backtest_return": -11.514774547796828
+  },
+  "BTC-USD": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.44660194174757284,
+    "f1_score": 0.6174496644295302,
+    "roc_auc": 0.5,
+    "brier_score": 0.5533980582524272,
+    "backtest_return": -14.259182052484176
+  },
+  "ETH-USD": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.49514563106796117,
+    "f1_score": 0.6623376623376623,
+    "roc_auc": 0.5,
+    "brier_score": 0.5048543689320388,
+    "backtest_return": -3.380132871296911
+  },
+  "USDINR=X": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.49295774647887325,
+    "f1_score": 0.660377358490566,
+    "roc_auc": 0.5,
+    "brier_score": 0.5070422535211268,
+    "backtest_return": 0.04148231935573858
+  },
+  "EURUSD=X": {
+    "model": "LogisticRegression",
+    "accuracy": 0.49295774647887325,
+    "f1_score": 0.5909090909090909,
+    "roc_auc": 0.6158730158730158,
+    "brier_score": 0.24843167837075816,
+    "backtest_return": -2.7515057952864446
+  },
+  "GBPUSD=X": {
+    "model": "LogisticRegression",
+    "accuracy": 0.5211267605633803,
+    "f1_score": 0.6730769230769231,
+    "roc_auc": 0.5611111111111111,
+    "brier_score": 0.24953905908434398,
+    "backtest_return": -0.10100030557277206
+  },
+  "USDJPY=X": {
+    "model": "LogisticRegression",
+    "accuracy": 0.39436619718309857,
+    "f1_score": 0.2711864406779661,
+    "roc_auc": 0.41304347826086957,
+    "brier_score": 0.2770502271940803,
+    "backtest_return": -0.6753918559564772
+  },
+  "^NSEI": {
+    "model": "LogisticRegression",
+    "accuracy": 0.6029411764705882,
+    "f1_score": 0.509090909090909,
+    "roc_auc": 0.5913419913419913,
+    "brier_score": 0.24800032894560892,
+    "backtest_return": -2.629369484719646
+  },
+  "^NSEBANK": {
+    "model": "MajorityBaseline",
+    "accuracy": 0.4852941176470588,
+    "f1_score": 0.6534653465346535,
+    "roc_auc": 0.5,
+    "brier_score": 0.5147058823529411,
+    "backtest_return": 5.588398075169316
+  },
+  "^GSPC": {
+    "model": "RandomForest",
+    "accuracy": 0.5362318840579711,
+    "f1_score": 0.6981132075471698,
+    "roc_auc": 0.4442567567567568,
+    "brier_score": 0.2594112624987249,
+    "backtest_return": 3.6070155009755833
+  },
+  "^IXIC": {
+    "model": "XGBoost",
+    "accuracy": 0.4782608695652174,
+    "f1_score": 0.6,
+    "roc_auc": 0.5505050505050505,
+    "brier_score": 0.2607765784159381,
+    "backtest_return": -1.8569448644669175
+  },
+  "^DJI": {
+    "model": "XGBoost",
+    "accuracy": 0.5797101449275363,
+    "f1_score": 0.6947368421052632,
+    "roc_auc": 0.5113240418118468,
+    "brier_score": 0.24760458802701454,
+    "backtest_return": 5.903452097548812
+  }
+}

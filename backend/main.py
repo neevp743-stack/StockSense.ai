@@ -1,0 +1,683 @@
+import os
+import json
+import asyncio
+from datetime import datetime, timedelta, date
+
+from typing import List, Dict, Any, Optional
+
+from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+import jwt
+from passlib.context import CryptContext
+from sqlalchemy.orm import Session
+
+from backend.config import (
+    DEFAULT_UNIVERSE, SYMBOL_MAP, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, RESEARCH_DISCLAIMER,
+    ENVIRONMENT, CORS_ALLOWED_ORIGINS, REALTIME_PROVIDER
+)
+from backend.db.database import get_db, init_db, SessionLocal
+from backend.db.models import StockPrice, FeatureRecord, ModelMetadata, PredictionRecord, UserRecord
+from backend.data.data_service import get_historical_data_from_db, sync_stock_universe, fetch_historical_data, save_prices_to_db
+from backend.features.feature_engine import compute_features_and_target, FEATURE_COLUMNS
+from backend.models.baseline_models import ModelPipeline
+from backend.models.explainability import get_shap_explanations
+from backend.risk.risk_assessor import categorize_risk_and_signal
+from backend.tracking.tracker import log_prediction, resolve_pending_predictions, get_prediction_history
+from backend.backtest.backtester import run_backtest
+from backend.models.trainer import train_all_models_for_symbol, train_entire_universe
+
+# Password Hashing & OAuth2
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login", auto_error=False)
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+# FastAPI App
+app = FastAPI(
+    title="StockSense AI API",
+    description="Explainable machine-learning platform for stock price directional predictions",
+    version="1.0.0"
+)
+
+# Environment-aware CORS configuration
+cors_origins = CORS_ALLOWED_ORIGINS if ENVIRONMENT == "production" else ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.on_event("startup")
+def startup_event():
+    init_db()
+
+# Pydantic Schemas
+class BacktestRequest(BaseModel):
+    symbol: str = "RELIANCE"
+    initial_capital: float = 100000.0
+    prob_threshold: float = 0.55
+    allow_short: bool = False
+    transaction_cost: float = 0.001
+    slippage: float = 0.0005
+
+class UserRegister(BaseModel):
+    username: str
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+# Endpoints
+@app.get("/")
+def read_root():
+    return {
+        "name": "StockSense AI API",
+        "status": "online",
+        "disclaimer": RESEARCH_DISCLAIMER
+    }
+
+@app.get("/health")
+def health_check():
+    """GET /health - Standard production health monitoring endpoint."""
+    return {
+        "status": "ok",
+        "environment": ENVIRONMENT,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+@app.get("/api/system/status")
+def get_system_status():
+    """GET /api/system/status - Detailed operational status of system components."""
+    from backend.data.realtime_provider import realtime_provider_manager
+    rt_info = realtime_provider_manager.get_stream_status()
+    return {
+        "backend": "ONLINE",
+        "database": "CONNECTED",
+        "realtime_provider": REALTIME_PROVIDER,
+        "realtime_status": rt_info.get("connection_status", "UNAVAILABLE"),
+        "model": "XGBoost v1.0",
+        "environment": ENVIRONMENT
+    }
+
+
+from backend.assets.asset_registry import (
+    ASSET_CLASSES, ASSET_REGISTRY, get_asset_info, get_assets_by_class, get_all_assets
+)
+from backend.data.provider import YFinanceProvider
+
+provider = YFinanceProvider()
+
+@app.get("/api/asset-classes")
+def get_asset_classes():
+    """GET /api/asset-classes - Returns supported asset classes."""
+    return {"asset_classes": ASSET_CLASSES}
+
+@app.get("/api/assets")
+def get_assets(asset_class: Optional[str] = None):
+    """GET /api/assets - Returns registered multi-asset list (optionally filtered by asset_class)."""
+    if asset_class:
+        assets = get_assets_by_class(asset_class)
+    else:
+        assets = get_all_assets()
+    return {"assets": assets, "count": len(assets)}
+
+@app.get("/api/assets/{symbol}")
+def get_asset_detail(symbol: str):
+    """GET /api/assets/{symbol} - Returns asset metadata."""
+    info = get_asset_info(symbol)
+    if not info:
+        raise HTTPException(status_code=404, detail=f"Asset symbol '{symbol}' not found in registry.")
+    return {"asset": info}
+
+@app.get("/api/stocks")
+def get_stocks_universe():
+    """GET /api/stocks - Returns configured universe of Indian equities (Backward compatible)."""
+    stocks = get_assets_by_class("INDIAN_EQUITY")
+    return {"universe": stocks, "disclaimer": RESEARCH_DISCLAIMER}
+
+@app.get("/api/stocks/{symbol}/history")
+def get_stock_history(symbol: str, db: Session = Depends(get_db)):
+    """GET /api/stocks/{symbol}/history - Historical OHLCV data."""
+    symbol_clean = symbol.upper().strip()
+    df = get_historical_data_from_db(symbol_clean, db=db)
+    if df.empty:
+        # Try fetching real data on the fly if DB empty
+        try:
+            df_fetched = fetch_historical_data(symbol_clean, period="2y")
+            save_prices_to_db(df_fetched, db=db)
+            df = df_fetched
+        except Exception as e:
+            raise HTTPException(status_code=404, detail=f"Market data unavailable — configure the data provider: {str(e)}")
+
+    records = df.to_dict(orient="records")
+    return {
+        "symbol": symbol_clean,
+        "count": len(records),
+        "data": records
+    }
+
+@app.get("/api/stocks/{symbol}/features")
+def get_stock_features(symbol: str, db: Session = Depends(get_db)):
+    """GET /api/stocks/{symbol}/features - Historical computed feature matrix."""
+    symbol_clean = symbol.upper().strip()
+    df = get_historical_data_from_db(symbol_clean, db=db)
+    if df.empty:
+        raise HTTPException(status_code=404, detail="Market data unavailable — configure data provider.")
+
+    df_feat = compute_features_and_target(df)
+    if df_feat.empty:
+        raise HTTPException(status_code=400, detail="Insufficient price data to compute technical indicators.")
+
+    records = df_feat.to_dict(orient="records")
+    return {
+        "symbol": symbol_clean,
+        "feature_count": len(FEATURE_COLUMNS),
+        "columns": FEATURE_COLUMNS,
+        "count": len(records),
+        "data": records
+    }
+
+@app.get("/api/stocks/{symbol}/prediction")
+def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session = Depends(get_db)):
+    """
+    GET /api/stocks/{symbol}/prediction - Latest AI prediction, probabilities,
+    risk/signal category, SHAP explanation breakdown, and disclaimers.
+    """
+    symbol_clean = symbol.upper().strip()
+    df_raw = get_historical_data_from_db(symbol_clean, db=db)
+    if df_raw.empty:
+        raise HTTPException(status_code=404, detail="Market data unavailable — configure data provider.")
+
+    df_feat = compute_features_and_target(df_raw)
+    if df_feat.empty:
+        raise HTTPException(status_code=400, detail="Insufficient feature data.")
+
+    latest_row = df_feat.iloc[[-1]]
+    as_of_d = latest_row["date"].iloc[0]
+    if hasattr(as_of_d, "date"):
+        as_of_d = as_of_d.date()
+
+    # Load requested model or fallback
+    pipe = ModelPipeline.load_model(symbol_clean, model_name)
+    if not pipe or not pipe.is_trained:
+        # Fallback to training or checking any trained model
+        pipe = ModelPipeline.load_model(symbol_clean, "LogisticRegression")
+
+    if not pipe or not pipe.is_trained:
+        return {
+            "symbol": symbol_clean,
+            "status": "Model not trained",
+            "message": f"No trained '{model_name}' model found for '{symbol_clean}'. Train models first.",
+            "disclaimer": RESEARCH_DISCLAIMER
+        }
+
+    preds, probs = pipe.predict(latest_row)
+    prob_up = float(probs[0])
+    predicted_dir = int(preds[0])
+
+    # Risk Assessor
+    brier = pipe.metrics.get("brier_score", None)
+    risk_info = categorize_risk_and_signal(prob_up, brier_score=brier)
+
+    # Dynamic SHAP Explanation
+    shap_info = get_shap_explanations(pipe, latest_row)
+
+    # Prediction target date: next trading day
+    prediction_d = as_of_d + timedelta(days=1)
+    if as_of_d.weekday() == 4:  # Friday -> Monday
+        prediction_d = as_of_d + timedelta(days=3)
+
+    # Log prediction to database
+    log_prediction(
+        symbol=symbol_clean,
+        as_of_date=as_of_d,
+        prediction_date=prediction_d,
+        predicted_direction=predicted_dir,
+        prob_up=prob_up,
+        prob_down=1.0 - prob_up,
+        risk_category=risk_info["risk_category"],
+        model_version=f"{pipe.model_name}_v1.0.0",
+        explanation_json=json.dumps(shap_info),
+        db=db
+    )
+
+    # Fetch latest available quote for dynamic data freshness status
+    quote_info = provider.get_latest_quote(symbol_clean)
+    latest_price_val = quote_info.get("price") or (float(df_raw["close"].iloc[-1]) if "close" in df_raw.columns and not df_raw.empty else None)
+
+    return {
+        "symbol": symbol_clean,
+        "latest_price": latest_price_val,
+        "quote_info": quote_info,
+        "as_of_date": str(as_of_d),
+        "prediction_date": str(prediction_d),
+        "predicted_direction": "UP" if predicted_dir == 1 else "DOWN",
+        "probability_up": prob_up,
+        "probability_down": 1.0 - prob_up,
+        "risk": risk_info,
+        "model": {
+            "name": pipe.model_name,
+            "metrics": pipe.metrics
+        },
+        "explanations": shap_info,
+        "disclaimer": RESEARCH_DISCLAIMER
+    }
+
+@app.get("/api/models")
+def get_models_registry(db: Session = Depends(get_db)):
+    """GET /api/models - Returns registry of all trained models and their metrics."""
+    records = db.query(ModelMetadata).order_by(ModelMetadata.created_at.desc()).all()
+    models = []
+    for r in records:
+        models.append({
+            "id": r.id,
+            "model_name": r.model_name,
+            "version": r.version,
+            "symbol": r.symbol,
+            "training_start": str(r.training_start),
+            "training_end": str(r.training_end),
+            "metrics": json.loads(r.metrics_json) if r.metrics_json else {},
+            "created_at": r.created_at.isoformat()
+        })
+    return {"models": models, "count": len(models)}
+
+@app.get("/api/predictions")
+def get_predictions_log(symbol: Optional[str] = None, limit: int = 50, db: Session = Depends(get_db)):
+    """GET /api/predictions - Returns prediction history log with resolution status."""
+    history = get_prediction_history(symbol=symbol, limit=limit, db=db)
+    return {"predictions": history, "count": len(history)}
+
+@app.get("/api/performance")
+def get_model_performance(db: Session = Depends(get_db)):
+    """GET /api/performance - Returns stock-wise and model-wise accuracy metrics."""
+    records = db.query(ModelMetadata).all()
+    stock_wise = {}
+    model_wise = {}
+
+    for r in records:
+        sym = r.symbol
+        m_name = r.model_name
+        metrics = json.loads(r.metrics_json) if r.metrics_json else {}
+
+        if sym not in stock_wise:
+            stock_wise[sym] = {}
+        stock_wise[sym][m_name] = metrics
+
+        if m_name not in model_wise:
+            model_wise[m_name] = []
+        model_wise[m_name].append({
+            "symbol": sym,
+            "accuracy": metrics.get("accuracy", 0.0),
+            "f1_score": metrics.get("f1_score", 0.0),
+            "roc_auc": metrics.get("roc_auc", 0.5)
+        })
+
+    return {
+        "stock_wise": stock_wise,
+        "model_wise": model_wise,
+        "disclaimer": RESEARCH_DISCLAIMER
+    }
+
+@app.post("/api/backtest")
+def post_backtest(req: BacktestRequest, db: Session = Depends(get_db)):
+    """POST /api/backtest - Executes backtesting simulation."""
+    symbol_clean = req.symbol.upper().strip()
+    df_raw = get_historical_data_from_db(symbol_clean, db=db)
+    if df_raw.empty:
+        raise HTTPException(status_code=404, detail="Market data unavailable — configure data provider.")
+
+    df_feat = compute_features_and_target(df_raw)
+    # Restrict backtest evaluation to strict out-of-sample test set (held out 15%)
+    df_trainable = df_feat.dropna(subset=["target"]).copy().sort_values("date").reset_index(drop=True)
+    train_ratio, val_ratio, test_ratio = 0.70, 0.15, 0.15
+    test_size = int(len(df_trainable) * test_ratio)
+    test_df = df_trainable.iloc[-test_size:].copy().reset_index(drop=True)
+
+    pipe = ModelPipeline.load_model(symbol_clean, "XGBoost")
+    if not pipe or not pipe.is_trained:
+        pipe = ModelPipeline.load_model(symbol_clean, "LogisticRegression")
+
+    if not pipe or not pipe.is_trained:
+        probs = np.full(len(test_df), 0.5)
+    else:
+        _, probs = pipe.predict(test_df)
+
+    results = run_backtest(
+        test_df,
+        probs,
+        initial_capital=req.initial_capital,
+        prob_threshold=req.prob_threshold,
+        allow_short=req.allow_short,
+        transaction_cost=req.transaction_cost,
+        slippage=req.slippage
+    )
+
+    return {
+        "symbol": symbol_clean,
+        "evaluation_scope": "STRICT_OUT_OF_SAMPLE_TEST_SET",
+        "test_set_dates": {
+            "start_date": str(test_df["date"].iloc[0]),
+            "end_date": str(test_df["date"].iloc[-1]),
+            "sample_size": len(test_df)
+        },
+        "parameters": req.dict(),
+        "results": results
+    }
+
+@app.post("/api/refresh")
+def post_data_refresh(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    """POST /api/refresh - Triggers data refresh, auto-resolution, and model re-training in background."""
+    def refresh_task():
+        sync_stock_universe(DEFAULT_UNIVERSE)
+        resolve_pending_predictions()
+        train_entire_universe(DEFAULT_UNIVERSE)
+
+    background_tasks.add_task(refresh_task)
+    return {
+        "status": "initiated",
+        "message": "Market data refresh and auto-resolution pipeline triggered in background."
+    }
+
+@app.post("/api/auth/register")
+def register_user(user: UserRegister, db: Session = Depends(get_db)):
+    existing = db.query(UserRecord).filter(UserRecord.username == user.username).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already exists.")
+
+    hashed_pw = get_password_hash(user.password)
+    db_user = UserRecord(username=user.username, email=user.email, hashed_password=hashed_pw)
+    db.add(db_user)
+    db.commit()
+    return {"message": "User registered successfully."}
+
+@app.post("/api/auth/login")
+def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = db.query(UserRecord).filter(UserRecord.username == form_data.username).first()
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect username or password.")
+
+    token = create_access_token(data={"sub": user.username})
+    return {"access_token": token, "token_type": "bearer"}
+
+from backend.data.fundamentals.provider import YFinanceFundamentalProvider
+from backend.data.news.provider import YFinanceNewsProvider
+from backend.data.news.sentiment import SentimentService
+
+fund_provider = YFinanceFundamentalProvider()
+news_provider = YFinanceNewsProvider()
+sentiment_service = SentimentService()
+
+@app.get("/api/assets/{symbol}/fundamentals")
+def get_asset_fundamentals(symbol: str):
+    """GET /api/assets/{symbol}/fundamentals - Returns point-in-time fundamental metrics."""
+    symbol_clean = symbol.upper().strip()
+    return fund_provider.get_fundamentals(symbol_clean)
+
+@app.get("/api/assets/{symbol}/news")
+def get_asset_news(symbol: str):
+    """GET /api/assets/{symbol}/news - Returns historical news articles."""
+    symbol_clean = symbol.upper().strip()
+    return news_provider.get_historical_news(symbol_clean, "2024-01-01", "2026-01-01")
+
+@app.get("/api/assets/{symbol}/sentiment")
+def get_asset_sentiment(symbol: str):
+    """GET /api/assets/{symbol}/sentiment - Returns daily sentiment scores and news volume."""
+    symbol_clean = symbol.upper().strip()
+    news_res = news_provider.get_historical_news(symbol_clean, "2024-01-01", "2026-01-01")
+    articles = news_res.get("articles", [])
+    aggregates = sentiment_service.aggregate_daily_sentiment(articles, datetime.utcnow())
+    return {
+        "symbol": symbol_clean,
+        "status": news_res.get("status", "NEWS DATA UNAVAILABLE"),
+        "aggregates": aggregates
+    }
+
+@app.get("/api/assets/{symbol}/feature-availability")
+def get_feature_availability(symbol: str):
+    """GET /api/assets/{symbol}/feature-availability - Feature source availability status."""
+    symbol_clean = symbol.upper().strip()
+    fund_res = fund_provider.get_historical_fundamentals(symbol_clean)
+    news_res = news_provider.get_historical_news(symbol_clean, "2024-01-01", "2026-01-01")
+    return {
+        "symbol": symbol_clean,
+        "technical_features": "AVAILABLE",
+        "market_context_features": "AVAILABLE",
+        "fundamental_features": fund_res.get("status", "FUNDAMENTAL DATA UNAVAILABLE"),
+        "news_sentiment_features": news_res.get("status", "NEWS DATA UNAVAILABLE"),
+        "point_in_time_supported": True
+    }
+
+@app.get("/api/research/ablation")
+def get_ablation_summary():
+    """GET /api/research/ablation - Returns Phase 4 master feature ablation research summary."""
+    json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../baseline_results.json"))
+    if os.path.exists(json_path):
+        with open(json_path, "r", encoding="utf-8") as f:
+            baseline_data = json.load(f)
+        return {
+            "status": "COMPLETED",
+            "experiment": "Phase 4 Feature Ablation Study",
+            "baseline": baseline_data
+        }
+    return {"status": "NOT RUN", "message": "Run /api/research/run-ablation first."}
+
+@app.get("/api/research/ablation/{symbol}")
+def get_ablation_for_symbol(symbol: str):
+    """GET /api/research/ablation/{symbol} - Returns feature ablation metrics for symbol."""
+    symbol_clean = symbol.upper().strip()
+    json_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../baseline_results.json"))
+    if os.path.exists(json_path):
+        with open(json_path, "r", encoding="utf-8") as f:
+            baseline_data = json.load(f)
+        if symbol_clean in baseline_data:
+            return {"symbol": symbol_clean, "metrics": baseline_data[symbol_clean]}
+    raise HTTPException(status_code=404, detail=f"No ablation data found for '{symbol_clean}'.")
+
+@app.post("/api/research/run-ablation")
+def run_ablation_study_endpoint(background_tasks: BackgroundTasks):
+    """POST /api/research/run-ablation - Triggers background feature ablation study."""
+    from backend.scripts.run_phase4_study import run_full_phase4_study
+    background_tasks.add_task(run_full_phase4_study)
+    return {"status": "initiated", "message": "Phase 4 Feature Ablation Study launched in background."}
+
+# ==============================================================================
+# PHASE 5 — REAL-TIME MARKET DATA & WEBSOCKET ENDPOINTS
+# ==============================================================================
+from fastapi import WebSocket, WebSocketDisconnect
+from backend.data.realtime_provider import realtime_provider_manager
+
+@app.get("/api/realtime/status")
+def get_realtime_status():
+    """GET /api/realtime/status - Returns real-time provider connection status."""
+    return realtime_provider_manager.get_stream_status()
+
+@app.get("/api/realtime/quote/{symbol}")
+def get_realtime_quote(symbol: str):
+    """GET /api/realtime/quote/{symbol} - Returns latest normalized tick for symbol."""
+    symbol_clean = symbol.upper().strip()
+    tick = realtime_provider_manager.cache.get_latest_tick(symbol_clean)
+    if tick:
+        return tick
+    
+    # Fallback to yfinance quote tagged as DELAYED/HISTORICAL
+    quote = provider.get_latest_quote(symbol_clean)
+    return {
+        "symbol": symbol_clean,
+        "price": quote.get("price"),
+        "timestamp": quote.get("timestamp"),
+        "provider": quote.get("provider", "yfinance"),
+        "data_status": quote.get("data_status", "DELAYED"),
+        "is_delayed": quote.get("is_delayed", True),
+        "last_tick_age_seconds": 0.0
+    }
+
+class SymbolSubscribeRequest(BaseModel):
+    symbol: str
+
+@app.post("/api/realtime/subscribe")
+def subscribe_symbol(req: SymbolSubscribeRequest):
+    """POST /api/realtime/subscribe - Subscribes symbol to real-time stream."""
+    realtime_provider_manager.subscribe(req.symbol)
+    return {"status": "subscribed", "symbol": req.symbol.upper()}
+
+@app.post("/api/realtime/unsubscribe")
+def unsubscribe_symbol(req: SymbolSubscribeRequest):
+    """POST /api/realtime/unsubscribe - Unsubscribes symbol from real-time stream."""
+    realtime_provider_manager.unsubscribe(req.symbol)
+    return {"status": "unsubscribed", "symbol": req.symbol.upper()}
+
+@app.get("/api/realtime/stream-status")
+def get_stream_status():
+    """GET /api/realtime/stream-status - Detailed stream status."""
+    return realtime_provider_manager.get_stream_status()
+
+@app.websocket("/ws/market/{symbol}")
+async def websocket_market_endpoint(websocket: WebSocket, symbol: str):
+    """
+    WebSocket /ws/market/{symbol} - Internal proxy forwarding normalized real-time ticks to React.
+    Does NOT expose provider credentials to frontend JavaScript.
+    """
+    await websocket.accept()
+    symbol_clean = symbol.upper().strip()
+    realtime_provider_manager.subscribe(symbol_clean)
+
+    async def send_tick_callback(tick: dict):
+        if tick.get("symbol") == symbol_clean:
+            try:
+                await websocket.send_text(json.dumps(tick))
+            except Exception:
+                pass
+
+    # Send initial cached or latest quote
+    initial_tick = realtime_provider_manager.cache.get_latest_tick(symbol_clean)
+    if not initial_tick:
+        quote = provider.get_latest_quote(symbol_clean)
+        initial_tick = {
+            "symbol": symbol_clean,
+            "price": quote.get("price"),
+            "timestamp": quote.get("timestamp"),
+            "provider": quote.get("provider", "yfinance"),
+            "data_status": quote.get("data_status", "DELAYED"),
+            "is_delayed": True
+        }
+    await websocket.send_text(json.dumps(initial_tick))
+
+    try:
+        while True:
+            # Keep connection open and receive optional ping messages
+            data = await websocket.receive_text()
+            await asyncio.sleep(0.5)
+    except WebSocketDisconnect:
+        realtime_provider_manager.unsubscribe(symbol_clean)
+
+# ==============================================================================
+# PHASE 6 — LIVE AI PREDICTION ENGINE ENDPOINTS
+# ==============================================================================
+from backend.services.live_prediction_service import live_prediction_service
+
+@app.get("/api/assets/{symbol}/live-prediction")
+def get_live_prediction(symbol: str, model_name: str = "XGBoost"):
+    """GET /api/assets/{symbol}/live-prediction - Returns 30s throttled live prediction."""
+    return live_prediction_service.get_live_prediction(symbol, model_name=model_name)
+
+@app.post("/api/research/resolve-predictions")
+def resolve_predictions():
+    """POST /api/research/resolve-predictions - Auto-resolves pending prediction records."""
+    return live_prediction_service.resolve_pending_predictions()
+
+@app.get("/api/assets/{symbol}/prediction-tracker-stats")
+def get_prediction_tracker_stats(symbol: str):
+    """GET /api/assets/{symbol}/prediction-tracker-stats - Real database prediction tracker stats."""
+    return live_prediction_service.get_prediction_tracker_stats(symbol)
+
+@app.get("/api/research/live-collection-status")
+def get_live_collection_status():
+    """GET /api/research/live-collection-status - Global live research dataset collection metrics."""
+    return live_prediction_service.get_live_collection_status()
+
+# ==============================================================================
+# PHASE 7.2 — LIVE RESEARCH MONITORING & STATISTICAL VALIDATION ENDPOINTS
+# ==============================================================================
+from fastapi.responses import PlainTextResponse
+from backend.services.live_research_service import live_research_service
+
+@app.get("/api/research/live-predictions/{symbol}")
+def get_live_predictions_history(symbol: str, page: int = 1, limit: int = 50):
+    """GET /api/research/live-predictions/{symbol} - Returns paginated prediction records."""
+    return live_research_service.get_live_predictions_history(symbol, page=page, limit=limit)
+
+@app.get("/api/research/live-predictions/{symbol}/csv", response_class=PlainTextResponse)
+def export_live_predictions_csv(symbol: str):
+    """GET /api/research/live-predictions/{symbol}/csv - Returns CSV string of prediction records."""
+    csv_data = live_research_service.export_live_predictions_csv(symbol)
+    return PlainTextResponse(content=csv_data, media_type="text/csv", headers={"Content-Disposition": f"attachment; filename=live_predictions_{symbol}.csv"})
+
+@app.get("/api/research/live-analytics/{symbol}")
+def get_live_analytics(symbol: str):
+    """GET /api/research/live-analytics/{symbol} - Statistical live research monitoring analytics."""
+    return live_research_service.get_live_analytics(symbol)
+
+# ==============================================================================
+# PHASE 8 — ADVANCED CHARTING & TECHNICAL ANALYSIS ENDPOINTS
+# ==============================================================================
+from backend.indicators.technical_analysis import calculate_technical_indicators, detect_support_resistance
+
+@app.get("/api/assets/{symbol}/technical-analysis")
+def get_technical_analysis(symbol: str, db: Session = Depends(get_db)):
+    """GET /api/assets/{symbol}/technical-analysis - Returns computed indicators & support/resistance levels."""
+    symbol_clean = symbol.upper().strip()
+    df_raw = get_historical_data_from_db(symbol_clean, db=db)
+    if df_raw.empty:
+        raise HTTPException(status_code=404, detail=f"Market data unavailable for '{symbol_clean}'.")
+
+    df_ind = calculate_technical_indicators(df_raw)
+    sup_res = detect_support_resistance(df_raw)
+
+    latest_row = df_ind.iloc[-1]
+    return {
+        "symbol": symbol_clean,
+        "support_levels": sup_res.get("support_levels", []),
+        "resistance_levels": sup_res.get("resistance_levels", []),
+        "latest_indicators": {
+            "rsi_14": round(float(latest_row.get("rsi_14", 50.0)), 2),
+            "macd": round(float(latest_row.get("macd", 0.0)), 4),
+            "macd_signal": round(float(latest_row.get("macd_signal", 0.0)), 4),
+            "macd_hist": round(float(latest_row.get("macd_hist", 0.0)), 4),
+            "sma_20": round(float(latest_row.get("sma_20", latest_row["close"])), 2),
+            "sma_50": round(float(latest_row.get("sma_50", latest_row["close"])), 2),
+            "ema_12": round(float(latest_row.get("ema_12", latest_row["close"])), 2),
+            "ema_26": round(float(latest_row.get("ema_26", latest_row["close"])), 2),
+            "bollinger_middle": round(float(latest_row.get("bollinger_middle", latest_row["close"])), 2),
+            "bollinger_upper": round(float(latest_row.get("bollinger_upper", latest_row["close"])), 2),
+            "bollinger_lower": round(float(latest_row.get("bollinger_lower", latest_row["close"])), 2),
+            "atr_14": round(float(latest_row.get("atr_14", 0.0)), 2),
+            "stoch_k": round(float(latest_row.get("stoch_k", 50.0)), 2),
+            "stoch_d": round(float(latest_row.get("stoch_d", 50.0)), 2),
+            "obv": float(latest_row.get("obv", 0.0))
+        }
+    }
+
+
+
+
+
+
+

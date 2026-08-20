@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: stocksense-ai-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT --workers 1
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: REALTIME_PROVIDER
+        value: FINNHUB
+      - key: REALTIME_WS_URL
+        value: wss://ws.finnhub.io
+      - key: STALE_TICK_THRESHOLD_SECONDS
+        value: "30"
+      - key: REALTIME_API_KEY
+        sync: false
