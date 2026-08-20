@@ -19,7 +19,8 @@ from backend.data.realtime_provider import realtime_provider_manager
 from backend.data.provider import YFinanceProvider
 from backend.models.baseline_models import ModelPipeline
 from backend.features.feature_engine import compute_features_and_target
-from backend.data.data_service import get_historical_data_from_db
+from backend.data.data_service import get_historical_data_from_db, ensure_historical_data_in_db
+
 
 
 logger = logging.getLogger(__name__)
@@ -107,7 +108,8 @@ class LivePredictionService:
             input_ts = quote.get("timestamp", now.isoformat())
 
         # 3. Construct Live Features Without Modifying Historical DB Data
-        df_hist = get_historical_data_from_db(symbol_clean)
+        df_hist = ensure_historical_data_in_db(symbol_clean)
+
         if df_hist.empty or len(df_hist) < 30:
             return {
                 "symbol": symbol_clean,

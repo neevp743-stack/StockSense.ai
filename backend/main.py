@@ -19,7 +19,12 @@ from backend.config import (
 )
 from backend.db.database import get_db, init_db, SessionLocal
 from backend.db.models import StockPrice, FeatureRecord, ModelMetadata, PredictionRecord, UserRecord
-from backend.data.data_service import get_historical_data_from_db, sync_stock_universe, fetch_historical_data, save_prices_to_db
+from backend.data.data_service import (
+    get_historical_data_from_db, ensure_historical_data_in_db, seed_asset_registry_db,
+    sync_stock_universe, fetch_historical_data, save_prices_to_db
+)
+
+
 from backend.features.feature_engine import compute_features_and_target, FEATURE_COLUMNS
 from backend.models.baseline_models import ModelPipeline
 from backend.models.explainability import get_shap_explanations
@@ -68,8 +73,14 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     init_db()
+    try:
+        seed_asset_registry_db()
+    except Exception as e:
+        print(f"Startup asset seed warning: {e}")
+
     from backend.data.realtime_provider import realtime_provider_manager
     await realtime_provider_manager.start()
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -170,15 +181,9 @@ def get_stocks_universe():
 def get_stock_history(symbol: str, db: Session = Depends(get_db)):
     """GET /api/stocks/{symbol}/history - Historical OHLCV data."""
     symbol_clean = symbol.upper().strip()
-    df = get_historical_data_from_db(symbol_clean, db=db)
+    df = ensure_historical_data_in_db(symbol_clean, db=db)
     if df.empty:
-        # Try fetching real data on the fly if DB empty
-        try:
-            df_fetched = fetch_historical_data(symbol_clean, period="2y")
-            save_prices_to_db(df_fetched, db=db)
-            df = df_fetched
-        except Exception as e:
-            raise HTTPException(status_code=404, detail=f"Market data unavailable — configure the data provider: {str(e)}")
+        raise HTTPException(status_code=404, detail=f"Market data unavailable for symbol '{symbol_clean}'.")
 
     records = df.to_dict(orient="records")
     return {
@@ -191,7 +196,7 @@ def get_stock_history(symbol: str, db: Session = Depends(get_db)):
 def get_stock_features(symbol: str, db: Session = Depends(get_db)):
     """GET /api/stocks/{symbol}/features - Historical computed feature matrix."""
     symbol_clean = symbol.upper().strip()
-    df = get_historical_data_from_db(symbol_clean, db=db)
+    df = ensure_historical_data_in_db(symbol_clean, db=db)
     if df.empty:
         raise HTTPException(status_code=404, detail="Market data unavailable — configure data provider.")
 
@@ -215,9 +220,10 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
     risk/signal category, SHAP explanation breakdown, and disclaimers.
     """
     symbol_clean = symbol.upper().strip()
-    df_raw = get_historical_data_from_db(symbol_clean, db=db)
+    df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
     if df_raw.empty:
         raise HTTPException(status_code=404, detail="Market data unavailable — configure data provider.")
+
 
     df_feat = compute_features_and_target(df_raw)
     if df_feat.empty:
@@ -657,9 +663,10 @@ from backend.indicators.technical_analysis import calculate_technical_indicators
 def get_technical_analysis(symbol: str, db: Session = Depends(get_db)):
     """GET /api/assets/{symbol}/technical-analysis - Returns computed indicators & support/resistance levels."""
     symbol_clean = symbol.upper().strip()
-    df_raw = get_historical_data_from_db(symbol_clean, db=db)
+    df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
     if df_raw.empty:
         raise HTTPException(status_code=404, detail=f"Market data unavailable for '{symbol_clean}'.")
+
 
     df_ind = calculate_technical_indicators(df_raw)
     sup_res = detect_support_resistance(df_raw)

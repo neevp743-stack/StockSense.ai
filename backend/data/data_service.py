@@ -171,6 +171,25 @@ def get_historical_data_from_db(symbol: str, db: Optional[Session] = None) -> pd
         if close_db:
             db.close()
 
+def ensure_historical_data_in_db(symbol: str, db: Optional[Session] = None, period: str = "2y") -> pd.DataFrame:
+    """
+    Ensures historical OHLCV market data exists in SQLite DB for symbol.
+    If DB is empty for symbol, fetches real historical data from provider on-the-fly and saves to DB.
+    Never fabricates synthetic prices.
+    """
+    symbol_clean = symbol.upper().strip()
+    df = get_historical_data_from_db(symbol_clean, db=db)
+    if df.empty:
+        try:
+            df_fetched = fetch_historical_data(symbol_clean, period=period)
+            save_prices_to_db(df_fetched, db=db)
+            return get_historical_data_from_db(symbol_clean, db=db)
+        except Exception as e:
+            print(f"Unable to fetch historical data on-the-fly for '{symbol_clean}': {e}")
+            return pd.DataFrame()
+    return df
+
+
 def sync_stock_universe(symbols: Optional[List[str]] = None, period: str = "5y") -> Dict[str, Any]:
     """
     Downloads historical data for all symbols in the universe, validates each,
