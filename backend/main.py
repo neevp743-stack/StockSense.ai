@@ -64,8 +64,16 @@ app.add_middleware(
 
 
 @app.on_event("startup")
-def startup_event():
+async def startup_event():
     init_db()
+    from backend.data.realtime_provider import realtime_provider_manager
+    await realtime_provider_manager.start()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    from backend.data.realtime_provider import realtime_provider_manager
+    await realtime_provider_manager.stop()
+
 
 # Pydantic Schemas
 class BacktestRequest(BaseModel):

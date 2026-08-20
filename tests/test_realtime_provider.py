@@ -1,6 +1,8 @@
 import pytest
 import time
+import asyncio
 from datetime import datetime, timedelta
+
 from backend.data.realtime_provider import RealTimeWebSocketProvider, LiveTickCache
 from fastapi.testclient import TestClient
 from backend.main import app
@@ -96,3 +98,32 @@ def test_realtime_status_endpoint():
     assert "provider" in data
     assert "configured" in data
     assert "connection_status" in data
+
+def test_finnhub_lifecycle_and_security():
+    """Verifies async start/stop lifecycle and token redaction safety."""
+    async def run_test():
+        provider = RealTimeWebSocketProvider()
+        provider.api_key = "test_finnhub_token_12345"
+
+        assert provider.is_configured() is True
+
+        # Test subscribe mapping
+        provider.subscribe("BTC-USD")
+        assert "BINANCE:BTCUSDT" in provider.subscribed_symbols
+
+        # Test start and stop async lifecycle
+        await provider.start()
+        assert provider._running is True
+
+        status = provider.get_stream_status()
+        assert status["configured"] is True
+        assert status["provider"] == "FINNHUB"
+        # Ensure token is never in status payload string
+        assert "test_finnhub_token_12345" not in str(status)
+
+        await provider.stop()
+        assert provider._running is False
+
+    asyncio.run(run_test())
+
+
