@@ -5,7 +5,7 @@ import { ChartAnalysisPanel } from './ChartAnalysisPanel';
 import { 
   calcSMA, calcEMA, calcVWAP, calcRSI, calcMACD, calcBollinger, detectSupportResistance 
 } from '../utils/technicalIndicators';
-import { api } from '../api';
+import { api, getWebSocketUrl } from '../api';
 import { Radio, Maximize2, Minimize2, Sliders, Eye, EyeOff } from 'lucide-react';
 
 export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predictionData = null }) {
@@ -51,8 +51,9 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
   // Real-time WebSocket Subscription
   useEffect(() => {
     if (!symbol) return;
-    const wsUrl = `ws://localhost:8000/ws/market/${encodeURIComponent(symbol)}`;
+    const wsUrl = getWebSocketUrl(symbol);
     const ws = new WebSocket(wsUrl);
+
 
     ws.onmessage = (event) => {
       try {

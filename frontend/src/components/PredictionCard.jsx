@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, ShieldAlert, Cpu, AlertTriangle, Radio, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { api } from '../api';
+import { api, getWebSocketUrl } from '../api';
 
 export function PredictionCard({ prediction, symbol, selectedModel, onSelectModel }) {
   const [liveTick, setLiveTick] = React.useState(null);
@@ -9,8 +9,9 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
 
   React.useEffect(() => {
     if (!symbol) return;
-    const wsUrl = `ws://localhost:8000/ws/market/${encodeURIComponent(symbol)}`;
+    const wsUrl = getWebSocketUrl(symbol);
     const ws = new WebSocket(wsUrl);
+
 
     ws.onmessage = (event) => {
       try {

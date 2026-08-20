@@ -1,6 +1,21 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// Environment-aware API Base URL
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:8000/api'
+    : 'https://stocksense-ai-backend-sdyo.onrender.com/api');
+
+export const BACKEND_ROOT_URL = API_BASE_URL.replace(/\/api\/?$/, '');
+
+// Dynamic WebSocket URL generator based on backend protocol & host
+export function getWebSocketUrl(symbol) {
+  const cleanSymbol = encodeURIComponent(symbol.toUpperCase ? symbol.toUpperCase() : symbol);
+  const isSecure = BACKEND_ROOT_URL.startsWith('https:');
+  const wsProtocol = isSecure ? 'wss:' : 'ws:';
+  const host = BACKEND_ROOT_URL.replace(/^https?:\/\//, '');
+  return `${wsProtocol}//${host}/ws/market/${cleanSymbol}`;
+}
 
 export const api = {
   getAssetClasses: () => axios.get(`${API_BASE_URL}/asset-classes`),
@@ -36,8 +51,9 @@ export const api = {
   getLivePredictionsCsvUrl: (symbol) => `${API_BASE_URL}/research/live-predictions/${symbol}/csv`,
   getTechnicalAnalysis: (symbol) => axios.get(`${API_BASE_URL}/assets/${symbol}/technical-analysis`),
   getSystemStatus: () => axios.get(`${API_BASE_URL}/system/status`),
-  getHealth: () => axios.get(`http://localhost:8000/health`)
+  getHealth: () => axios.get(`${BACKEND_ROOT_URL}/health`)
 };
+
 
 
 
