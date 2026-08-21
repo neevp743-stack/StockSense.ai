@@ -1,11 +1,14 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, ShieldAlert, Cpu, AlertTriangle, Radio, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { api, getWebSocketUrl } from '../api';
+import { formatPrice } from '../utils/formatters';
 
 export function PredictionCard({ prediction, symbol, selectedModel, onSelectModel }) {
   const [liveTick, setLiveTick] = React.useState(null);
   const [isPulsing, setIsPulsing] = React.useState(false);
   const [trackerStats, setTrackerStats] = React.useState(null);
+
+
 
   React.useEffect(() => {
     if (!symbol) return;
@@ -67,7 +70,9 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
   const riskCategory = prediction.risk?.risk_category || "MEDIUM";
 
   const validLiveTick = (liveTick && liveTick.symbol && liveTick.symbol.toUpperCase() === symbol.toUpperCase()) ? liveTick : null;
-  const currentPriceVal = validLiveTick?.price ? validLiveTick.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : (prediction.latest_price ? prediction.latest_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A');
+  const rawPrice = validLiveTick?.price || prediction.latest_price;
+  const currentPriceDisplay = formatPrice(rawPrice, symbol);
+
 
   const quoteInfo = prediction.quote_info || {};
   const dataStatus = liveTick?.data_status || quoteInfo.data_status || "HISTORICAL";
@@ -110,8 +115,9 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
               {symbol.includes("BTC") ? "BTC/USD" : symbol}
             </h3>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: isPulsing ? 'var(--accent-cyan)' : '#fff', transition: 'color 0.3s' }} className="mono-font">
-              ${currentPriceVal}
+              {currentPriceDisplay}
             </div>
+
           </div>
 
           {/* Model Selector Dropdown */}

@@ -1,8 +1,10 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, AlertTriangle, ShieldCheck, Activity, Cpu, Layers } from 'lucide-react';
+import { formatPrice, getCurrencySymbol } from '../utils/formatters';
 
 export function ChartAnalysisPanel({ symbol, prediction, indicators, supportResistance }) {
-  const latestPrice = prediction?.latest_price || "N/A";
+  const currencySym = getCurrencySymbol(symbol);
+  const latestPrice = formatPrice(prediction?.latest_price, symbol);
   const isUp = prediction?.predicted_direction === "UP";
   const probUpPct = prediction?.probability_up ? (prediction.probability_up * 100).toFixed(1) : "N/A";
   const probDownPct = prediction?.probability_down ? (prediction.probability_down * 100).toFixed(1) : "N/A";
@@ -65,12 +67,12 @@ export function ChartAnalysisPanel({ symbol, prediction, indicators, supportResi
 
             <div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>SMA (20/50)</div>
-              <strong className="mono-font">{indicators?.sma_20 ? `$${indicators.sma_20}` : 'N/A'}</strong>
+              <strong className="mono-font">{indicators?.sma_20 ? formatPrice(indicators.sma_20, symbol) : 'N/A'}</strong>
             </div>
 
             <div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>Bollinger Bands</div>
-              <strong className="mono-font">{indicators?.bollinger_upper ? `$${indicators.bollinger_upper}` : 'N/A'}</strong>
+              <strong className="mono-font">{indicators?.bollinger_upper ? formatPrice(indicators.bollinger_upper, symbol) : 'N/A'}</strong>
             </div>
           </div>
         </div>
@@ -84,15 +86,16 @@ export function ChartAnalysisPanel({ symbol, prediction, indicators, supportResi
           <div style={{ fontSize: '0.82rem' }}>
             <div style={{ marginBottom: '4px' }}>
               <span style={{ color: 'var(--down-red)', fontWeight: 700 }}>AUTOMATIC RESISTANCE: </span>
-              <span className="mono-font">{reses.length > 0 ? reses.map(r => `$${r}`).join(', ') : 'None detected'}</span>
+              <span className="mono-font">{reses.length > 0 ? reses.map(r => formatPrice(r, symbol)).join(', ') : 'None detected'}</span>
             </div>
             <div>
               <span style={{ color: 'var(--up-green)', fontWeight: 700 }}>AUTOMATIC SUPPORT: </span>
-              <span className="mono-font">{sups.length > 0 ? sups.map(s => `$${s}`).join(', ') : 'None detected'}</span>
+              <span className="mono-font">{sups.length > 0 ? sups.map(s => formatPrice(s, symbol)).join(', ') : 'None detected'}</span>
             </div>
           </div>
         </div>
       </div>
+
 
       {/* Mandatory Disclaimer */}
       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: '1.4', background: 'rgba(239, 68, 68, 0.08)', padding: '8px 10px', borderRadius: '8px', marginTop: 'auto' }}>

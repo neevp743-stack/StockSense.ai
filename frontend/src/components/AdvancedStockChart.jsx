@@ -6,7 +6,9 @@ import {
   calcSMA, calcEMA, calcVWAP, calcRSI, calcMACD, calcBollinger, detectSupportResistance 
 } from '../utils/technicalIndicators';
 import { api, getWebSocketUrl } from '../api';
+import { formatPrice } from '../utils/formatters';
 import { Radio, Maximize2, Minimize2, Sliders, Eye, EyeOff } from 'lucide-react';
+
 
 export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predictionData = null }) {
   const chartContainerRef = useRef(null);
@@ -220,13 +222,22 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
     };
     window.addEventListener('resize', handleResize);
 
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    if (chartContainerRef.current) {
+      resizeObserver.observe(chartContainerRef.current);
+    }
+
     return () => {
       window.removeEventListener('resize', handleResize);
+      if (resizeObserver) resizeObserver.disconnect();
       if (chartRef.current) {
         chartRef.current.remove();
         chartRef.current = null;
       }
     };
+
   }, [historyData, indicators]);
 
   // Derived Header Metrics with strict symbol validation
@@ -269,8 +280,9 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
               <span className="mono-font" style={{ fontSize: '1.4rem', fontWeight: 800 }}>
-                ${latestPriceVal ? latestPriceVal.toLocaleString('en-US', { minimumFractionDigits: 2 }) : 'N/A'}
+                {formatPrice(latestPriceVal, symbol)}
               </span>
+
               <span className="mono-font" style={{ fontSize: '0.9rem', fontWeight: 700, color: isPos ? 'var(--up-green)' : 'var(--down-red)' }}>
                 {isPos ? '+' : ''}{priceChange.toFixed(2)} ({isPos ? '+' : ''}{pctChange.toFixed(2)}%)
               </span>

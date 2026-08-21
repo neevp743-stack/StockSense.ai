@@ -3,8 +3,11 @@ import {
   ResponsiveContainer, ComposedChart, Line, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend 
 } from 'recharts';
 import { Activity } from 'lucide-react';
+import { formatPrice } from '../utils/formatters';
 
 export function StockChart({ historyData, symbol }) {
+
+
   const [showIndicators, setShowIndicators] = useState({
     sma10: true,
     sma20: true,
@@ -50,8 +53,9 @@ export function StockChart({ historyData, symbol }) {
               {symbol} Historical OHLCV Price Chart
             </h2>
             <span style={{ fontSize: '1.1rem', fontWeight: 700, color: change >= 0 ? 'var(--up-green)' : 'var(--down-red)' }}>
-              ₹{latestClose.toFixed(2)} ({change >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
+              {formatPrice(latestClose, symbol)} ({change >= 0 ? '+' : ''}{changePct.toFixed(2)}%)
             </span>
+
           </div>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
             Real historical data retrieved from NSE via Yahoo Finance
