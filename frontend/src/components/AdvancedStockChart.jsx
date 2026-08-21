@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createChart, ColorType } from 'lightweight-charts';
+import { createChart, ColorType, CandlestickSeries, HistogramSeries, LineSeries } from 'lightweight-charts';
 import { ChartDrawingToolbar } from './ChartDrawingToolbar';
 import { ChartAnalysisPanel } from './ChartAnalysisPanel';
 import { 
@@ -9,6 +9,27 @@ import { api, getWebSocketUrl } from '../api';
 import { formatPrice } from '../utils/formatters';
 import { Radio, Maximize2, Minimize2, Sliders, Eye, EyeOff } from 'lucide-react';
 
+// Safe helper functions for lightweight-charts v4 & v5 compatibility
+function addCandleSeries(chart, options) {
+  if (typeof chart.addCandlestickSeries === 'function') {
+    return chart.addCandlestickSeries(options);
+  }
+  return chart.addSeries(CandlestickSeries, options);
+}
+
+function addHistoSeries(chart, options) {
+  if (typeof chart.addHistogramSeries === 'function') {
+    return chart.addHistogramSeries(options);
+  }
+  return chart.addSeries(HistogramSeries, options);
+}
+
+function addLSeries(chart, options) {
+  if (typeof chart.addLineSeries === 'function') {
+    return chart.addLineSeries(options);
+  }
+  return chart.addSeries(LineSeries, options);
+}
 
 export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predictionData = null }) {
   const chartContainerRef = useRef(null);
@@ -70,7 +91,6 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
       try {
         const data = JSON.parse(event.data);
         if (data && data.price && (!data.symbol || data.symbol.toUpperCase() === symbol.toUpperCase())) {
-
           setLiveTick(data);
           // Update lightweight-charts live candle
           if (candleSeriesRef.current) {
@@ -128,7 +148,7 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
     chartRef.current = chart;
 
     // Candlestick Series
-    const candleSeries = chart.addCandlestickSeries({
+    const candleSeries = addCandleSeries(chart, {
       upColor: '#10b981',
       downColor: '#ef4444',
       borderVisible: false,
@@ -138,7 +158,7 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
     candleSeriesRef.current = candleSeries;
 
     // Volume Series
-    const volumeSeries = chart.addHistogramSeries({
+    const volumeSeries = addHistoSeries(chart, {
       color: '#26a69a',
       priceFormat: { type: 'volume' },
       priceScaleId: '', // Set as overlay
@@ -183,35 +203,36 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
 
     if (indicators.sma && formattedCandles.length > 20) {
       const smaData = calcSMA(formattedCandles, 20);
-      const smaLine = chart.addLineSeries({ color: '#00f2fe', lineWidth: 2, title: 'SMA 20' });
+      const smaLine = addLSeries(chart, { color: '#00f2fe', lineWidth: 2, title: 'SMA 20' });
       smaLine.setData(smaData);
       indicatorSeriesRef.current.push(smaLine);
     }
 
     if (indicators.ema && formattedCandles.length > 12) {
       const emaData = calcEMA(formattedCandles, 12);
-      const emaLine = chart.addLineSeries({ color: '#f59e0b', lineWidth: 2, title: 'EMA 12' });
+      const emaLine = addLSeries(chart, { color: '#f59e0b', lineWidth: 2, title: 'EMA 12' });
       emaLine.setData(emaData);
       indicatorSeriesRef.current.push(emaLine);
     }
 
     if (indicators.vwap && formattedCandles.length > 0) {
       const vwapData = calcVWAP(formattedCandles);
-      const vwapLine = chart.addLineSeries({ color: '#a855f7', lineWidth: 1.5, title: 'VWAP' });
+      const vwapLine = addLSeries(chart, { color: '#a855f7', lineWidth: 1.5, title: 'VWAP' });
       vwapLine.setData(vwapData);
       indicatorSeriesRef.current.push(vwapLine);
     }
 
     if (indicators.bollinger && formattedCandles.length > 20) {
       const { upper, middle, lower } = calcBollinger(formattedCandles, 20, 2);
-      const uLine = chart.addLineSeries({ color: 'rgba(244, 63, 94, 0.6)', lineWidth: 1, title: 'BB Upper' });
-      const mLine = chart.addLineSeries({ color: 'rgba(244, 63, 94, 0.4)', lineWidth: 1, title: 'BB Mid' });
-      const lLine = chart.addLineSeries({ color: 'rgba(244, 63, 94, 0.6)', lineWidth: 1, title: 'BB Lower' });
+      const uLine = addLSeries(chart, { color: 'rgba(244, 63, 94, 0.6)', lineWidth: 1, title: 'BB Upper' });
+      const mLine = addLSeries(chart, { color: 'rgba(244, 63, 94, 0.4)', lineWidth: 1, title: 'BB Mid' });
+      const lLine = addLSeries(chart, { color: 'rgba(244, 63, 94, 0.6)', lineWidth: 1, title: 'BB Lower' });
       uLine.setData(upper);
       mLine.setData(middle);
       lLine.setData(lower);
       indicatorSeriesRef.current.push(uLine, mLine, lLine);
     }
+
 
     chart.timeScale().fitContent();
 
