@@ -70,6 +70,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import time
+
+@app.middleware("http")
+async def add_process_time_header(request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = (time.time() - start_time) * 1000.0
+    response.headers["X-Process-Time-ms"] = f"{process_time:.2f}"
+    return response
+
+
 
 
 @app.on_event("startup")
@@ -244,18 +255,12 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
     pipe = ModelPipeline.load_model(symbol_clean, model_name)
     if not pipe or not pipe.is_trained:
         pipe = ModelPipeline.load_model(symbol_clean, "LogisticRegression")
-
-    # On-the-fly model training fallback if no pre-trained model exists on disk
-    if not pipe or not pipe.is_trained:
-        try:
-            from backend.models.trainer import train_all_models_for_symbol
-            train_all_models_for_symbol(symbol_clean)
-            pipe = ModelPipeline.load_model(symbol_clean, model_name) or ModelPipeline.load_model(symbol_clean, "LogisticRegression")
-        except Exception as e:
-            print(f"On-the-fly model training skipped for {symbol_clean}: {e}")
+        if not pipe or not pipe.is_trained:
+            pipe = ModelPipeline.load_model(symbol_clean, "XGBoost")
 
     if not pipe or not pipe.is_trained:
-        # Graceful heuristic fallback so UI never displays blank or unhandled N/A
+        # Graceful heuristic technical fallback so API returns immediately without blocking on training
+
         rsi_val = float(latest_row.get("rsi", [50.0])[0]) if "rsi" in latest_row else 50.0
         prob_up = 0.55 if rsi_val > 50 else 0.45
         predicted_dir = 1 if prob_up >= 0.50 else 0
@@ -355,6 +360,27 @@ def get_models_registry(db: Session = Depends(get_db)):
             "created_at": r.created_at.isoformat()
         })
     return {"models": models, "count": len(models)}
+
+@app.post("/api/models/train/{symbol}")
+def train_symbol_models_endpoint(symbol: str, background_tasks: BackgroundTasks):
+    """POST /api/models/train/{symbol} - Triggers background model training for symbol."""
+    symbol_clean = symbol.upper().strip()
+    background_tasks.add_task(train_all_models_for_symbol, symbol_clean)
+    return {
+        "status": "initiated",
+        "symbol": symbol_clean,
+        "message": f"Model training pipeline for symbol '{symbol_clean}' launched in background."
+    }
+
+@app.post("/api/models/train-all")
+def train_universe_models_endpoint(background_tasks: BackgroundTasks):
+    """POST /api/models/train-all - Triggers background model training for all universe assets."""
+    background_tasks.add_task(train_entire_universe)
+    return {
+        "status": "initiated",
+        "message": "Universe multi-asset model training pipeline launched in background."
+    }
+
 
 @app.get("/api/predictions")
 def get_predictions_log(symbol: Optional[str] = None, limit: int = 50, db: Session = Depends(get_db)):

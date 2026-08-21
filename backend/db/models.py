@@ -1,6 +1,7 @@
 from datetime import datetime, date
-from sqlalchemy import Column, Integer, String, Float, DateTime, Date, Boolean, Text, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Float, DateTime, Date, Boolean, Text, UniqueConstraint, Index
 from backend.db.database import Base
+
 
 class AssetRecord(Base):
     __tablename__ = "assets"
@@ -33,6 +34,7 @@ class StockPrice(Base):
 
     __table_args__ = (
         UniqueConstraint("symbol", "date", name="uix_symbol_date"),
+        Index("idx_stock_price_symbol_date", "symbol", "date"),
     )
 
 class FeatureRecord(Base):
@@ -60,6 +62,7 @@ class FeatureRecord(Base):
 
     __table_args__ = (
         UniqueConstraint("symbol", "date", name="uix_feature_symbol_date"),
+        Index("idx_feature_symbol_date", "symbol", "date"),
     )
 
 class ModelMetadata(Base):
@@ -77,6 +80,10 @@ class ModelMetadata(Base):
     metrics_json = Column(Text, nullable=False)  # JSON string (accuracy, precision, recall, f1, roc_auc, brier_score)
     file_path = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (
+        Index("idx_model_meta_symbol_name", "symbol", "model_name"),
+    )
 
 class PredictionRecord(Base):
     __tablename__ = "predictions"
@@ -97,6 +104,11 @@ class PredictionRecord(Base):
     actual_direction = Column(Integer, nullable=True)           # Resolved later: 1 or 0
     is_correct = Column(Boolean, nullable=True)
     resolved_at = Column(DateTime, nullable=True)
+
+    __table_args__ = (
+        Index("idx_prediction_symbol_date", "stock_symbol", "prediction_date"),
+    )
+
 
 class UserRecord(Base):
     __tablename__ = "users"

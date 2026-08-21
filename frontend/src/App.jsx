@@ -36,35 +36,42 @@ export default function App() {
 
   // Load asset data on asset change or model change
   useEffect(() => {
-    let isCurrent = true;
-    if (selectedAsset) {
-      // Immediately reset state so old symbol data is never shown for new symbol
-      setHistoryData([]);
-      setPredictionData(null);
+    if (!selectedAsset) return;
 
-      // Load chart history first for fast UI display
-      api.getHistory(selectedAsset)
-        .then(res => {
-          if (isCurrent) {
-            setHistoryData(res.data.data || []);
-          }
-        })
-        .catch(err => console.error("Failed to load history:", err));
+    const controller = new AbortController();
+    const { signal } = controller;
 
-      // Load prediction in parallel
-      api.getPrediction(selectedAsset, selectedModel)
-        .then(res => {
-          if (isCurrent) {
-            setPredictionData(res.data || null);
-          }
-        })
-        .catch(err => console.error("Failed to load prediction:", err));
-    }
+    // Immediately clear state to prevent old symbol data lingering
+    setHistoryData([]);
+    setPredictionData(null);
+
+    // Load chart history first for fast UI display
+    api.getHistory(selectedAsset, null, { signal })
+      .then(res => {
+        setHistoryData(res.data?.data || []);
+      })
+      .catch(err => {
+        if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
+          console.error("Failed to load history:", err);
+        }
+      });
+
+    // Load prediction in parallel without blocking chart
+    api.getPrediction(selectedAsset, selectedModel, { signal })
+      .then(res => {
+        setPredictionData(res.data || null);
+      })
+      .catch(err => {
+        if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
+          console.error("Failed to load prediction:", err);
+        }
+      });
 
     return () => {
-      isCurrent = false;
+      controller.abort();
     };
   }, [selectedAsset, selectedModel]);
+
 
   useEffect(() => {
     loadGlobalMetrics();

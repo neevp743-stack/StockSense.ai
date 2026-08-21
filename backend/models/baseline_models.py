@@ -16,9 +16,11 @@ from sklearn.metrics import (
 
 from backend.config import PROJECT_ROOT
 from backend.features.feature_engine import FEATURE_COLUMNS
+from backend.cache import model_cache
 
 MODELS_DIR = os.path.join(PROJECT_ROOT, "saved_models")
 os.makedirs(MODELS_DIR, exist_ok=True)
+
 
 def evaluate_predictions(y_true: np.ndarray, y_pred: np.ndarray, y_prob: np.ndarray) -> Dict[str, Any]:
     """Calculates comprehensive classification metrics & Brier calibration score."""
@@ -127,28 +129,59 @@ class ModelPipeline:
         return preds, probs
 
     def save_model(self):
-        filepath = os.path.join(MODELS_DIR, f"{self.symbol}_{self.model_name}.joblib")
+        clean_symbol = self.symbol.upper().strip()
+        asset_dir = os.path.join(MODELS_DIR, clean_symbol)
+        os.makedirs(asset_dir, exist_ok=True)
+
+        filepath_flat = os.path.join(MODELS_DIR, f"{clean_symbol}_{self.model_name}.joblib")
+        filepath_nested = os.path.join(asset_dir, f"{self.model_name}.joblib")
+
         data = {
             "model_name": self.model_name,
-            "symbol": self.symbol,
+            "symbol": clean_symbol,
             "model": self.model,
             "scaler": self.scaler,
             "metrics": self.metrics,
             "is_trained": self.is_trained,
             "features_used": self.features_used
         }
-        joblib.dump(data, filepath)
+        joblib.dump(data, filepath_flat)
+        joblib.dump(data, filepath_nested)
+
+        cache_key = f"model_{clean_symbol}_{self.model_name}"
+        model_cache.set(cache_key, self)
 
     @classmethod
     def load_model(cls, symbol: str, model_name: str) -> Optional["ModelPipeline"]:
-        filepath = os.path.join(MODELS_DIR, f"{symbol}_{model_name}.joblib")
-        if not os.path.exists(filepath):
+        clean_symbol = symbol.upper().strip()
+        cache_key = f"model_{clean_symbol}_{model_name}"
+        cached_model = model_cache.get(cache_key)
+        if cached_model is not None:
+            return cached_model
+
+        filepath_flat = os.path.join(MODELS_DIR, f"{clean_symbol}_{model_name}.joblib")
+        filepath_nested = os.path.join(MODELS_DIR, clean_symbol, f"{model_name}.joblib")
+
+        filepath = None
+        if os.path.exists(filepath_flat):
+            filepath = filepath_flat
+        elif os.path.exists(filepath_nested):
+            filepath = filepath_nested
+
+        if not filepath:
             return None
-        data = joblib.load(filepath)
-        pipe = cls(model_name=data["model_name"], symbol=data["symbol"])
-        pipe.model = data["model"]
-        pipe.scaler = data["scaler"]
-        pipe.metrics = data["metrics"]
-        pipe.is_trained = data["is_trained"]
-        pipe.features_used = data["features_used"]
-        return pipe
+
+        try:
+            data = joblib.load(filepath)
+            pipe = cls(model_name=data["model_name"], symbol=data["symbol"])
+            pipe.model = data["model"]
+            pipe.scaler = data["scaler"]
+            pipe.metrics = data["metrics"]
+            pipe.is_trained = data["is_trained"]
+            pipe.features_used = data["features_used"]
+            model_cache.set(cache_key, pipe)
+            return pipe
+        except Exception as e:
+            print(f"Error loading model from {filepath}: {e}")
+            return None
+

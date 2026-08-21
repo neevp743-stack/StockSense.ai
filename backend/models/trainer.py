@@ -38,57 +38,63 @@ def train_all_models_for_symbol(symbol: str) -> Dict[str, Any]:
     if df_feat.empty or len(df_feat) < 100:
         raise ValueError(f"Insufficient feature data ({len(df_feat)} rows) to train models for '{symbol_clean}'.")
 
-    # Save feature records to SQLite
+    # Save feature records to SQLite using bulk operations
     from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
+    from backend.cache import prediction_cache, model_cache
     db = SessionLocal()
     try:
-        for _, row in df_feat.iterrows():
-            target_val = int(row["target"]) if pd.notnull(row["target"]) else None
-            stmt = sqlite_upsert(FeatureRecord).values(
-                symbol=symbol_clean,
-                date=row["date"],
-                sma_10=float(row["sma_10"]),
-                sma_20=float(row["sma_20"]),
-                sma_50=float(row["sma_50"]),
-                ema_10=float(row["ema_10"]),
-                ema_20=float(row["ema_20"]),
-                rsi=float(row["rsi"]),
-                macd=float(row["macd"]),
-                macd_signal=float(row["macd_signal"]),
-                macd_hist=float(row["macd_hist"]),
-                bb_upper=float(row["bb_upper"]),
-                bb_lower=float(row["bb_lower"]),
-                bb_width=float(row["bb_width"]),
-                daily_return=float(row["daily_return"]),
-                rolling_volatility=float(row["rolling_volatility"]),
-                volume_change=float(row["volume_change"]),
-                target=target_val
-            )
-            stmt = stmt.on_conflict_do_update(
+        feat_records = []
+        for row in df_feat.to_dict(orient="records"):
+            target_val = int(row["target"]) if pd.notnull(row.get("target")) else None
+            feat_records.append({
+                "symbol": symbol_clean,
+                "date": row["date"],
+                "sma_10": float(row["sma_10"]),
+                "sma_20": float(row["sma_20"]),
+                "sma_50": float(row["sma_50"]),
+                "ema_10": float(row["ema_10"]),
+                "ema_20": float(row["ema_20"]),
+                "rsi": float(row["rsi"]),
+                "macd": float(row["macd"]),
+                "macd_signal": float(row["macd_signal"]),
+                "macd_hist": float(row["macd_hist"]),
+                "bb_upper": float(row["bb_upper"]),
+                "bb_lower": float(row["bb_lower"]),
+                "bb_width": float(row["bb_width"]),
+                "daily_return": float(row["daily_return"]),
+                "rolling_volatility": float(row["rolling_volatility"]),
+                "volume_change": float(row["volume_change"]),
+                "target": target_val
+            })
+
+        if feat_records:
+            stmt = sqlite_upsert(FeatureRecord)
+            upsert_stmt = stmt.on_conflict_do_update(
                 index_elements=["symbol", "date"],
                 set_={
-                    "sma_10": float(row["sma_10"]),
-                    "sma_20": float(row["sma_20"]),
-                    "sma_50": float(row["sma_50"]),
-                    "ema_10": float(row["ema_10"]),
-                    "ema_20": float(row["ema_20"]),
-                    "rsi": float(row["rsi"]),
-                    "macd": float(row["macd"]),
-                    "macd_signal": float(row["macd_signal"]),
-                    "macd_hist": float(row["macd_hist"]),
-                    "bb_upper": float(row["bb_upper"]),
-                    "bb_lower": float(row["bb_lower"]),
-                    "bb_width": float(row["bb_width"]),
-                    "daily_return": float(row["daily_return"]),
-                    "rolling_volatility": float(row["rolling_volatility"]),
-                    "volume_change": float(row["volume_change"]),
-                    "target": target_val
+                    "sma_10": stmt.excluded.sma_10,
+                    "sma_20": stmt.excluded.sma_20,
+                    "sma_50": stmt.excluded.sma_50,
+                    "ema_10": stmt.excluded.ema_10,
+                    "ema_20": stmt.excluded.ema_20,
+                    "rsi": stmt.excluded.rsi,
+                    "macd": stmt.excluded.macd,
+                    "macd_signal": stmt.excluded.macd_signal,
+                    "macd_hist": stmt.excluded.macd_hist,
+                    "bb_upper": stmt.excluded.bb_upper,
+                    "bb_lower": stmt.excluded.bb_lower,
+                    "bb_width": stmt.excluded.bb_width,
+                    "daily_return": stmt.excluded.daily_return,
+                    "rolling_volatility": stmt.excluded.rolling_volatility,
+                    "volume_change": stmt.excluded.volume_change,
+                    "target": stmt.excluded.target
                 }
             )
-            db.execute(stmt)
-        db.commit()
+            db.execute(upsert_stmt, feat_records)
+            db.commit()
     finally:
         db.close()
+
 
     # Filter out rows with target = NaN for training
     df_trainable = df_feat.dropna(subset=["target"]).copy()
@@ -181,6 +187,29 @@ def train_all_models_for_symbol(symbol: str) -> Dict[str, Any]:
             )
             db.add(meta)
         db.commit()
+
+        # Write metadata.json for artifact registry
+        asset_dir = os.path.join(PROJECT_ROOT, "saved_models", symbol_clean)
+        os.makedirs(asset_dir, exist_ok=True)
+        meta_json_path = os.path.join(asset_dir, "metadata.json")
+        meta_content = {
+            "symbol": symbol_clean,
+            "asset_class": aclass,
+            "trained_at": datetime.utcnow().isoformat(),
+            "training_period": {
+                "start": str(training_start_date),
+                "end": str(training_end_date)
+            },
+            "features_used": FEATURE_COLUMNS,
+            "test_metrics": test_eval_results
+        }
+        with open(meta_json_path, "w", encoding="utf-8") as f:
+            json.dump(meta_content, f, indent=2)
+
+        # Invalidate prediction cache for this symbol so fresh predictions use new model
+        prediction_cache.invalidate(symbol_clean)
+        model_cache.invalidate(symbol_clean)
+
     finally:
         db.close()
 
@@ -190,6 +219,7 @@ def train_all_models_for_symbol(symbol: str) -> Dict[str, Any]:
         "test_metrics": test_eval_results,
         "trained_models": trained_models
     }
+
 
 def train_entire_universe(symbols: Optional[List[str]] = None) -> Dict[str, Any]:
     """Syncs market data and trains models for all stocks in initial universe."""

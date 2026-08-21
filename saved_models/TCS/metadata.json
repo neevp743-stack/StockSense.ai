@@ -1,0 +1,136 @@
+{
+  "symbol": "TCS",
+  "asset_class": "INDIAN_EQUITY",
+  "trained_at": "2026-08-21T04:13:19.950392",
+  "training_period": {
+    "start": "2021-11-01",
+    "end": "2025-03-12"
+  },
+  "features_used": [
+    "sma_10",
+    "sma_20",
+    "sma_50",
+    "ema_10",
+    "ema_20",
+    "rsi",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_upper",
+    "bb_lower",
+    "bb_width",
+    "daily_return",
+    "rolling_volatility",
+    "volume_change"
+  ],
+  "test_metrics": {
+    "MajorityBaseline": {
+      "accuracy": 0.4666666666666667,
+      "precision": 0.4666666666666667,
+      "recall": 1.0,
+      "f1_score": 0.6363636363636364,
+      "roc_auc": 0.5,
+      "brier_score": 0.5333333333333333,
+      "confusion_matrix": [
+        [
+          0,
+          96
+        ],
+        [
+          0,
+          84
+        ]
+      ]
+    },
+    "LogisticRegression": {
+      "accuracy": 0.4444444444444444,
+      "precision": 0.4473684210526316,
+      "recall": 0.8095238095238095,
+      "f1_score": 0.576271186440678,
+      "roc_auc": 0.48908730158730157,
+      "brier_score": 0.25150471073694747,
+      "confusion_matrix": [
+        [
+          12,
+          84
+        ],
+        [
+          16,
+          68
+        ]
+      ]
+    },
+    "RandomForest": {
+      "accuracy": 0.5222222222222223,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "roc_auc": 0.5620039682539683,
+      "brier_score": 0.2476079389808402,
+      "confusion_matrix": [
+        [
+          94,
+          2
+        ],
+        [
+          84,
+          0
+        ]
+      ]
+    },
+    "XGBoost": {
+      "accuracy": 0.5166666666666667,
+      "precision": 0.48514851485148514,
+      "recall": 0.5833333333333334,
+      "f1_score": 0.5297297297297298,
+      "roc_auc": 0.5074404761904763,
+      "brier_score": 0.25022604045516905,
+      "confusion_matrix": [
+        [
+          44,
+          52
+        ],
+        [
+          35,
+          49
+        ]
+      ]
+    },
+    "LSTM": {
+      "accuracy": 0.4678362573099415,
+      "precision": 0.45652173913043476,
+      "recall": 0.7974683544303798,
+      "f1_score": 0.5806451612903226,
+      "roc_auc": 0.5015134837644468,
+      "brier_score": 0.295167475938797,
+      "confusion_matrix": [
+        [
+          17,
+          75
+        ],
+        [
+          16,
+          63
+        ]
+      ]
+    },
+    "Ensemble": {
+      "accuracy": 0.4666666666666667,
+      "precision": 0.4666666666666667,
+      "recall": 1.0,
+      "f1_score": 0.6363636363636364,
+      "roc_auc": 0.49317956349206354,
+      "brier_score": 0.2717822826028394,
+      "confusion_matrix": [
+        [
+          0,
+          96
+        ],
+        [
+          0,
+          84
+        ]
+      ]
+    }
+  }
+}

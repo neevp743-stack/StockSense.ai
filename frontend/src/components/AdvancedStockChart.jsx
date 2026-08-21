@@ -39,22 +39,23 @@ export function AdvancedStockChart({ symbol = "BTC-USD", historyData = [], predi
     if (!symbol) return;
     setTechAnalysis(null);
     setSupportResistance(null);
-    let isCurrent = true;
 
-    api.getTechnicalAnalysis(symbol)
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    api.getTechnicalAnalysis(symbol, { signal })
       .then(res => {
-        if (isCurrent) {
-          setTechAnalysis(res.data?.latest_indicators || null);
-          setSupportResistance({
-            support_levels: res.data?.support_levels || [],
-            resistance_levels: res.data?.resistance_levels || []
-          });
-        }
+        setTechAnalysis(res.data?.latest_indicators || null);
+        setSupportResistance({
+          support_levels: res.data?.support_levels || [],
+          resistance_levels: res.data?.resistance_levels || []
+        });
       })
       .catch(() => {});
 
-    return () => { isCurrent = false; };
+    return () => { controller.abort(); };
   }, [symbol]);
+
 
   // Real-time WebSocket Subscription
   useEffect(() => {

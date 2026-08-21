@@ -30,17 +30,27 @@ class TTLCacheManager:
         with self._lock:
             self._cache[key] = (expiry, value)
 
-    def invalidate(self, key_prefix: Optional[str] = None) -> None:
+    def invalidate(self, key_pattern: Optional[str] = None) -> None:
         with self._lock:
-            if key_prefix is None:
+            if key_pattern is None:
                 self._cache.clear()
             else:
-                keys_to_del = [k for k in self._cache if k.startswith(key_prefix)]
+                pattern = key_pattern.upper().strip()
+                keys_to_del = [k for k in self._cache if pattern in k.upper()]
                 for k in keys_to_del:
                     del self._cache[k]
 
+# Standard TTL Constants
+TTL_HISTORY = 600      # 10 minutes for historical OHLCV
+TTL_INDICATORS = 120   # 2 minutes for technical indicators
+TTL_PREDICTION = 60    # 1 minute for AI predictions
+TTL_QUOTE = 15         # 15 seconds for realtime quotes
+TTL_MODEL = 3600       # 1 hour for loaded ML model pipelines
+
 # Global singleton cache instances
-history_cache = TTLCacheManager(default_ttl_seconds=300)     # 5 minutes for historical OHLCV
-indicators_cache = TTLCacheManager(default_ttl_seconds=120)  # 2 minutes for technical indicators
-prediction_cache = TTLCacheManager(default_ttl_seconds=60)   # 1 minute for AI predictions
-quote_cache = TTLCacheManager(default_ttl_seconds=30)         # 30 seconds for market quotes
+history_cache = TTLCacheManager(default_ttl_seconds=TTL_HISTORY)
+indicators_cache = TTLCacheManager(default_ttl_seconds=TTL_INDICATORS)
+prediction_cache = TTLCacheManager(default_ttl_seconds=TTL_PREDICTION)
+quote_cache = TTLCacheManager(default_ttl_seconds=TTL_QUOTE)
+model_cache = TTLCacheManager(default_ttl_seconds=TTL_MODEL)
+

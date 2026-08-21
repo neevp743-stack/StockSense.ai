@@ -105,7 +105,7 @@ def fetch_historical_data(symbol: str, period: str = "5y", start: Optional[str] 
 from backend.cache import history_cache
 
 def save_prices_to_db(df: pd.DataFrame, db: Optional[Session] = None) -> int:
-    """Saves/upserts cleaned historical prices to SQLite database."""
+    """Saves/upserts cleaned historical prices to SQLite database using bulk operations."""
     if df is None or df.empty:
         return 0
 
@@ -115,35 +115,37 @@ def save_prices_to_db(df: pd.DataFrame, db: Optional[Session] = None) -> int:
         close_db = True
 
     try:
-        count = 0
-        symbol_name = None
-        for _, row in df.iterrows():
-            symbol_name = row["symbol"]
-            stmt = sqlite_upsert(StockPrice).values(
-                symbol=row["symbol"],
-                date=row["date"],
-                open=float(row["open"]),
-                high=float(row["high"]),
-                low=float(row["low"]),
-                close=float(row["close"]),
-                volume=float(row["volume"])
-            )
-            stmt = stmt.on_conflict_do_update(
+        symbol_name = df["symbol"].iloc[0] if "symbol" in df.columns and not df.empty else None
+        records_data = []
+        for row in df.to_dict(orient="records"):
+            records_data.append({
+                "symbol": str(row["symbol"]).upper().strip(),
+                "date": row["date"],
+                "open": float(row["open"]),
+                "high": float(row["high"]),
+                "low": float(row["low"]),
+                "close": float(row["close"]),
+                "volume": float(row["volume"])
+            })
+
+        if records_data:
+            stmt = sqlite_upsert(StockPrice)
+            upsert_stmt = stmt.on_conflict_do_update(
                 index_elements=["symbol", "date"],
                 set_={
-                    "open": float(row["open"]),
-                    "high": float(row["high"]),
-                    "low": float(row["low"]),
-                    "close": float(row["close"]),
-                    "volume": float(row["volume"])
+                    "open": stmt.excluded.open,
+                    "high": stmt.excluded.high,
+                    "low": stmt.excluded.low,
+                    "close": stmt.excluded.close,
+                    "volume": stmt.excluded.volume
                 }
             )
-            db.execute(stmt)
-            count += 1
-        db.commit()
+            db.execute(upsert_stmt, records_data)
+            db.commit()
+
         if symbol_name:
-            history_cache.invalidate(symbol_name.upper().strip())
-        return count
+            history_cache.invalidate(str(symbol_name).upper().strip())
+        return len(records_data)
     finally:
         if close_db:
             db.close()
@@ -162,14 +164,11 @@ def get_historical_data_from_db(symbol: str, db: Optional[Session] = None, limit
         close_db = True
 
     try:
-        query = db.query(StockPrice).filter(StockPrice.symbol == symbol_clean).order_by(StockPrice.date.asc())
         if limit and limit > 0:
-            # Query last N records efficiently
-            total = db.query(StockPrice).filter(StockPrice.symbol == symbol_clean).count()
-            offset = max(0, total - limit)
-            records = query.offset(offset).all()
+            records = db.query(StockPrice).filter(StockPrice.symbol == symbol_clean).order_by(StockPrice.date.desc()).limit(limit).all()
+            records.reverse()
         else:
-            records = query.all()
+            records = db.query(StockPrice).filter(StockPrice.symbol == symbol_clean).order_by(StockPrice.date.asc()).all()
 
         if not records:
             empty_df = pd.DataFrame()
@@ -187,11 +186,12 @@ def get_historical_data_from_db(symbol: str, db: Optional[Session] = None, limit
         } for r in records]
 
         df = pd.DataFrame(data)
-        history_cache.set(cache_key, df, ttl_seconds=300)
+        history_cache.set(cache_key, df, ttl_seconds=600)
         return df
     finally:
         if close_db:
             db.close()
+
 
 def ensure_historical_data_in_db(symbol: str, db: Optional[Session] = None, period: str = "2y", limit: Optional[int] = None) -> pd.DataFrame:
     """
