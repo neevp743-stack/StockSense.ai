@@ -8,6 +8,8 @@ except ImportError:
 from typing import Dict, Any, List, Optional
 from backend.features.feature_engine import FEATURE_COLUMNS
 
+_EXPLAINER_CACHE: Dict[int, Any] = {}
+
 def get_shap_explanations(model_pipeline: Any, feature_row: pd.DataFrame) -> Dict[str, Any]:
     """
     Generates dynamic SHAP values or feature importance factors for a given prediction row.
@@ -32,7 +34,10 @@ def get_shap_explanations(model_pipeline: Any, feature_row: pd.DataFrame) -> Dic
             base_estimator = raw_model
 
         if HAS_SHAP and hasattr(base_estimator, "feature_importances_"):
-            explainer = shap.TreeExplainer(base_estimator)
+            est_id = id(base_estimator)
+            if est_id not in _EXPLAINER_CACHE:
+                _EXPLAINER_CACHE[est_id] = shap.TreeExplainer(base_estimator)
+            explainer = _EXPLAINER_CACHE[est_id]
             shap_values = explainer.shap_values(X_sample)
 
             # If shap_values is a list (for classification classes 0 and 1), take class 1 (UP)
