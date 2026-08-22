@@ -55,36 +55,53 @@ export default function App() {
     loadAssetsForClass(selectedAssetClass);
   }, [selectedAssetClass]);
 
-  // Preload stock data & model predictions on asset switch in a single consolidated HTTP call
+  const symbolCacheRef = useRef({});
+
+  // Preload stock data & predictions with Stale-While-Revalidate Client Caching
   useEffect(() => {
     if (!selectedAsset) return;
 
     const controller = new AbortController();
     const { signal } = controller;
 
-    setHistoryData([]);
-    setPredictionData(null);
-    setDataError(null);
+    const cleanSymbol = selectedAsset.toUpperCase().strip ? selectedAsset.toUpperCase().strip() : selectedAsset.toUpperCase();
+    const cacheKey = `${cleanSymbol}_${selectedModel}`;
+    const cached = symbolCacheRef.current[cacheKey];
+
+    // If cached in client memory, render immediately while revalidating in background
+    if (cached) {
+      setHistoryData(cached.history || []);
+      setPredictionData(cached.prediction || null);
+      setDataError(null);
+    } else {
+      setHistoryData([]);
+      setPredictionData(null);
+      setDataError(null);
+    }
 
     api.getDashboardData(selectedAsset, selectedModel, { signal })
       .then(res => {
         const dashData = res.data;
         if (dashData) {
-          setHistoryData(dashData.history?.data || []);
-          setPredictionData(dashData.prediction || null);
+          const newHist = dashData.history?.data || [];
+          const newPred = dashData.prediction || null;
+
+          setHistoryData(newHist);
+          setPredictionData(newPred);
+
+          symbolCacheRef.current[cacheKey] = {
+            history: newHist,
+            prediction: newPred,
+            timestamp: Date.now()
+          };
         }
       })
       .catch(err => {
         if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
-          console.error("Failed to load dashboard data, trying fallbacks:", err);
-          // Fallback to separate endpoint calls if consolidated endpoint fails
-          api.getHistory(selectedAsset, null, { signal })
-            .then(r => setHistoryData(r.data?.data || []))
-            .catch(() => setDataError(`Failed to fetch market data for '${selectedAsset}'.`));
-
-          api.getPrediction(selectedAsset, selectedModel, { signal })
-            .then(r => setPredictionData(r.data || null))
-            .catch(() => {});
+          if (!cached) {
+            console.error("Failed to load dashboard data:", err);
+            setDataError(`Connecting to live market feed for '${selectedAsset}'...`);
+          }
         }
       });
 
