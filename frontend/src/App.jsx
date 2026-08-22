@@ -55,7 +55,7 @@ export default function App() {
     loadAssetsForClass(selectedAssetClass);
   }, [selectedAssetClass]);
 
-  // Preload stock data & model predictions on asset switch (strictly scoped to symbol)
+  // Preload stock data & model predictions on asset switch in a single consolidated HTTP call
   useEffect(() => {
     if (!selectedAsset) return;
 
@@ -66,20 +66,25 @@ export default function App() {
     setPredictionData(null);
     setDataError(null);
 
-    api.getHistory(selectedAsset, null, { signal })
-      .then(res => setHistoryData(res.data?.data || []))
-      .catch(err => {
-        if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
-          console.error("Failed to load chart history:", err);
-          setDataError(`Failed to fetch historical market data for '${selectedAsset}'.`);
+    api.getDashboardData(selectedAsset, selectedModel, { signal })
+      .then(res => {
+        const dashData = res.data;
+        if (dashData) {
+          setHistoryData(dashData.history?.data || []);
+          setPredictionData(dashData.prediction || null);
         }
-      });
-
-    api.getPrediction(selectedAsset, selectedModel, { signal })
-      .then(res => setPredictionData(res.data || null))
+      })
       .catch(err => {
         if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
-          console.error("Failed to load model prediction:", err);
+          console.error("Failed to load dashboard data, trying fallbacks:", err);
+          // Fallback to separate endpoint calls if consolidated endpoint fails
+          api.getHistory(selectedAsset, null, { signal })
+            .then(r => setHistoryData(r.data?.data || []))
+            .catch(() => setDataError(`Failed to fetch market data for '${selectedAsset}'.`));
+
+          api.getPrediction(selectedAsset, selectedModel, { signal })
+            .then(r => setPredictionData(r.data || null))
+            .catch(() => {});
         }
       });
 

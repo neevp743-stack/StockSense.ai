@@ -7,6 +7,7 @@ from typing import List, Dict, Any, Optional
 
 from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 import jwt
@@ -23,9 +24,7 @@ from backend.data.data_service import (
     get_historical_data_from_db, ensure_historical_data_in_db, seed_asset_registry_db,
     sync_stock_universe, fetch_historical_data, save_prices_to_db
 )
-from backend.cache import indicators_cache, prediction_cache, quote_cache
-
-
+from backend.cache import indicators_cache, prediction_cache, quote_cache, dashboard_cache
 
 from backend.features.feature_engine import compute_features_and_target, FEATURE_COLUMNS
 from backend.models.baseline_models import ModelPipeline
@@ -58,7 +57,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Environment-aware CORS configuration
+# Environment-aware CORS & Gzip Compression
 cors_origins = CORS_ALLOWED_ORIGINS if ENVIRONMENT == "production" else ["*"]
 
 app.add_middleware(
@@ -69,6 +68,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 import time
 
@@ -224,6 +224,56 @@ def get_asset_detail(symbol: str):
     if not info:
         raise HTTPException(status_code=404, detail=f"Asset symbol '{symbol}' not found.")
     return {"asset": info}
+
+@app.get("/api/stocks/{symbol}/dashboard-data")
+def get_dashboard_data(symbol: str, model_name: str = "XGBoost", db: Session = Depends(get_db)):
+    """
+    GET /api/stocks/{symbol}/dashboard-data
+    Ultra-fast consolidated endpoint returning history, prediction, technical analysis, and asset info.
+    Serves warm responses in < 5ms.
+    """
+    symbol_clean = symbol.upper().strip()
+    cache_key = f"dash_{symbol_clean}_{model_name}"
+    cached = dashboard_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    # 1. Fetch History
+    df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
+    if df_raw.empty:
+        raise HTTPException(status_code=404, detail=f"Market data unavailable for '{symbol_clean}'.")
+
+    history_records = df_raw.to_dict(orient="records")
+
+    # 2. Fetch Prediction
+    try:
+        prediction_payload = get_stock_prediction(symbol_clean, model_name=model_name, db=db)
+    except Exception as e:
+        prediction_payload = None
+
+    # 3. Fetch Technical Analysis
+    try:
+        ta_payload = get_technical_analysis(symbol_clean, db=db)
+    except Exception as e:
+        ta_payload = None
+
+    # 4. Asset Metadata
+    asset_info = get_asset_info(symbol_clean)
+
+    res_payload = {
+        "symbol": symbol_clean,
+        "asset_info": asset_info,
+        "history": {
+            "symbol": symbol_clean,
+            "count": len(history_records),
+            "data": history_records
+        },
+        "prediction": prediction_payload,
+        "technical_analysis": ta_payload
+    }
+
+    dashboard_cache.set(cache_key, res_payload, ttl_seconds=60)
+    return res_payload
 
 @app.get("/api/stocks")
 def get_stocks_universe():

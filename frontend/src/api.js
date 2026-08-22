@@ -31,6 +31,8 @@ export function getWebSocketUrl(symbol) {
 }
 
 export const api = {
+  getDashboardData: (symbol, modelName = 'XGBoost', options = {}) =>
+    axios.get(`${API_BASE_URL}/stocks/${symbol}/dashboard-data`, { params: { model_name: modelName }, ...options }),
   search: (query = '', limit = 20, options = {}) => axios.get(`${API_BASE_URL}/search`, { params: { q: query, limit }, ...options }),
   getMarkets: (params = {}, options = {}) => axios.get(`${API_BASE_URL}/markets`, { params, ...options }),
   getAssetClasses: (options = {}) => axios.get(`${API_BASE_URL}/asset-classes`, options),
