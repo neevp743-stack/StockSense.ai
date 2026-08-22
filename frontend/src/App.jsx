@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { Header } from './components/Header';
 import { TopMarketBar } from './components/TopMarketBar';
 import { DashboardHero } from './components/DashboardHero';
