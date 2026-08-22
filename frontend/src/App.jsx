@@ -10,11 +10,12 @@ import { SystemStatusBanner } from './components/SystemStatusBanner';
 import { SplashScreen } from './components/SplashScreen';
 import { SearchModal } from './components/SearchModal';
 import { MobileNav } from './components/MobileNav';
-import { ChartSkeleton, PredictionSkeleton, TechnicalGaugeSkeleton } from './components/SkeletonLoaders';
+import { ChartSkeleton, PredictionSkeleton } from './components/SkeletonLoaders';
 import { ErrorFallbackCard } from './components/EmptyState';
 import { api } from './api';
 
-// Code-splitting heavy research modules to shrink initial bundle size & optimize performance
+// Code-splitting heavy research & market universe modules
+const MarketsPage = lazy(() => import('./components/MarketsPage').then(m => ({ default: m.MarketsPage })));
 const LiveResearchPage = lazy(() => import('./components/LiveResearchPage').then(m => ({ default: m.LiveResearchPage })));
 const BacktesterUI = lazy(() => import('./components/BacktesterUI').then(m => ({ default: m.BacktesterUI })));
 const ResearchStudy = lazy(() => import('./components/ResearchStudy'));
@@ -50,12 +51,11 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSearchOpen]);
 
-  // Load available assets when asset class changes
   useEffect(() => {
     loadAssetsForClass(selectedAssetClass);
   }, [selectedAssetClass]);
 
-  // Preload stock data & model predictions simultaneously
+  // Preload stock data & model predictions on asset switch (strictly scoped to symbol)
   useEffect(() => {
     if (!selectedAsset) return;
 
@@ -71,7 +71,7 @@ export default function App() {
       .catch(err => {
         if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
           console.error("Failed to load chart history:", err);
-          setDataError("Failed to fetch historical market chart data.");
+          setDataError(`Failed to fetch historical market data for '${selectedAsset}'.`);
         }
       });
 
@@ -95,9 +95,6 @@ export default function App() {
       const res = await api.getAssets(cls);
       const assetsList = res.data.assets || [];
       setAvailableAssets(assetsList);
-      if (assetsList.length > 0 && !assetsList.some(a => a.symbol === selectedAsset)) {
-        setSelectedAsset(assetsList[0].symbol);
-      }
     } catch (err) {
       console.error("Failed to load assets for class:", err);
     }
@@ -131,13 +128,18 @@ export default function App() {
     }
   };
 
+  const handleSelectSymbolAndSwitchTab = (sym) => {
+    setSelectedAsset(sym);
+    setActiveTab('dashboard');
+  };
+
   return (
     <>
       {/* Smart Startup Splash Screen (~1.2s max, preloads data concurrently) */}
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
 
       {/* Top Benchmark Market Ticker Bar */}
-      <TopMarketBar onSelectTicker={setSelectedAsset} />
+      <TopMarketBar onSelectTicker={handleSelectSymbolAndSwitchTab} />
 
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '20px 24px 80px 24px' }}>
         {/* Navigation Header */}
@@ -181,6 +183,7 @@ export default function App() {
             <Watchlist 
               selectedSymbol={selectedAsset} 
               onSelectSymbol={setSelectedAsset} 
+              onOpenSearch={() => setIsSearchOpen(true)}
             />
 
             {/* Dominant Chart View */}
@@ -212,8 +215,12 @@ export default function App() {
           </>
         )}
 
-        {/* Lazy Loaded Heavy Research Tabs */}
+        {/* Lazy Loaded Market Universe & Research Tabs */}
         <Suspense fallback={<ChartSkeleton />}>
+          {activeTab === 'markets' && (
+            <MarketsPage onSelectSymbol={handleSelectSymbolAndSwitchTab} />
+          )}
+
           {activeTab === 'live-research' && (
             <LiveResearchPage activeSymbol={selectedAsset} onSelectSymbol={setSelectedAsset} />
           )}
@@ -239,7 +246,7 @@ export default function App() {
         <SearchModal 
           isOpen={isSearchOpen} 
           onClose={() => setIsSearchOpen(false)} 
-          onSelectAsset={setSelectedAsset} 
+          onSelectAsset={handleSelectSymbolAndSwitchTab} 
         />
 
         {/* Mobile Navigation Bar */}
@@ -247,9 +254,9 @@ export default function App() {
 
         {/* Footer */}
         <footer style={{ marginTop: '50px', paddingTop: '24px', borderTop: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', lineHeight: '1.6' }}>
-          <div>StockSense AI — Multi-Asset Machine Learning Research Platform | Predict. Explain. Verify.</div>
+          <div>StockSense AI — Scalable Multi-Asset Machine Learning Platform | Predict. Explain. Verify.</div>
           <div style={{ fontSize: '0.74rem', opacity: 0.7, marginTop: '4px' }}>
-            Built for Bloomberg-grade market research. Not financial advice. Powered by Finnhub Realtime & XGBoost ML.
+            Assets dynamically loaded on-demand via provider feeds. Not financial advice. Powered by Finnhub Realtime & XGBoost ML.
           </div>
         </footer>
       </div>

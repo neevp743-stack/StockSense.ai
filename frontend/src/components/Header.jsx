@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, RefreshCw, Globe, AlertTriangle, User, Zap } from 'lucide-react';
+import { Search, RefreshCw, Globe, AlertTriangle, User } from 'lucide-react';
 import { Logo } from './Logo';
 
 export function Header({ 
@@ -48,10 +48,10 @@ export function Header({
               gap: '8px',
               cursor: 'pointer'
             }}
-            title="Search stocks (Press /)"
+            title="Search all supported stocks (Press /)"
           >
             <Search size={14} color="var(--accent-cyan)" />
-            <span>Search stocks...</span>
+            <span>Search market universe...</span>
             <kbd style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '1px 5px', borderRadius: '4px', fontSize: '0.68rem', color: 'var(--text-muted)' }}>
               /
             </kbd>
@@ -103,7 +103,6 @@ export function Header({
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
 
-          {/* User Profile Avatar */}
           <div 
             style={{
               width: '36px',
@@ -117,7 +116,7 @@ export function Header({
               color: 'var(--accent-cyan)',
               cursor: 'pointer'
             }}
-            title="Neev — Research Analyst Profile"
+            title="Neev — Quant Analyst Profile"
           >
             <User size={18} />
           </div>
@@ -139,7 +138,8 @@ export function Header({
         }}
       >
         {[
-          { id: 'dashboard', label: '📊 Markets & AI Prediction' },
+          { id: 'dashboard', label: '📊 Stock Intelligence' },
+          { id: 'markets', label: '🌐 Market Universe' },
           { id: 'live-research', label: '⚡ Live AI Research' },
           { id: 'ablation', label: '🧪 Feature Study' },
           { id: 'leaderboard', label: '🏆 Model Evaluation' },

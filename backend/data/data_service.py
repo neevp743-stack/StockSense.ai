@@ -7,6 +7,7 @@ from sqlalchemy.dialects.sqlite import insert as sqlite_upsert
 
 from backend.config import get_ticker_symbol, DEFAULT_UNIVERSE
 from backend.assets.asset_registry import get_asset_info, ASSET_REGISTRY
+from backend.assets.provider_symbol_mapper import get_provider_symbol, get_internal_symbol
 from backend.db.database import SessionLocal, init_db
 from backend.db.models import StockPrice, AssetRecord
 from backend.data.data_validator import validate_market_data
@@ -19,7 +20,7 @@ class DataProviderUnavailableException(Exception):
 provider_instance = YFinanceProvider()
 
 def seed_asset_registry_db(db: Optional[Session] = None):
-    """Seeds AssetRecord table with the 21 registered multi-asset configurations."""
+    """Seeds AssetRecord table with registered multi-asset configurations."""
     close_db = False
     if db is None:
         db = SessionLocal()
@@ -61,45 +62,23 @@ def seed_asset_registry_db(db: Optional[Session] = None):
 def fetch_historical_data(symbol: str, period: str = "5y", start: Optional[str] = None, end: Optional[str] = None) -> pd.DataFrame:
     """
     Retrieves real historical market data via MarketDataProvider abstraction.
+    Uses centralized provider_symbol_mapper for provider ticker resolution.
     STRICT RULE: Never fabricates or synthesizes market data.
     """
-    df = provider_instance.get_historical_data(symbol, period=period)
+    internal_symbol = get_internal_symbol(symbol)
+    provider_symbol = get_provider_symbol(symbol)
+
+    df = provider_instance.get_historical_data(provider_symbol, period=period)
+    if df.empty and provider_symbol != internal_symbol:
+        # Fallback retry with internal symbol if provider suffix returned empty
+        df = provider_instance.get_historical_data(internal_symbol, period=period)
+
     if df.empty:
         raise DataProviderUnavailableException(
-            f"Real market data unavailable for symbol '{symbol}'."
-        )
-    df["symbol"] = symbol.upper().strip()
-    return df
-
-    # Flatten multi-index columns if yfinance returns multi-index
-    if isinstance(df_raw.columns, pd.MultiIndex):
-        df_raw.columns = df_raw.columns.get_level_values(0)
-
-    # Reset index to get Date as a column
-    df = df_raw.reset_index()
-
-    # Standardize column names to lowercase
-    cols = {col: str(col).lower() for col in df.columns}
-    df = df.rename(columns=cols)
-
-    # Ensure required columns exist
-    required = ["date", "open", "high", "low", "close", "volume"]
-    missing = [c for c in required if c not in df.columns]
-    if missing:
-        raise DataProviderUnavailableException(
-            f"Market data malformed — missing columns {missing} for '{ticker}'."
+            f"Real market data unavailable for symbol '{internal_symbol}'."
         )
 
-    # Filter to required columns and convert data types
-    df = df[required].copy()
-    df["date"] = pd.to_datetime(df["date"]).dt.date
-    for num_col in ["open", "high", "low", "close", "volume"]:
-        df[num_col] = pd.to_numeric(df[num_col], errors="coerce")
-
-    # Drop any row with NaNs in date or close
-    df = df.dropna(subset=["date", "close"]).sort_values("date").reset_index(drop=True)
-    df["symbol"] = symbol.upper().strip()
-
+    df["symbol"] = internal_symbol.upper().strip()
     return df
 
 from backend.cache import history_cache
@@ -152,10 +131,10 @@ def save_prices_to_db(df: pd.DataFrame, db: Optional[Session] = None) -> int:
 
 def get_historical_data_from_db(symbol: str, db: Optional[Session] = None, limit: Optional[int] = None) -> pd.DataFrame:
     """Retrieves stored historical OHLCV data from SQLite database with in-memory TTL caching."""
-    symbol_clean = symbol.upper().strip()
+    symbol_clean = get_internal_symbol(symbol)
     cache_key = f"hist_{symbol_clean}_{limit or 'all'}"
     cached_df = history_cache.get(cache_key)
-    if cached_df is not None:
+    if cached_df is not None and not cached_df.empty:
         return cached_df
 
     close_db = False
@@ -172,7 +151,6 @@ def get_historical_data_from_db(symbol: str, db: Optional[Session] = None, limit
 
         if not records:
             empty_df = pd.DataFrame()
-            history_cache.set(cache_key, empty_df, ttl_seconds=60)
             return empty_df
 
         data = [{
@@ -192,14 +170,13 @@ def get_historical_data_from_db(symbol: str, db: Optional[Session] = None, limit
         if close_db:
             db.close()
 
-
 def ensure_historical_data_in_db(symbol: str, db: Optional[Session] = None, period: str = "2y", limit: Optional[int] = None) -> pd.DataFrame:
     """
     Ensures historical OHLCV market data exists in SQLite DB for symbol.
     If DB is empty for symbol, fetches real historical data from provider on-the-fly and saves to DB.
     Never fabricates synthetic prices.
     """
-    symbol_clean = symbol.upper().strip()
+    symbol_clean = get_internal_symbol(symbol)
     df = get_historical_data_from_db(symbol_clean, db=db, limit=limit)
     if df.empty:
         try:
@@ -210,8 +187,6 @@ def ensure_historical_data_in_db(symbol: str, db: Optional[Session] = None, peri
             print(f"Unable to fetch historical data on-the-fly for '{symbol_clean}': {e}")
             return pd.DataFrame()
     return df
-
-
 
 def sync_stock_universe(symbols: Optional[List[str]] = None, period: str = "5y") -> Dict[str, Any]:
     """

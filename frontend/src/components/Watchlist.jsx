@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Plus, Trash2, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { Star, Plus, Trash2, TrendingUp, TrendingDown } from 'lucide-react';
 import { formatPrice } from '../utils/formatters';
 
-const DEFAULT_WATCHLIST = ['RELIANCE', 'INFY', 'TCS', 'AAPL', 'BTC-USD'];
+const DEFAULT_WATCHLIST = ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'ICICIBANK', 'AAPL', 'NVDA', 'BTC-USD'];
 
-const MOCK_PRICES = {
-  'RELIANCE': { price: 1313.20, change: 1.25 },
-  'INFY': { price: 1482.50, change: 0.72 },
-  'TCS': { price: 3421.10, change: -0.45 },
-  'AAPL': { price: 224.30, change: 0.85 },
-  'TSLA': { price: 212.50, change: -1.15 },
-  'BTC-USD': { price: 94250.00, change: 1.45 },
-};
-
-export function Watchlist({ selectedSymbol, onSelectSymbol }) {
+export function Watchlist({ selectedSymbol, onSelectSymbol, onOpenSearch }) {
   const [watchlist, setWatchlist] = useState(DEFAULT_WATCHLIST);
 
   useEffect(() => {
@@ -45,15 +36,24 @@ export function Watchlist({ selectedSymbol, onSelectSymbol }) {
         <h3 className="heading-font" style={{ fontSize: '1.05rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Star size={18} color="var(--accent-cyan)" fill="var(--accent-cyan)" /> My Watchlist
         </h3>
-        <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-          {watchlist.length} Assets Tracked
-        </span>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+            {watchlist.length} Assets Tracked
+          </span>
+
+          <button
+            onClick={onOpenSearch}
+            className="btn-secondary"
+            style={{ padding: '4px 10px', fontSize: '0.76rem', borderRadius: '6px' }}
+          >
+            <Plus size={12} /> Add Asset
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
         {watchlist.map(sym => {
-          const info = MOCK_PRICES[sym] || { price: 1000.00, change: 0.50 };
-          const isPos = info.change >= 0;
           const isSelected = selectedSymbol === sym;
 
           return (
@@ -75,8 +75,8 @@ export function Watchlist({ selectedSymbol, onSelectSymbol }) {
             >
               <div>
                 <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#fff' }}>{sym}</div>
-                <div className="mono-font" style={{ fontSize: '0.85rem', fontWeight: 700, marginTop: '2px' }}>
-                  {formatPrice(info.price, sym)}
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                  On-Demand Quote
                 </div>
               </div>
 
@@ -84,15 +84,15 @@ export function Watchlist({ selectedSymbol, onSelectSymbol }) {
                 <span 
                   className="mono-font" 
                   style={{ 
-                    fontSize: '0.78rem', 
+                    fontSize: '0.74rem', 
                     fontWeight: 700, 
-                    color: isPos ? 'var(--up-green)' : 'var(--down-red)',
-                    background: isPos ? 'var(--up-green-bg)' : 'var(--down-red-bg)',
+                    color: 'var(--accent-cyan)',
+                    background: 'rgba(0, 242, 254, 0.1)',
                     padding: '2px 8px',
                     borderRadius: '6px'
                   }}
                 >
-                  {isPos ? '+' : ''}{info.change}%
+                  TRACKED
                 </span>
                 
                 <button

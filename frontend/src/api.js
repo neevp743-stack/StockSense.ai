@@ -31,6 +31,8 @@ export function getWebSocketUrl(symbol) {
 }
 
 export const api = {
+  search: (query = '', limit = 20, options = {}) => axios.get(`${API_BASE_URL}/search`, { params: { q: query, limit }, ...options }),
+  getMarkets: (params = {}, options = {}) => axios.get(`${API_BASE_URL}/markets`, { params, ...options }),
   getAssetClasses: (options = {}) => axios.get(`${API_BASE_URL}/asset-classes`, options),
   getAssets: (assetClass = '', options = {}) => axios.get(`${API_BASE_URL}/assets`, { params: { asset_class: assetClass }, ...options }),
   getAssetDetail: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}`, options),

@@ -156,11 +156,52 @@ def get_system_status():
 
 
 from backend.assets.asset_registry import (
-    ASSET_CLASSES, ASSET_REGISTRY, get_asset_info, get_assets_by_class, get_all_assets
+    ASSET_CLASSES, ASSET_REGISTRY, get_asset_info, get_assets_by_class, get_all_assets, search_assets
 )
 from backend.data.provider import YFinanceProvider
 
 provider = YFinanceProvider()
+
+@app.get("/api/search")
+def search_stock_universe(q: str = "", limit: int = 20):
+    """GET /api/search?q=... - Dynamic search matching symbol or company name."""
+    results = search_assets(q, limit=limit)
+    return {
+        "query": q,
+        "count": len(results),
+        "assets": results
+    }
+
+@app.get("/api/markets")
+@app.get("/api/markets/{exchange}")
+def get_markets_universe(exchange: Optional[str] = None, asset_class: Optional[str] = None, page: int = 1, limit: int = 50):
+    """GET /api/markets - Paginated market universe endpoint."""
+    all_assets = get_all_assets()
+    
+    if exchange:
+        ex_clean = exchange.upper().strip()
+        all_assets = [a for a in all_assets if a.get("exchange", "").upper() == ex_clean]
+    
+    if asset_class:
+        cls_clean = asset_class.upper().strip()
+        all_assets = [a for a in all_assets if a.get("asset_class", "").upper() == cls_clean]
+
+    total_count = len(all_assets)
+    page_safe = max(1, page)
+    limit_safe = min(100, max(1, limit))
+    start_idx = (page_safe - 1) * limit_safe
+    end_idx = start_idx + limit_safe
+    
+    page_items = all_assets[start_idx:end_idx]
+    total_pages = max(1, (total_count + limit_safe - 1) // limit_safe)
+
+    return {
+        "page": page_safe,
+        "limit": limit_safe,
+        "total_assets": total_count,
+        "total_pages": total_pages,
+        "assets": page_items
+    }
 
 @app.get("/api/asset-classes")
 def get_asset_classes():
@@ -178,10 +219,10 @@ def get_assets(asset_class: Optional[str] = None):
 
 @app.get("/api/assets/{symbol}")
 def get_asset_detail(symbol: str):
-    """GET /api/assets/{symbol} - Returns asset metadata."""
+    """GET /api/assets/{symbol} - Returns asset metadata (auto-registers on demand)."""
     info = get_asset_info(symbol)
     if not info:
-        raise HTTPException(status_code=404, detail=f"Asset symbol '{symbol}' not found in registry.")
+        raise HTTPException(status_code=404, detail=f"Asset symbol '{symbol}' not found.")
     return {"asset": info}
 
 @app.get("/api/stocks")

@@ -1,9 +1,13 @@
 """
-StockSense AI — Asset Registry Configuration
-Defines supported asset classes, 21 initial multi-asset configurations, and metadata lookup.
+StockSense AI — Scalable Asset Registry Configuration
+Maintains asset classes, expanded multi-asset universe, and dynamic symbol resolution.
 """
 
 from typing import Dict, Any, List, Optional
+from backend.assets.provider_symbol_mapper import (
+    INDIAN_EQUITY_SYMBOLS, US_EQUITY_SYMBOLS, CRYPTO_SYMBOLS, 
+    FOREX_SYMBOLS, INDEX_SYMBOLS, infer_asset_metadata, get_internal_symbol
+)
 
 ASSET_CLASSES = {
     "INDIAN_EQUITY": {
@@ -38,302 +42,106 @@ ASSET_CLASSES = {
     }
 }
 
-# Configured Initial Universe (21 Assets)
-ASSET_REGISTRY: Dict[str, Dict[str, Any]] = {
-    # 1. Indian Equities (NSE)
-    "RELIANCE": {
-        "symbol": "RELIANCE",
-        "display_name": "Reliance Industries Ltd",
-        "asset_class": "INDIAN_EQUITY",
-        "exchange": "NSE",
-        "market": "India",
-        "currency": "INR",
-        "currency_symbol": "₹",
-        "provider_symbol": "RELIANCE.NS",
-        "active": True,
-        "trading_calendar": "NSE",
-        "timezone": "Asia/Kolkata"
-    },
-    "TCS": {
-        "symbol": "TCS",
-        "display_name": "Tata Consultancy Services Ltd",
-        "asset_class": "INDIAN_EQUITY",
-        "exchange": "NSE",
-        "market": "India",
-        "currency": "INR",
-        "currency_symbol": "₹",
-        "provider_symbol": "TCS.NS",
-        "active": True,
-        "trading_calendar": "NSE",
-        "timezone": "Asia/Kolkata"
-    },
-    "INFY": {
-        "symbol": "INFY",
-        "display_name": "Infosys Limited",
-        "asset_class": "INDIAN_EQUITY",
-        "exchange": "NSE",
-        "market": "India",
-        "currency": "INR",
-        "currency_symbol": "₹",
-        "provider_symbol": "INFY.NS",
-        "active": True,
-        "trading_calendar": "NSE",
-        "timezone": "Asia/Kolkata"
-    },
-    "HDFCBANK": {
-        "symbol": "HDFCBANK",
-        "display_name": "HDFC Bank Limited",
-        "asset_class": "INDIAN_EQUITY",
-        "exchange": "NSE",
-        "market": "India",
-        "currency": "INR",
-        "currency_symbol": "₹",
-        "provider_symbol": "HDFCBANK.NS",
-        "active": True,
-        "trading_calendar": "NSE",
-        "timezone": "Asia/Kolkata"
-    },
-    "ICICIBANK": {
-        "symbol": "ICICIBANK",
-        "display_name": "ICICI Bank Limited",
-        "asset_class": "INDIAN_EQUITY",
-        "exchange": "NSE",
-        "market": "India",
-        "currency": "INR",
-        "currency_symbol": "₹",
-        "provider_symbol": "ICICIBANK.NS",
-        "active": True,
-        "trading_calendar": "NSE",
-        "timezone": "Asia/Kolkata"
-    },
+# Pre-populate Expanded Initial Universe
+ASSET_REGISTRY: Dict[str, Dict[str, Any]] = {}
 
-    # 2. US Equities
-    "AAPL": {
-        "symbol": "AAPL",
-        "display_name": "Apple Inc.",
-        "asset_class": "US_EQUITY",
-        "exchange": "NASDAQ",
-        "market": "US",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "AAPL",
-        "active": True,
-        "trading_calendar": "US_EQUITY",
-        "timezone": "America/New_York"
-    },
-    "MSFT": {
-        "symbol": "MSFT",
-        "display_name": "Microsoft Corporation",
-        "asset_class": "US_EQUITY",
-        "exchange": "NASDAQ",
-        "market": "US",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "MSFT",
-        "active": True,
-        "trading_calendar": "US_EQUITY",
-        "timezone": "America/New_York"
-    },
-    "NVDA": {
-        "symbol": "NVDA",
-        "display_name": "NVIDIA Corporation",
-        "asset_class": "US_EQUITY",
-        "exchange": "NASDAQ",
-        "market": "US",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "NVDA",
-        "active": True,
-        "trading_calendar": "US_EQUITY",
-        "timezone": "America/New_York"
-    },
-    "AMZN": {
-        "symbol": "AMZN",
-        "display_name": "Amazon.com Inc.",
-        "asset_class": "US_EQUITY",
-        "exchange": "NASDAQ",
-        "market": "US",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "AMZN",
-        "active": True,
-        "trading_calendar": "US_EQUITY",
-        "timezone": "America/New_York"
-    },
-    "GOOGL": {
-        "symbol": "GOOGL",
-        "display_name": "Alphabet Inc.",
-        "asset_class": "US_EQUITY",
-        "exchange": "NASDAQ",
-        "market": "US",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "GOOGL",
-        "active": True,
-        "trading_calendar": "US_EQUITY",
-        "timezone": "America/New_York"
-    },
-
-    # 3. Cryptocurrency (24/7)
-    "BTC-USD": {
-        "symbol": "BTC-USD",
-        "display_name": "Bitcoin / US Dollar",
-        "asset_class": "CRYPTO",
-        "exchange": "CRYPTO_GLOBAL",
-        "market": "Global Crypto",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "BTC-USD",
-        "active": True,
-        "trading_calendar": "24/7",
-        "timezone": "UTC"
-    },
-    "ETH-USD": {
-        "symbol": "ETH-USD",
-        "display_name": "Ethereum / US Dollar",
-        "asset_class": "CRYPTO",
-        "exchange": "CRYPTO_GLOBAL",
-        "market": "Global Crypto",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "ETH-USD",
-        "active": True,
-        "trading_calendar": "24/7",
-        "timezone": "UTC"
-    },
-
-    # 4. Foreign Exchange (Forex)
-    "USDINR=X": {
-        "symbol": "USDINR=X",
-        "display_name": "US Dollar / Indian Rupee",
-        "asset_class": "FOREX",
-        "exchange": "FOREX_OTC",
-        "market": "Forex",
-        "currency": "INR",
-        "currency_symbol": "₹",
-        "provider_symbol": "USDINR=X",
-        "active": True,
-        "trading_calendar": "FOREX_24/5",
-        "timezone": "UTC"
-    },
-    "EURUSD=X": {
-        "symbol": "EURUSD=X",
-        "display_name": "Euro / US Dollar",
-        "asset_class": "FOREX",
-        "exchange": "FOREX_OTC",
-        "market": "Forex",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "EURUSD=X",
-        "active": True,
-        "trading_calendar": "FOREX_24/5",
-        "timezone": "UTC"
-    },
-    "GBPUSD=X": {
-        "symbol": "GBPUSD=X",
-        "display_name": "British Pound / US Dollar",
-        "asset_class": "FOREX",
-        "exchange": "FOREX_OTC",
-        "market": "Forex",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "GBPUSD=X",
-        "active": True,
-        "trading_calendar": "FOREX_24/5",
-        "timezone": "UTC"
-    },
-    "USDJPY=X": {
-        "symbol": "USDJPY=X",
-        "display_name": "US Dollar / Japanese Yen",
-        "asset_class": "FOREX",
-        "exchange": "FOREX_OTC",
-        "market": "Forex",
-        "currency": "JPY",
-        "currency_symbol": "¥",
-        "provider_symbol": "USDJPY=X",
-        "active": True,
-        "trading_calendar": "FOREX_24/5",
-        "timezone": "UTC"
-    },
-
-    # 5. Global Market Indices
-    "^NSEI": {
-        "symbol": "^NSEI",
-        "display_name": "NIFTY 50 Index",
-        "asset_class": "INDEX",
+# Populate Indian Equities
+for sym, name in INDIAN_EQUITY_SYMBOLS.items():
+    ASSET_REGISTRY[sym] = {
+        "symbol": sym,
+        "display_name": name,
+        "asset_class": "INDIAN_EQUITY",
         "exchange": "NSE",
         "market": "India",
         "currency": "INR",
         "currency_symbol": "₹",
-        "provider_symbol": "^NSEI",
+        "provider_symbol": f"{sym}.NS",
         "active": True,
         "trading_calendar": "NSE",
         "timezone": "Asia/Kolkata"
-    },
-    "^NSEBANK": {
-        "symbol": "^NSEBANK",
-        "display_name": "NIFTY Bank Index",
-        "asset_class": "INDEX",
-        "exchange": "NSE",
-        "market": "India",
-        "currency": "INR",
-        "currency_symbol": "₹",
-        "provider_symbol": "^NSEBANK",
-        "active": True,
-        "trading_calendar": "NSE",
-        "timezone": "Asia/Kolkata"
-    },
-    "^GSPC": {
-        "symbol": "^GSPC",
-        "display_name": "S&P 500 Index",
-        "asset_class": "INDEX",
-        "exchange": "US_INDEX",
-        "market": "US",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "^GSPC",
-        "active": True,
-        "trading_calendar": "US_EQUITY",
-        "timezone": "America/New_York"
-    },
-    "^IXIC": {
-        "symbol": "^IXIC",
-        "display_name": "NASDAQ Composite Index",
-        "asset_class": "INDEX",
+    }
+
+# Populate US Equities
+for sym, name in US_EQUITY_SYMBOLS.items():
+    ASSET_REGISTRY[sym] = {
+        "symbol": sym,
+        "display_name": name,
+        "asset_class": "US_EQUITY",
         "exchange": "NASDAQ",
         "market": "US",
         "currency": "USD",
         "currency_symbol": "$",
-        "provider_symbol": "^IXIC",
-        "active": True,
-        "trading_calendar": "US_EQUITY",
-        "timezone": "America/New_York"
-    },
-    "^DJI": {
-        "symbol": "^DJI",
-        "display_name": "Dow Jones Industrial Average",
-        "asset_class": "INDEX",
-        "exchange": "NYSE",
-        "market": "US",
-        "currency": "USD",
-        "currency_symbol": "$",
-        "provider_symbol": "^DJI",
+        "provider_symbol": sym,
         "active": True,
         "trading_calendar": "US_EQUITY",
         "timezone": "America/New_York"
     }
-}
+
+# Populate Crypto
+for sym, name in CRYPTO_SYMBOLS.items():
+    ASSET_REGISTRY[sym] = {
+        "symbol": sym,
+        "display_name": name,
+        "asset_class": "CRYPTO",
+        "exchange": "CRYPTO_GLOBAL",
+        "market": "Global Crypto",
+        "currency": "USD",
+        "currency_symbol": "$",
+        "provider_symbol": sym,
+        "active": True,
+        "trading_calendar": "24/7",
+        "timezone": "UTC"
+    }
+
+# Populate Forex
+for sym, name in FOREX_SYMBOLS.items():
+    ASSET_REGISTRY[sym] = {
+        "symbol": sym,
+        "display_name": name,
+        "asset_class": "FOREX",
+        "exchange": "FOREX_OTC",
+        "market": "Forex",
+        "currency": "USD",
+        "currency_symbol": "$",
+        "provider_symbol": sym,
+        "active": True,
+        "trading_calendar": "FOREX_24/5",
+        "timezone": "UTC"
+    }
+
+# Populate Indices
+for sym, name in INDEX_SYMBOLS.items():
+    ASSET_REGISTRY[sym] = {
+        "symbol": sym,
+        "display_name": name,
+        "asset_class": "INDEX",
+        "exchange": "NSE" if "^NSE" in sym or "^BSE" in sym else "NASDAQ",
+        "market": "India" if "^NSE" in sym or "^BSE" in sym else "US",
+        "currency": "INR" if "^NSE" in sym or "^BSE" in sym else "USD",
+        "currency_symbol": "₹" if "^NSE" in sym or "^BSE" in sym else "$",
+        "provider_symbol": sym,
+        "active": True,
+        "trading_calendar": "NSE" if "^NSE" in sym or "^BSE" in sym else "US_EQUITY",
+        "timezone": "Asia/Kolkata" if "^NSE" in sym or "^BSE" in sym else "America/New_York"
+    }
 
 def get_asset_info(symbol: str) -> Optional[Dict[str, Any]]:
-    """Retrieves asset metadata by symbol or provider symbol."""
-    clean_sym = symbol.upper().strip()
+    """Retrieves asset metadata by symbol or provider symbol, dynamically registering if unknown."""
+    if not symbol:
+        return None
+    clean_sym = get_internal_symbol(symbol)
+
     if clean_sym in ASSET_REGISTRY:
         return ASSET_REGISTRY[clean_sym]
     
     for s, info in ASSET_REGISTRY.items():
-        if info["provider_symbol"].upper() == clean_sym:
+        if info["provider_symbol"].upper() == clean_sym.upper():
             return info
-    return None
+
+    # Dynamically resolve and auto-register new requested symbol
+    inferred = infer_asset_metadata(clean_sym)
+    ASSET_REGISTRY[inferred["symbol"]] = inferred
+    return inferred
 
 def get_assets_by_class(asset_class: str) -> List[Dict[str, Any]]:
     """Returns all active assets belonging to a specified asset class."""
@@ -343,3 +151,36 @@ def get_assets_by_class(asset_class: str) -> List[Dict[str, Any]]:
 def get_all_assets() -> List[Dict[str, Any]]:
     """Returns all registered active assets."""
     return [info for info in ASSET_REGISTRY.values() if info["active"]]
+
+def search_assets(query: str, limit: int = 20) -> List[Dict[str, Any]]:
+    """
+    Case-insensitive search over symbol and company display_name.
+    """
+    if not query or not query.strip():
+        return get_all_assets()[:limit]
+
+    q = query.lower().strip()
+    matches = []
+
+    # Priority 1: Exact symbol match
+    for sym, info in ASSET_REGISTRY.items():
+        if sym.lower() == q:
+            matches.append(info)
+
+    # Priority 2: Symbol starts with query
+    for sym, info in ASSET_REGISTRY.items():
+        if sym.lower().startswith(q) and info not in matches:
+            matches.append(info)
+
+    # Priority 3: Name contains query
+    for sym, info in ASSET_REGISTRY.items():
+        if q in info["display_name"].lower() and info not in matches:
+            matches.append(info)
+
+    # Priority 4: Dynamic fallback resolution if query looks like a valid stock ticker and no matches found
+    if not matches and len(q) >= 2 and q.isalnum():
+        dynamic_asset = get_asset_info(query)
+        if dynamic_asset:
+            matches.append(dynamic_asset)
+
+    return matches[:limit]
