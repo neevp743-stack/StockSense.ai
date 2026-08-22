@@ -86,25 +86,29 @@ async def add_process_time_header(request, call_next):
 async def background_cache_warmup():
     """
     Non-blocking background cache pre-warming task.
-    Pre-populates dashboard_cache for top stock universe asynchronously after server availability.
+    Pre-populates dashboard_cache for top stock universe asynchronously in background threads.
     """
-    await asyncio.sleep(2)
-    warmup_universe = ["RELIANCE", "INFY", "TCS", "HDFCBANK", "AAPL", "NVDA", "BTC-USD"]
-    print(f"Starting background cache warming for {len(warmup_universe)} priority assets...")
+    await asyncio.sleep(3)
+    warmup_universe = ["RELIANCE", "INFY", "TCS"]
+    print(f"Starting non-blocking background cache warming for {len(warmup_universe)} priority assets...")
     
-    db = SessionLocal()
-    try:
-        for symbol in warmup_universe:
-            try:
-                cache_key = f"dashboard_{symbol}_XGBoost"
-                if not dashboard_cache.get(cache_key):
-                    # Build history & prediction payload safely in background
-                    ensure_historical_data_in_db(symbol, db=db)
-                await asyncio.sleep(0.2)
-            except Exception as e:
-                print(f"Background cache warmup non-fatal warning for {symbol}: {e}")
-    finally:
-        db.close()
+    def warm_single_symbol(symbol: str):
+        db = SessionLocal()
+        try:
+            cache_key = f"dashboard_{symbol}_XGBoost"
+            if not dashboard_cache.get(cache_key):
+                ensure_historical_data_in_db(symbol, db=db)
+        except Exception as e:
+            print(f"Background cache warmup non-fatal warning for {symbol}: {e}")
+        finally:
+            db.close()
+
+    for symbol in warmup_universe:
+        try:
+            await asyncio.to_thread(warm_single_symbol, symbol)
+            await asyncio.sleep(0.5)
+        except Exception as e:
+            print(f"Background thread warmup error for {symbol}: {e}")
 
 @app.on_event("startup")
 async def startup_event():
