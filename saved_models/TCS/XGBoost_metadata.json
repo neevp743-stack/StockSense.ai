@@ -2,112 +2,93 @@
   "symbol": "TCS",
   "model_name": "XGBoost",
   "version": "1.0.0",
-  "trained_at": "2026-08-22T15:11:47.964673Z",
+  "trained_at": "2026-08-22T15:31:49.890225Z",
   "features_used": [
+    "atr_14",
+    "bb_lower",
+    "bb_upper",
+    "bb_width",
+    "close_to_sma10",
+    "close_to_sma20",
+    "close_to_sma50",
+    "daily_return",
+    "ema_10",
+    "ema_20",
+    "macd",
+    "macd_hist",
+    "macd_hist_change_3d",
+    "macd_signal",
+    "obv_slope",
+    "roc_10",
+    "rolling_volatility",
+    "rsi",
+    "rsi_change_3d",
+    "sma10_to_sma50",
     "sma_10",
     "sma_20",
     "sma_50",
-    "ema_10",
-    "ema_20",
-    "rsi",
-    "macd",
-    "macd_signal",
-    "macd_hist",
-    "bb_upper",
-    "bb_lower",
-    "bb_width",
-    "daily_return",
-    "rolling_volatility",
-    "volume_change"
+    "stoch_d",
+    "stoch_k",
+    "trend_regime",
+    "volatility_change_5d",
+    "volatility_regime",
+    "volume_change",
+    "volume_ratio_5d",
+    "williams_r"
   ],
   "metrics": {
-    "accuracy": 0.4550561797752809,
-    "precision": 0.416,
-    "recall": 0.6842105263157895,
-    "f1_score": 0.5174129353233831,
-    "roc_auc": 0.47871517027863775,
-    "brier_score": 0.25502045926657885,
+    "accuracy": 0.4887640449438202,
+    "precision": 0.4025974025974026,
+    "recall": 0.40789473684210525,
+    "f1_score": 0.40522875816993464,
+    "roc_auc": 0.49406604747162025,
+    "brier_score": 0.24994365700667967,
     "confusion_matrix": [
       [
-        29,
-        73
+        56,
+        46
       ],
       [
-        24,
-        52
+        45,
+        31
       ]
     ]
   },
   "disclaimer": "Educational & Research Purposes Only. Past performance does not guarantee future results.",
-  "chronological_split": {
-    "train_rows": 833,
-    "val_rows": 178,
-    "test_rows": 180,
-    "train_dates": [
-      "2021-11-01",
-      "2025-03-12"
-    ],
-    "val_dates": [
-      "2025-03-13",
-      "2025-12-02"
-    ],
-    "test_dates": [
-      "2025-12-03",
-      "2026-08-20"
-    ]
+  "model_version": "XGBoost v2.0.0",
+  "walk_forward_metrics": {
+    "accuracy_mean": 0.5133333333333333,
+    "accuracy_median": 0.5166666666666667,
+    "accuracy_std": 0.02666666666666668,
+    "f1_mean": 0.663254015061244,
+    "f1_std": 0.017592419454056735,
+    "roc_auc_mean": 0.5301903587760652,
+    "brier_mean": 0.25014032384053114
   },
   "test_out_of_sample_metrics": {
-    "accuracy": 0.5166666666666667,
-    "precision": 0.48514851485148514,
-    "recall": 0.5833333333333334,
-    "f1_score": 0.5297297297297298,
-    "roc_auc": 0.5074404761904763,
-    "brier_score": 0.25022604045516905,
+    "accuracy": 0.5055555555555555,
+    "precision": 0.4074074074074074,
+    "recall": 0.13095238095238096,
+    "f1_score": 0.1981981981981982,
+    "roc_auc": 0.49838789682539686,
+    "brier_score": 0.25070736841839286,
     "confusion_matrix": [
       [
-        44,
-        52
+        80,
+        16
       ],
       [
-        35,
-        49
+        73,
+        11
       ]
     ]
   },
-  "majority_baseline_metrics": {
-    "accuracy": 0.4666666666666667,
-    "precision": 0.4666666666666667,
-    "recall": 1.0,
-    "f1_score": 0.6363636363636364,
-    "roc_auc": 0.5,
-    "brier_score": 0.5333333333333333,
-    "confusion_matrix": [
-      [
-        0,
-        96
-      ],
-      [
-        0,
-        84
-      ]
-    ]
-  },
-  "prev_dir_baseline_metrics": {
-    "accuracy": 0.5277777777777778,
-    "precision": 0.49411764705882355,
-    "recall": 0.5,
-    "f1_score": 0.4970414201183432,
-    "roc_auc": 0.5260416666666666,
-    "brier_score": 0.27888888888888885,
-    "confusion_matrix": [
-      [
-        53,
-        43
-      ],
-      [
-        42,
-        42
-      ]
-    ]
+  "selective_confidence": {
+    "threshold_bounds": [
+      0.47,
+      0.53
+    ],
+    "selective_accuracy": 0.5555555555555556,
+    "coverage_pct": 70.0
   }
 }

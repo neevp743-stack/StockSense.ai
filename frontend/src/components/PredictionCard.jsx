@@ -58,6 +58,7 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
     );
   }
 
+  const isNoSignal = prediction.predicted_direction === "NO_SIGNAL" || prediction.signal === "NO CLEAR SIGNAL";
   const isUp = prediction.predicted_direction === "UP";
   const probUpPct = (prediction.probability_up * 100).toFixed(1);
   const probDownPct = (prediction.probability_down * 100).toFixed(1);
@@ -67,13 +68,8 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
   const currentPriceDisplay = formatPrice(rawPrice, symbol);
 
   const quoteInfo = prediction.quote_info || {};
-  const dataStatus = liveTick?.data_status || quoteInfo.data_status || "HISTORICAL";
-  const lastUpdated = liveTick?.timestamp ? new Date(liveTick.timestamp).toLocaleTimeString() : (quoteInfo.last_updated || new Date().toLocaleTimeString());
   const providerName = liveTick?.provider || quoteInfo.provider || "Finnhub";
 
-  const totalPreds = trackerStats ? trackerStats.total_predictions : 0;
-  const correctPreds = trackerStats ? trackerStats.correct_count : 0;
-  const wrongPreds = trackerStats ? trackerStats.wrong_count : 0;
   const accuracyDisplay = trackerStats ? trackerStats.accuracy_display : "INSUFFICIENT SAMPLE SIZE";
 
   return (
@@ -120,29 +116,42 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
 
         {/* AI Direction & Probability Card */}
         <div style={{ 
-          background: isUp ? 'var(--up-green-bg)' : 'var(--down-red-bg)',
-          border: `1px solid ${isUp ? 'var(--up-green-border)' : 'var(--down-red-border)'}`,
+          background: isNoSignal ? 'rgba(255, 255, 255, 0.04)' : (isUp ? 'var(--up-green-bg)' : 'var(--down-red-bg)'),
+          border: `1px solid ${isNoSignal ? 'rgba(255, 255, 255, 0.12)' : (isUp ? 'var(--up-green-border)' : 'var(--down-red-border)')}`,
           borderRadius: '16px', padding: '18px', textAlign: 'center', marginBottom: '16px'
         }}>
           <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.05em' }}>
             AI DIRECTION PREDICTION
           </div>
 
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: isUp ? 'var(--up-green)' : 'var(--down-red)' }}>
-            {isUp ? <ArrowUpRight size={32} /> : <ArrowDownRight size={32} />}
-            <span className="heading-font" style={{ fontSize: '2rem', fontWeight: 800 }}>
-              {prediction.predicted_direction}
-            </span>
-          </div>
+          {isNoSignal ? (
+            <div style={{ padding: '8px 0' }}>
+              <span className="heading-font" style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--risk-medium)' }}>
+                NO CLEAR SIGNAL
+              </span>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                Probability ({probUpPct}%) within neutral noise band [47% - 53%]
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: isUp ? 'var(--up-green)' : 'var(--down-red)' }}>
+                {isUp ? <ArrowUpRight size={32} /> : <ArrowDownRight size={32} />}
+                <span className="heading-font" style={{ fontSize: '2rem', fontWeight: 800 }}>
+                  {prediction.predicted_direction}
+                </span>
+              </div>
 
-          <div style={{ marginTop: '8px', fontSize: '1.25rem', fontWeight: 800 }}>
-            <span style={{ color: 'var(--up-green)' }}>UP {probUpPct}%</span>
-            <span style={{ margin: '0 8px', color: 'var(--text-muted)' }}>|</span>
-            <span style={{ color: 'var(--down-red)' }}>DOWN {probDownPct}%</span>
-          </div>
+              <div style={{ marginTop: '8px', fontSize: '1.25rem', fontWeight: 800 }}>
+                <span style={{ color: 'var(--up-green)' }}>UP {probUpPct}%</span>
+                <span style={{ margin: '0 8px', color: 'var(--text-muted)' }}>|</span>
+                <span style={{ color: 'var(--down-red)' }}>DOWN {probDownPct}%</span>
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Probability Gauge Bar */}
+        {/* Directional Probability Bar */}
         <div style={{ marginBottom: '18px' }}>
           <div style={{ height: '8px', background: 'var(--down-red)', borderRadius: '4px', overflow: 'hidden', display: 'flex' }}>
             <div style={{ width: `${probUpPct}%`, background: 'var(--up-green)', transition: 'width 0.5s ease' }} />
@@ -153,18 +162,18 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
           <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Prediction Horizon:</div>
-            <strong style={{ fontSize: '0.85rem', color: '#fff' }}>Next Trading Session</strong>
+            <strong style={{ fontSize: '0.85rem', color: '#fff' }}>{prediction.prediction_horizon || '1 trading day'}</strong>
           </div>
 
           <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Model Architecture:</div>
-            <strong style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)' }}>{selectedModel} v1.0</strong>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Model Version:</div>
+            <strong style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)' }}>{prediction.model_version || `${selectedModel} v1.0`}</strong>
           </div>
 
           <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Confidence Tier:</div>
-            <strong style={{ fontSize: '0.85rem', color: probUpPct > 65 || probDownPct > 65 ? 'var(--up-green)' : 'var(--risk-medium)' }}>
-              {probUpPct > 65 || probDownPct > 65 ? 'STRONG CONFIDENCE' : 'MODERATE CONFIDENCE'}
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Signal Classification:</div>
+            <strong style={{ fontSize: '0.85rem', color: isNoSignal ? 'var(--risk-medium)' : (isUp ? 'var(--up-green)' : 'var(--down-red)') }}>
+              {prediction.signal || (isNoSignal ? 'NO CLEAR SIGNAL' : (probUpPct > 65 || probDownPct > 65 ? 'STRONG SIGNAL' : 'MODERATE SIGNAL'))}
             </strong>
           </div>
 

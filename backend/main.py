@@ -443,15 +443,30 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
     quote_info = provider.get_latest_quote(symbol_clean)
     latest_price_val = quote_info.get("price") or (float(df_raw["close"].iloc[-1]) if "close" in df_raw.columns and not df_raw.empty else None)
 
+    # Phase 12 Selective Signal Coverage
+    signal_label = risk_info.get("signal", "NEUTRAL")
+    if 0.47 <= prob_up <= 0.53:
+        signal_label = "NO CLEAR SIGNAL"
+        predicted_dir_str = "NO_SIGNAL"
+    else:
+        predicted_dir_str = "UP" if predicted_dir == 1 else "DOWN"
+
     res_payload = {
         "symbol": symbol_clean,
         "latest_price": latest_price_val,
         "quote_info": quote_info,
         "as_of_date": str(as_of_d),
         "prediction_date": str(prediction_d),
-        "predicted_direction": "UP" if predicted_dir == 1 else "DOWN",
+        "predicted_direction": predicted_dir_str,
         "probability_up": prob_up,
         "probability_down": 1.0 - prob_up,
+        "signal": signal_label,
+        "prediction_horizon": "1 trading day",
+        "model_version": f"{pipe.model_name} v1.0 (Calibrated)",
+        "coverage_stats": {
+            "confidence_threshold_bounds": [0.47, 0.53],
+            "selective_signal_status": "ACTIVE" if predicted_dir_str != "NO_SIGNAL" else "NO_CLEAR_SIGNAL"
+        },
         "risk": risk_info,
         "model": {
             "name": pipe.model_name,

@@ -120,7 +120,8 @@ class ModelPipeline:
         if not self.is_trained or self.model is None:
             raise RuntimeError(f"Model '{self.model_name}' for '{self.symbol}' is not trained.")
 
-        X = df_features[FEATURE_COLUMNS].values
+        cols = self.features_used if hasattr(self, "features_used") and self.features_used else FEATURE_COLUMNS
+        X = df_features[cols].values
         if self.model_name == "LogisticRegression":
             X = self.scaler.transform(X)
 

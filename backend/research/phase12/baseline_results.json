@@ -1,0 +1,38 @@
+{
+  "RELIANCE": {
+    "accuracy": 0.4667,
+    "roc_auc": 0.4697,
+    "brier_score": 0.2514,
+    "f1_score": 0.6336
+  },
+  "INFY": {
+    "accuracy": 0.55,
+    "roc_auc": 0.5401,
+    "brier_score": 0.2482,
+    "f1_score": 0.3415
+  },
+  "TCS": {
+    "accuracy": 0.5167,
+    "roc_auc": 0.5262,
+    "brier_score": 0.2494,
+    "f1_score": 0.5297
+  },
+  "AAPL": {
+    "accuracy": 0.5507,
+    "roc_auc": 0.5512,
+    "brier_score": 0.2471,
+    "f1_score": 0.699
+  },
+  "NVDA": {
+    "accuracy": 0.4493,
+    "roc_auc": 0.4412,
+    "brier_score": 0.252,
+    "f1_score": 0.5778
+  },
+  "BTC-USD": {
+    "accuracy": 0.5049,
+    "roc_auc": 0.5186,
+    "brier_score": 0.2501,
+    "f1_score": 0.495
+  }
+}

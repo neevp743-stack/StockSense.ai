@@ -2,31 +2,47 @@
   "symbol": "NVDA",
   "model_name": "XGBoost",
   "version": "1.0.0",
-  "trained_at": "2026-08-22T15:11:49.735985Z",
+  "trained_at": "2026-08-22T15:32:19.245294Z",
   "features_used": [
+    "atr_14",
+    "bb_lower",
+    "bb_upper",
+    "bb_width",
+    "close_to_sma10",
+    "close_to_sma20",
+    "close_to_sma50",
+    "daily_return",
+    "ema_10",
+    "ema_20",
+    "macd",
+    "macd_hist",
+    "macd_hist_change_3d",
+    "macd_signal",
+    "obv_slope",
+    "roc_10",
+    "rolling_volatility",
+    "rsi",
+    "rsi_change_3d",
+    "sma10_to_sma50",
     "sma_10",
     "sma_20",
     "sma_50",
-    "ema_10",
-    "ema_20",
-    "rsi",
-    "macd",
-    "macd_signal",
-    "macd_hist",
-    "bb_upper",
-    "bb_lower",
-    "bb_width",
-    "daily_return",
-    "rolling_volatility",
-    "volume_change"
+    "stoch_d",
+    "stoch_k",
+    "trend_regime",
+    "volatility_change_5d",
+    "volatility_regime",
+    "volume_change",
+    "volume_ratio_5d",
+    "williams_r"
   ],
   "metrics": {
     "accuracy": 0.5522388059701493,
     "precision": 0.5957446808510638,
     "recall": 0.717948717948718,
     "f1_score": 0.6511627906976745,
-    "roc_auc": 0.4926739926739927,
-    "brier_score": 0.24876226110111285,
+    "roc_auc": 0.5091575091575091,
+    "brier_score": 0.2475918616293954,
     "confusion_matrix": [
       [
         9,
@@ -39,34 +55,27 @@
     ]
   },
   "disclaimer": "Educational & Research Purposes Only. Past performance does not guarantee future results.",
-  "chronological_split": {
-    "train_rows": 315,
-    "val_rows": 67,
-    "test_rows": 69,
-    "train_dates": [
-      "2024-10-29",
-      "2026-02-02"
-    ],
-    "val_dates": [
-      "2026-02-03",
-      "2026-05-08"
-    ],
-    "test_dates": [
-      "2026-05-11",
-      "2026-08-18"
-    ]
+  "model_version": "XGBoost v2.0.0",
+  "walk_forward_metrics": {
+    "accuracy_mean": 0.5055555555555555,
+    "accuracy_median": 0.5166666666666667,
+    "accuracy_std": 0.028327886186626582,
+    "f1_mean": 0.6354327589621707,
+    "f1_std": 0.019489631680743382,
+    "roc_auc_mean": 0.4842246224557248,
+    "brier_mean": 0.25286713315916437
   },
   "test_out_of_sample_metrics": {
-    "accuracy": 0.4492753623188406,
-    "precision": 0.4482758620689655,
+    "accuracy": 0.43478260869565216,
+    "precision": 0.4406779661016949,
     "recall": 0.8125,
-    "f1_score": 0.5777777777777777,
-    "roc_auc": 0.4231418918918919,
-    "brier_score": 0.2630959209221609,
+    "f1_score": 0.5714285714285714,
+    "roc_auc": 0.379222972972973,
+    "brier_score": 0.2604384681758632,
     "confusion_matrix": [
       [
-        5,
-        32
+        4,
+        33
       ],
       [
         6,
@@ -74,40 +83,12 @@
       ]
     ]
   },
-  "majority_baseline_metrics": {
-    "accuracy": 0.463768115942029,
-    "precision": 0.463768115942029,
-    "recall": 1.0,
-    "f1_score": 0.6336633663366337,
-    "roc_auc": 0.5,
-    "brier_score": 0.5362318840579711,
-    "confusion_matrix": [
-      [
-        0,
-        37
-      ],
-      [
-        0,
-        32
-      ]
-    ]
-  },
-  "prev_dir_baseline_metrics": {
-    "accuracy": 0.5217391304347826,
-    "precision": 0.48484848484848486,
-    "recall": 0.5,
-    "f1_score": 0.49230769230769234,
-    "roc_auc": 0.5202702702702703,
-    "brier_score": 0.2813043478260869,
-    "confusion_matrix": [
-      [
-        20,
-        17
-      ],
-      [
-        16,
-        16
-      ]
-    ]
+  "selective_confidence": {
+    "threshold_bounds": [
+      0.47,
+      0.53
+    ],
+    "selective_accuracy": 0.3958333333333333,
+    "coverage_pct": 69.56521739130434
   }
 }
