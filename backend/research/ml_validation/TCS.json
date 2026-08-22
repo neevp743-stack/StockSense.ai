@@ -1,0 +1,87 @@
+{
+  "symbol": "TCS",
+  "validated_at": "2026-08-22T15:11:47.965675Z",
+  "evaluation_methodology": "STRICT_CHRONOLOGICAL_OUT_OF_SAMPLE_HOLDOUT",
+  "chronological_periods": {
+    "train_rows": 833,
+    "val_rows": 178,
+    "test_rows": 180,
+    "train_dates": [
+      "2021-11-01",
+      "2025-03-12"
+    ],
+    "val_dates": [
+      "2025-03-13",
+      "2025-12-02"
+    ],
+    "test_dates": [
+      "2025-12-03",
+      "2026-08-20"
+    ]
+  },
+  "model_performance": {
+    "model_name": "XGBoost (Calibrated)",
+    "out_of_sample_test_metrics": {
+      "accuracy": 0.5166666666666667,
+      "precision": 0.48514851485148514,
+      "recall": 0.5833333333333334,
+      "f1_score": 0.5297297297297298,
+      "roc_auc": 0.5074404761904763,
+      "brier_score": 0.25022604045516905,
+      "confusion_matrix": [
+        [
+          44,
+          52
+        ],
+        [
+          35,
+          49
+        ]
+      ]
+    }
+  },
+  "baseline_comparisons": {
+    "majority_class_baseline": {
+      "accuracy": 0.4666666666666667,
+      "precision": 0.4666666666666667,
+      "recall": 1.0,
+      "f1_score": 0.6363636363636364,
+      "roc_auc": 0.5,
+      "brier_score": 0.5333333333333333,
+      "confusion_matrix": [
+        [
+          0,
+          96
+        ],
+        [
+          0,
+          84
+        ]
+      ]
+    },
+    "previous_direction_baseline": {
+      "accuracy": 0.5277777777777778,
+      "precision": 0.49411764705882355,
+      "recall": 0.5,
+      "f1_score": 0.4970414201183432,
+      "roc_auc": 0.5260416666666666,
+      "brier_score": 0.27888888888888885,
+      "confusion_matrix": [
+        [
+          53,
+          43
+        ],
+        [
+          42,
+          42
+        ]
+      ]
+    }
+  },
+  "outperforming_majority_baseline": true,
+  "calibration": {
+    "brier_score": 0.25022604045516905,
+    "interpretation": "Brier score measures probability calibration accuracy (lower is better, 0.0 is perfect)."
+  },
+  "disclaimer": "Educational and research purposes only. Past accuracy does not guarantee future financial returns."
+}

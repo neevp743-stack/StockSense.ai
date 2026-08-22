@@ -128,7 +128,10 @@ class ModelPipeline:
         preds = (probs >= 0.5).astype(int)
         return preds, probs
 
-    def save_model(self):
+    def save_model(self, extra_meta: Optional[Dict[str, Any]] = None):
+        import json
+        from datetime import datetime
+
         clean_symbol = self.symbol.upper().strip()
         asset_dir = os.path.join(MODELS_DIR, clean_symbol)
         os.makedirs(asset_dir, exist_ok=True)
@@ -147,6 +150,22 @@ class ModelPipeline:
         }
         joblib.dump(data, filepath_flat)
         joblib.dump(data, filepath_nested)
+
+        meta_payload = {
+            "symbol": clean_symbol,
+            "model_name": self.model_name,
+            "version": "1.0.0",
+            "trained_at": datetime.utcnow().isoformat() + "Z",
+            "features_used": self.features_used,
+            "metrics": self.metrics,
+            "disclaimer": "Educational & Research Purposes Only. Past performance does not guarantee future results."
+        }
+        if extra_meta:
+            meta_payload.update(extra_meta)
+
+        meta_path = os.path.join(asset_dir, f"{self.model_name}_metadata.json")
+        with open(meta_path, "w", encoding="utf-8") as f:
+            json.dump(meta_payload, f, indent=2)
 
         cache_key = f"model_{clean_symbol}_{self.model_name}"
         model_cache.set(cache_key, self)

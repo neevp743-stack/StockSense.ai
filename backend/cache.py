@@ -40,6 +40,10 @@ class TTLCacheManager:
                 for k in keys_to_del:
                     del self._cache[k]
 
+    def size(self) -> int:
+        with self._lock:
+            return len(self._cache)
+
 # Standard TTL Constants
 TTL_HISTORY = 600      # 10 minutes for historical OHLCV
 TTL_INDICATORS = 120   # 2 minutes for technical indicators

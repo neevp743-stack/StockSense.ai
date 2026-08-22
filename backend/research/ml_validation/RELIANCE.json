@@ -1,0 +1,87 @@
+{
+  "symbol": "RELIANCE",
+  "validated_at": "2026-08-22T15:11:46.118154Z",
+  "evaluation_methodology": "STRICT_CHRONOLOGICAL_OUT_OF_SAMPLE_HOLDOUT",
+  "chronological_periods": {
+    "train_rows": 833,
+    "val_rows": 178,
+    "test_rows": 180,
+    "train_dates": [
+      "2021-11-01",
+      "2025-03-12"
+    ],
+    "val_dates": [
+      "2025-03-13",
+      "2025-12-02"
+    ],
+    "test_dates": [
+      "2025-12-03",
+      "2026-08-20"
+    ]
+  },
+  "model_performance": {
+    "model_name": "XGBoost (Calibrated)",
+    "out_of_sample_test_metrics": {
+      "accuracy": 0.4666666666666667,
+      "precision": 0.46629213483146065,
+      "recall": 0.9880952380952381,
+      "f1_score": 0.6335877862595419,
+      "roc_auc": 0.4697420634920635,
+      "brier_score": 0.251445135754036,
+      "confusion_matrix": [
+        [
+          1,
+          95
+        ],
+        [
+          1,
+          83
+        ]
+      ]
+    }
+  },
+  "baseline_comparisons": {
+    "majority_class_baseline": {
+      "accuracy": 0.4666666666666667,
+      "precision": 0.4666666666666667,
+      "recall": 1.0,
+      "f1_score": 0.6363636363636364,
+      "roc_auc": 0.5,
+      "brier_score": 0.5333333333333333,
+      "confusion_matrix": [
+        [
+          0,
+          96
+        ],
+        [
+          0,
+          84
+        ]
+      ]
+    },
+    "previous_direction_baseline": {
+      "accuracy": 0.4666666666666667,
+      "precision": 0.42857142857142855,
+      "recall": 0.42857142857142855,
+      "f1_score": 0.42857142857142855,
+      "roc_auc": 0.4642857142857143,
+      "brier_score": 0.30333333333333323,
+      "confusion_matrix": [
+        [
+          48,
+          48
+        ],
+        [
+          48,
+          36
+        ]
+      ]
+    }
+  },
+  "outperforming_majority_baseline": true,
+  "calibration": {
+    "brier_score": 0.251445135754036,
+    "interpretation": "Brier score measures probability calibration accuracy (lower is better, 0.0 is perfect)."
+  },
+  "disclaimer": "Educational and research purposes only. Past accuracy does not guarantee future financial returns."
+}

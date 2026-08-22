@@ -24,7 +24,7 @@ from backend.data.data_service import (
     get_historical_data_from_db, ensure_historical_data_in_db, seed_asset_registry_db,
     sync_stock_universe, fetch_historical_data, save_prices_to_db
 )
-from backend.cache import indicators_cache, prediction_cache, quote_cache, dashboard_cache
+from backend.cache import indicators_cache, prediction_cache, quote_cache, dashboard_cache, history_cache, model_cache
 
 from backend.features.feature_engine import compute_features_and_target, FEATURE_COLUMNS
 from backend.models.baseline_models import ModelPipeline
@@ -540,9 +540,12 @@ def get_model_performance(db: Session = Depends(get_db)):
         "disclaimer": RESEARCH_DISCLAIMER
     }
 
+from backend.security.rate_limiter import heavy_endpoint_limiter, training_endpoint_limiter
+
 @app.post("/api/backtest")
-def post_backtest(req: BacktestRequest, db: Session = Depends(get_db)):
+def post_backtest(req: BacktestRequest, request: Request, db: Session = Depends(get_db)):
     """POST /api/backtest - Executes backtesting simulation."""
+    heavy_endpoint_limiter.check(request, "backtest")
     symbol_clean = req.symbol.upper().strip()
     df_raw = get_historical_data_from_db(symbol_clean, db=db)
     if df_raw.empty:
@@ -587,8 +590,9 @@ def post_backtest(req: BacktestRequest, db: Session = Depends(get_db)):
     }
 
 @app.post("/api/refresh")
-def post_data_refresh(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+def post_data_refresh(background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)):
     """POST /api/refresh - Triggers data refresh, auto-resolution, and model re-training in background."""
+    training_endpoint_limiter.check(request, "refresh")
     def refresh_task():
         sync_stock_universe(DEFAULT_UNIVERSE)
         resolve_pending_predictions()
@@ -885,6 +889,37 @@ def get_technical_analysis(symbol: str, db: Session = Depends(get_db)):
     }
     indicators_cache.set(cache_key, res_payload, ttl_seconds=120)
     return res_payload
+
+# ==============================================================================
+# PHASE 11 — SYSTEM METRICS & PRODUCTION MONITORING
+# ==============================================================================
+@app.get("/api/system/metrics")
+def get_system_metrics():
+    """GET /api/system/metrics - System telemetry, memory usage, cache statistics, & stream status."""
+    mem_data = {"rss_memory_mb": 0.0, "status": "AVAILABLE"}
+    try:
+        import psutil
+        process = psutil.Process(os.getpid())
+        mem_info = process.memory_info()
+        mem_data = {
+            "rss_memory_mb": round(mem_info.rss / (1024 * 1024), 2),
+            "vms_memory_mb": round(mem_info.vms / (1024 * 1024), 2)
+        }
+    except Exception:
+        mem_data = {"rss_memory_mb": "N/A"}
+
+    return {
+        "status": "HEALTHY",
+        "timestamp": datetime.now().isoformat() + "Z",
+        "system": mem_data,
+        "caches": {
+            "dashboard_cache_entries": dashboard_cache.size(),
+            "prediction_cache_entries": prediction_cache.size(),
+            "history_cache_entries": history_cache.size(),
+            "model_cache_entries": model_cache.size()
+        },
+        "realtime": realtime_provider_manager.get_stream_status()
+    }
 
 
 

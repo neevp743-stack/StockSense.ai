@@ -1,0 +1,87 @@
+{
+  "symbol": "NVDA",
+  "validated_at": "2026-08-22T15:11:49.737443Z",
+  "evaluation_methodology": "STRICT_CHRONOLOGICAL_OUT_OF_SAMPLE_HOLDOUT",
+  "chronological_periods": {
+    "train_rows": 315,
+    "val_rows": 67,
+    "test_rows": 69,
+    "train_dates": [
+      "2024-10-29",
+      "2026-02-02"
+    ],
+    "val_dates": [
+      "2026-02-03",
+      "2026-05-08"
+    ],
+    "test_dates": [
+      "2026-05-11",
+      "2026-08-18"
+    ]
+  },
+  "model_performance": {
+    "model_name": "XGBoost (Calibrated)",
+    "out_of_sample_test_metrics": {
+      "accuracy": 0.4492753623188406,
+      "precision": 0.4482758620689655,
+      "recall": 0.8125,
+      "f1_score": 0.5777777777777777,
+      "roc_auc": 0.4231418918918919,
+      "brier_score": 0.2630959209221609,
+      "confusion_matrix": [
+        [
+          5,
+          32
+        ],
+        [
+          6,
+          26
+        ]
+      ]
+    }
+  },
+  "baseline_comparisons": {
+    "majority_class_baseline": {
+      "accuracy": 0.463768115942029,
+      "precision": 0.463768115942029,
+      "recall": 1.0,
+      "f1_score": 0.6336633663366337,
+      "roc_auc": 0.5,
+      "brier_score": 0.5362318840579711,
+      "confusion_matrix": [
+        [
+          0,
+          37
+        ],
+        [
+          0,
+          32
+        ]
+      ]
+    },
+    "previous_direction_baseline": {
+      "accuracy": 0.5217391304347826,
+      "precision": 0.48484848484848486,
+      "recall": 0.5,
+      "f1_score": 0.49230769230769234,
+      "roc_auc": 0.5202702702702703,
+      "brier_score": 0.2813043478260869,
+      "confusion_matrix": [
+        [
+          20,
+          17
+        ],
+        [
+          16,
+          16
+        ]
+      ]
+    }
+  },
+  "outperforming_majority_baseline": false,
+  "calibration": {
+    "brier_score": 0.2630959209221609,
+    "interpretation": "Brier score measures probability calibration accuracy (lower is better, 0.0 is perfect)."
+  },
+  "disclaimer": "Educational and research purposes only. Past accuracy does not guarantee future financial returns."
+}

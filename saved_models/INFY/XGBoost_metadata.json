@@ -1,0 +1,113 @@
+{
+  "symbol": "INFY",
+  "model_name": "XGBoost",
+  "version": "1.0.0",
+  "trained_at": "2026-08-22T15:11:47.108204Z",
+  "features_used": [
+    "sma_10",
+    "sma_20",
+    "sma_50",
+    "ema_10",
+    "ema_20",
+    "rsi",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "bb_upper",
+    "bb_lower",
+    "bb_width",
+    "daily_return",
+    "rolling_volatility",
+    "volume_change"
+  ],
+  "metrics": {
+    "accuracy": 0.5168539325842697,
+    "precision": 0.5324675324675324,
+    "recall": 0.45054945054945056,
+    "f1_score": 0.4880952380952381,
+    "roc_auc": 0.4622963243652899,
+    "brier_score": 0.25282931106764245,
+    "confusion_matrix": [
+      [
+        51,
+        36
+      ],
+      [
+        50,
+        41
+      ]
+    ]
+  },
+  "disclaimer": "Educational & Research Purposes Only. Past performance does not guarantee future results.",
+  "chronological_split": {
+    "train_rows": 833,
+    "val_rows": 178,
+    "test_rows": 180,
+    "train_dates": [
+      "2021-11-01",
+      "2025-03-12"
+    ],
+    "val_dates": [
+      "2025-03-13",
+      "2025-12-02"
+    ],
+    "test_dates": [
+      "2025-12-03",
+      "2026-08-20"
+    ]
+  },
+  "test_out_of_sample_metrics": {
+    "accuracy": 0.55,
+    "precision": 0.44680851063829785,
+    "recall": 0.27631578947368424,
+    "f1_score": 0.34146341463414637,
+    "roc_auc": 0.46988866396761136,
+    "brier_score": 0.25027638075366476,
+    "confusion_matrix": [
+      [
+        78,
+        26
+      ],
+      [
+        55,
+        21
+      ]
+    ]
+  },
+  "majority_baseline_metrics": {
+    "accuracy": 0.4222222222222222,
+    "precision": 0.4222222222222222,
+    "recall": 1.0,
+    "f1_score": 0.59375,
+    "roc_auc": 0.5,
+    "brier_score": 0.5777777777777777,
+    "confusion_matrix": [
+      [
+        0,
+        104
+      ],
+      [
+        0,
+        76
+      ]
+    ]
+  },
+  "prev_dir_baseline_metrics": {
+    "accuracy": 0.5611111111111111,
+    "precision": 0.4805194805194805,
+    "recall": 0.4868421052631579,
+    "f1_score": 0.48366013071895425,
+    "roc_auc": 0.5511133603238867,
+    "brier_score": 0.2655555555555555,
+    "confusion_matrix": [
+      [
+        64,
+        40
+      ],
+      [
+        39,
+        37
+      ]
+    ]
+  }
+}

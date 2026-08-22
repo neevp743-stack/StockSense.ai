@@ -1,0 +1,87 @@
+{
+  "symbol": "BTC-USD",
+  "validated_at": "2026-08-22T15:11:50.595602Z",
+  "evaluation_methodology": "STRICT_CHRONOLOGICAL_OUT_OF_SAMPLE_HOLDOUT",
+  "chronological_periods": {
+    "train_rows": 476,
+    "val_rows": 102,
+    "test_rows": 103,
+    "train_dates": [
+      "2024-10-08",
+      "2026-01-26"
+    ],
+    "val_dates": [
+      "2026-01-27",
+      "2026-05-08"
+    ],
+    "test_dates": [
+      "2026-05-09",
+      "2026-08-19"
+    ]
+  },
+  "model_performance": {
+    "model_name": "XGBoost (Calibrated)",
+    "out_of_sample_test_metrics": {
+      "accuracy": 0.5048543689320388,
+      "precision": 0.45454545454545453,
+      "recall": 0.5434782608695652,
+      "f1_score": 0.49504950495049505,
+      "roc_auc": 0.5282227307398932,
+      "brier_score": 0.24943669359199913,
+      "confusion_matrix": [
+        [
+          27,
+          30
+        ],
+        [
+          21,
+          25
+        ]
+      ]
+    }
+  },
+  "baseline_comparisons": {
+    "majority_class_baseline": {
+      "accuracy": 0.44660194174757284,
+      "precision": 0.44660194174757284,
+      "recall": 1.0,
+      "f1_score": 0.6174496644295302,
+      "roc_auc": 0.5,
+      "brier_score": 0.5533980582524272,
+      "confusion_matrix": [
+        [
+          0,
+          57
+        ],
+        [
+          0,
+          46
+        ]
+      ]
+    },
+    "previous_direction_baseline": {
+      "accuracy": 0.5533980582524272,
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1_score": 0.5,
+      "roc_auc": 0.5482456140350878,
+      "brier_score": 0.268640776699029,
+      "confusion_matrix": [
+        [
+          34,
+          23
+        ],
+        [
+          23,
+          23
+        ]
+      ]
+    }
+  },
+  "outperforming_majority_baseline": true,
+  "calibration": {
+    "brier_score": 0.24943669359199913,
+    "interpretation": "Brier score measures probability calibration accuracy (lower is better, 0.0 is perfect)."
+  },
+  "disclaimer": "Educational and research purposes only. Past accuracy does not guarantee future financial returns."
+}
