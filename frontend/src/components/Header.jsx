@@ -1,112 +1,173 @@
 import React from 'react';
-import { TrendingUp, RefreshCw, AlertTriangle, Globe } from 'lucide-react';
+import { Search, RefreshCw, Globe, AlertTriangle, User, Zap } from 'lucide-react';
+import { Logo } from './Logo';
 
 export function Header({ 
   assetClasses, selectedAssetClass, onSelectAssetClass,
   availableAssets, selectedAsset, onSelectAsset,
-  onRefresh, isRefreshing, activeTab = 'dashboard', onSelectTab
+  onRefresh, isRefreshing, activeTab = 'dashboard', onSelectTab,
+  onOpenSearch
 }) {
   return (
-    <header style={{ marginBottom: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ 
-            width: '44px', height: '44px', borderRadius: '12px', 
-            background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#000', boxShadow: '0 4px 20px rgba(0, 242, 254, 0.4)'
-          }}>
-            <TrendingUp size={26} strokeWidth={2.5} />
-          </div>
-          <div>
-            <h1 className="heading-font" style={{ fontSize: '1.6rem', fontWeight: 800, background: 'linear-gradient(90deg, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              StockSense AI
-            </h1>
-            <p style={{ color: 'var(--accent-cyan)', fontSize: '0.82rem', fontWeight: 600, letterSpacing: '0.5px' }}>
-              Predict. Explain. Verify. — Multi-Asset AI Market Research Platform
-            </p>
-          </div>
+    <header style={{ marginBottom: '20px' }}>
+      {/* Top Navbar Row */}
+      <div 
+        style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          flexWrap: 'wrap', 
+          gap: '16px', 
+          marginBottom: '16px',
+          background: 'rgba(13, 19, 31, 0.9)',
+          padding: '14px 20px',
+          borderRadius: '16px',
+          border: '1px solid var(--border-color)',
+          backdropFilter: 'blur(16px)'
+        }}
+      >
+        {/* Brand Identity Logo */}
+        <div style={{ cursor: 'pointer' }} onClick={() => onSelectTab && onSelectTab('dashboard')}>
+          <Logo size={42} showText={true} />
         </div>
 
-        {/* Two-Tier Market Selector & Refresh Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          {/* Tier 1: Asset Class Selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-secondary)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-            <Globe size={16} color="var(--accent-cyan)" />
+        {/* Center: Search Trigger & Asset Selectors */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {/* Quick Stock Search Button */}
+          <button
+            onClick={onOpenSearch}
+            style={{
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '10px',
+              padding: '7px 14px',
+              color: 'var(--text-secondary)',
+              fontSize: '0.82rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer'
+            }}
+            title="Search stocks (Press /)"
+          >
+            <Search size={14} color="var(--accent-cyan)" />
+            <span>Search stocks...</span>
+            <kbd style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', padding: '1px 5px', borderRadius: '4px', fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+              /
+            </kbd>
+          </button>
+
+          {/* Asset Class Selector Dropdown */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+            <Globe size={14} color="var(--accent-cyan)" />
             <select
               value={selectedAssetClass}
               onChange={(e) => onSelectAssetClass(e.target.value)}
               style={{
                 background: 'transparent', color: '#fff', border: 'none',
-                fontSize: '0.85rem', fontWeight: 600, outline: 'none', cursor: 'pointer'
+                fontSize: '0.82rem', fontWeight: 600, outline: 'none', cursor: 'pointer'
               }}
             >
               <option value="INDIAN_EQUITY">Indian Stocks (NSE)</option>
-              <option value="US_EQUITY">US Stocks (NASDAQ/NYSE)</option>
+              <option value="US_EQUITY">US Stocks (NASDAQ)</option>
               <option value="CRYPTO">Crypto (24/7)</option>
               <option value="FOREX">Forex Pairs</option>
               <option value="INDEX">Global Indices</option>
             </select>
           </div>
 
-          {/* Tier 2: Dynamic Symbol Selector */}
-          <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-            {availableAssets.map(ast => (
+          {/* Quick Symbol Switcher Pill Buttons */}
+          <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-primary)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+            {availableAssets.slice(0, 5).map(ast => (
               <button
                 key={ast.symbol}
                 className={`btn-secondary ${selectedAsset === ast.symbol ? 'active' : ''}`}
                 onClick={() => onSelectAsset(ast.symbol)}
-                style={{ padding: '6px 12px', fontSize: '0.82rem', fontWeight: 600 }}
+                style={{ padding: '4px 10px', fontSize: '0.78rem', fontWeight: 700, borderRadius: '6px' }}
               >
                 {ast.symbol}
               </button>
             ))}
           </div>
+        </div>
 
+        {/* Right Actions: Refresh & User Profile */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button 
             className="btn-primary" 
             onClick={onRefresh} 
             disabled={isRefreshing}
-            style={{ opacity: isRefreshing ? 0.6 : 1 }}
+            style={{ opacity: isRefreshing ? 0.6 : 1, padding: '8px 14px', fontSize: '0.82rem' }}
           >
-            <RefreshCw size={16} className={isRefreshing ? 'spin' : ''} />
-            {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+            <RefreshCw size={14} className={isRefreshing ? 'spin' : ''} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </button>
+
+          {/* User Profile Avatar */}
+          <div 
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '10px',
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--accent-cyan)',
+              cursor: 'pointer'
+            }}
+            title="Neev — Research Analyst Profile"
+          >
+            <User size={18} />
+          </div>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        <button 
-          className={`btn-secondary ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => onSelectTab && onSelectTab('dashboard')}
-          style={{ padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600 }}
-        >
-          📊 Dashboard & Predictions
-        </button>
-        <button 
-          className={`btn-secondary ${activeTab === 'live-research' ? 'active' : ''}`}
-          onClick={() => onSelectTab && onSelectTab('live-research')}
-          style={{ padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600 }}
-        >
-          ⚡ Live Research & Analytics
-        </button>
-        <button 
-          className={`btn-secondary ${activeTab === 'ablation' ? 'active' : ''}`}
-          onClick={() => onSelectTab && onSelectTab('ablation')}
-          style={{ padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600 }}
-        >
-          🧪 Feature Study & Ablation
-        </button>
+      {/* Primary Navigation Bar (Desktop & Tablet) */}
+      <div 
+        style={{ 
+          display: 'flex', 
+          gap: '8px', 
+          marginBottom: '16px', 
+          background: 'var(--bg-secondary)', 
+          padding: '6px', 
+          borderRadius: '12px',
+          border: '1px solid var(--border-color)',
+          overflowX: 'auto',
+          scrollbarWidth: 'none'
+        }}
+      >
+        {[
+          { id: 'dashboard', label: '📊 Markets & AI Prediction' },
+          { id: 'live-research', label: '⚡ Live AI Research' },
+          { id: 'ablation', label: '🧪 Feature Study' },
+          { id: 'leaderboard', label: '🏆 Model Evaluation' },
+          { id: 'tracking', label: '📜 Resolution Tracking' },
+          { id: 'backtest', label: '⚡ Backtester' },
+        ].map(tab => (
+          <button 
+            key={tab.id}
+            className={`btn-secondary ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => onSelectTab && onSelectTab(tab.id)}
+            style={{ 
+              padding: '8px 16px', 
+              fontSize: '0.84rem', 
+              fontWeight: activeTab === tab.id ? 700 : 600,
+              borderRadius: '8px',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-
-
-      {/* Mandatory Research Disclaimer Banner */}
+      {/* Disclaimer Banner */}
       <div className="disclaimer-banner">
-        <AlertTriangle size={18} style={{ flexShrink: 0 }} />
+        <AlertTriangle size={16} style={{ flexShrink: 0 }} />
         <div>
-          <strong>ACADEMIC RESEARCH DISCLAIMER:</strong> StockSense AI is an educational machine-learning research platform. It is <strong>NOT</strong> financial advice and does not guarantee trading returns or prediction accuracy. Predictions represent historical model probabilities, NOT certainty.
+          <strong>ACADEMIC RESEARCH DISCLAIMER:</strong> StockSense AI is an educational machine-learning research platform. It is <strong>NOT</strong> financial advice. Directional predictions represent historical model probabilities, NOT certainty.
         </div>
       </div>
     </header>

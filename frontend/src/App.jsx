@@ -1,21 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Header } from './components/Header';
-import { StockChart } from './components/StockChart';
+import { TopMarketBar } from './components/TopMarketBar';
+import { DashboardHero } from './components/DashboardHero';
+import { Watchlist } from './components/Watchlist';
 import { AdvancedStockChart } from './components/AdvancedStockChart';
 import { PredictionCard } from './components/PredictionCard';
-import { SystemStatusBanner } from './components/SystemStatusBanner';
-
-
 import { ExplanationCard } from './components/ExplanationCard';
-import { ModelLeaderboard } from './components/ModelLeaderboard';
-import { PredictionHistory } from './components/PredictionHistory';
-import { BacktesterUI } from './components/BacktesterUI';
-import { LiveResearchPage } from './components/LiveResearchPage';
-import ResearchStudy from './components/ResearchStudy';
+import { SystemStatusBanner } from './components/SystemStatusBanner';
+import { SplashScreen } from './components/SplashScreen';
+import { SearchModal } from './components/SearchModal';
+import { MobileNav } from './components/MobileNav';
+import { ChartSkeleton, PredictionSkeleton, TechnicalGaugeSkeleton } from './components/SkeletonLoaders';
+import { ErrorFallbackCard } from './components/EmptyState';
 import { api } from './api';
 
-export default function App() {
+// Code-splitting heavy research modules to shrink initial bundle size & optimize performance
+const LiveResearchPage = lazy(() => import('./components/LiveResearchPage').then(m => ({ default: m.LiveResearchPage })));
+const BacktesterUI = lazy(() => import('./components/BacktesterUI').then(m => ({ default: m.BacktesterUI })));
+const ResearchStudy = lazy(() => import('./components/ResearchStudy'));
+const ModelLeaderboard = lazy(() => import('./components/ModelLeaderboard').then(m => ({ default: m.ModelLeaderboard })));
+const PredictionHistory = lazy(() => import('./components/PredictionHistory').then(m => ({ default: m.PredictionHistory })));
 
+export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
   const [selectedAssetClass, setSelectedAssetClass] = useState('INDIAN_EQUITY');
   const [availableAssets, setAvailableAssets] = useState([]);
   const [selectedAsset, setSelectedAsset] = useState('RELIANCE');
@@ -27,63 +34,68 @@ export default function App() {
   const [predictionsHistory, setPredictionsHistory] = useState([]);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard', 'leaderboard', 'tracking', 'backtest', 'ablation'
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [dataError, setDataError] = useState(null);
 
-  // Load assets whenever asset class changes
+  // Global Keyboard Listener for '/' Search Shortcut
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === '/' && !isSearchOpen && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen]);
+
+  // Load available assets when asset class changes
   useEffect(() => {
     loadAssetsForClass(selectedAssetClass);
   }, [selectedAssetClass]);
 
-  // Load asset data on asset change or model change
+  // Preload stock data & model predictions simultaneously
   useEffect(() => {
     if (!selectedAsset) return;
 
     const controller = new AbortController();
     const { signal } = controller;
 
-    // Immediately clear state to prevent old symbol data lingering
     setHistoryData([]);
     setPredictionData(null);
+    setDataError(null);
 
-    // Load chart history first for fast UI display
     api.getHistory(selectedAsset, null, { signal })
-      .then(res => {
-        setHistoryData(res.data?.data || []);
-      })
+      .then(res => setHistoryData(res.data?.data || []))
       .catch(err => {
         if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
-          console.error("Failed to load history:", err);
+          console.error("Failed to load chart history:", err);
+          setDataError("Failed to fetch historical market chart data.");
         }
       });
 
-    // Load prediction in parallel without blocking chart
     api.getPrediction(selectedAsset, selectedModel, { signal })
-      .then(res => {
-        setPredictionData(res.data || null);
-      })
+      .then(res => setPredictionData(res.data || null))
       .catch(err => {
         if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
-          console.error("Failed to load prediction:", err);
+          console.error("Failed to load model prediction:", err);
         }
       });
 
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, [selectedAsset, selectedModel]);
-
 
   useEffect(() => {
     loadGlobalMetrics();
   }, []);
-
 
   const loadAssetsForClass = async (cls) => {
     try {
       const res = await api.getAssets(cls);
       const assetsList = res.data.assets || [];
       setAvailableAssets(assetsList);
-      if (assetsList.length > 0) {
+      if (assetsList.length > 0 && !assetsList.some(a => a.symbol === selectedAsset)) {
         setSelectedAsset(assetsList[0].symbol);
       }
     } catch (err) {
@@ -92,15 +104,13 @@ export default function App() {
   };
 
   const loadGlobalMetrics = async () => {
-
     try {
       const [perfRes, logsRes] = await Promise.all([
         api.getPerformance().catch(() => ({ data: null })),
         api.getPredictionsHistory('', 50).catch(() => ({ data: { predictions: [] } }))
       ]);
-
       setPerformanceData(perfRes.data);
-      setPredictionsHistory(logsRes.data.predictions || []);
+      setPredictionsHistory(logsRes.data?.predictions || []);
     } catch (err) {
       console.error("Failed to load global metrics:", err);
     }
@@ -111,10 +121,10 @@ export default function App() {
     try {
       await api.triggerRefresh();
       setTimeout(() => {
-        loadStockData(selectedAsset, selectedModel);
+        loadAssetsForClass(selectedAssetClass);
         loadGlobalMetrics();
         setIsRefreshing(false);
-      }, 3000);
+      }, 2500);
     } catch (err) {
       console.error("Refresh failed:", err);
       setIsRefreshing(false);
@@ -122,101 +132,127 @@ export default function App() {
   };
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px 20px' }}>
-      <Header
-        assetClasses={["INDIAN_EQUITY", "US_EQUITY", "CRYPTO", "FOREX", "INDEX"]}
-        selectedAssetClass={selectedAssetClass}
-        onSelectAssetClass={setSelectedAssetClass}
-        availableAssets={availableAssets}
-        selectedAsset={selectedAsset}
-        onSelectAsset={setSelectedAsset}
-        onRefresh={handleRefresh}
-        isRefreshing={isRefreshing}
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-      />
+    <>
+      {/* Smart Startup Splash Screen (~1.2s max, preloads data concurrently) */}
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
 
-      <SystemStatusBanner />
+      {/* Top Benchmark Market Ticker Bar */}
+      <TopMarketBar onSelectTicker={setSelectedAsset} />
 
+      <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '20px 24px 80px 24px' }}>
+        {/* Navigation Header */}
+        <Header
+          assetClasses={["INDIAN_EQUITY", "US_EQUITY", "CRYPTO", "FOREX", "INDEX"]}
+          selectedAssetClass={selectedAssetClass}
+          onSelectAssetClass={setSelectedAssetClass}
+          availableAssets={availableAssets}
+          selectedAsset={selectedAsset}
+          onSelectAsset={setSelectedAsset}
+          onRefresh={handleRefresh}
+          isRefreshing={isRefreshing}
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          onOpenSearch={() => setIsSearchOpen(true)}
+        />
 
-      {/* Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px', flexWrap: 'wrap' }}>
-        <button 
-          className={`btn-secondary ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
-        >
-          📊 Asset Overview & Predictions
-        </button>
-        <button 
-          className={`btn-secondary ${activeTab === 'ablation' ? 'active' : ''}`}
-          onClick={() => setActiveTab('ablation')}
-        >
-          🧪 Feature Study & Ablation
-        </button>
-        <button 
-          className={`btn-secondary ${activeTab === 'leaderboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('leaderboard')}
-        >
-          🏆 Model Evaluation Leaderboard
-        </button>
-        <button 
-          className={`btn-secondary ${activeTab === 'tracking' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tracking')}
-        >
-          📜 Prediction Resolution Log
-        </button>
-        <button 
-          className={`btn-secondary ${activeTab === 'backtest' ? 'active' : ''}`}
-          onClick={() => setActiveTab('backtest')}
-        >
-          ⚡ Research Backtester
-        </button>
-      </div>
+        {/* System Health Status Bar */}
+        <SystemStatusBanner />
 
-      {/* Main Tab Content */}
-      {activeTab === 'dashboard' && (
-        <>
-          <AdvancedStockChart historyData={historyData} symbol={selectedAsset} predictionData={predictionData} />
+        {/* Error Fallback Banner if API fails */}
+        {dataError && (
+          <ErrorFallbackCard 
+            title="Market Data Reconnecting..." 
+            message={dataError} 
+            onRetry={() => loadAssetsForClass(selectedAssetClass)} 
+          />
+        )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '24px' }}>
-            <PredictionCard
-              prediction={predictionData}
-              symbol={selectedAsset}
-              selectedModel={selectedModel}
-              onSelectModel={setSelectedModel}
+        {/* Main Tab Content */}
+        {activeTab === 'dashboard' && (
+          <>
+            {/* Dashboard Hero */}
+            <DashboardHero 
+              onOpenSearch={() => setIsSearchOpen(true)} 
+              selectedSymbol={selectedAsset}
+              onSelectSymbol={setSelectedAsset}
             />
-            <ExplanationCard explanations={predictionData?.explanations} />
+
+            {/* Watchlist Quick Switcher */}
+            <Watchlist 
+              selectedSymbol={selectedAsset} 
+              onSelectSymbol={setSelectedAsset} 
+            />
+
+            {/* Dominant Chart View */}
+            {historyData.length > 0 ? (
+              <AdvancedStockChart 
+                historyData={historyData} 
+                symbol={selectedAsset} 
+                predictionData={predictionData} 
+              />
+            ) : (
+              <ChartSkeleton />
+            )}
+
+            {/* AI Direction & Explainability Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+              {predictionData ? (
+                <PredictionCard
+                  prediction={predictionData}
+                  symbol={selectedAsset}
+                  selectedModel={selectedModel}
+                  onSelectModel={setSelectedModel}
+                />
+              ) : (
+                <PredictionSkeleton />
+              )}
+
+              <ExplanationCard explanations={predictionData?.explanations} />
+            </div>
+          </>
+        )}
+
+        {/* Lazy Loaded Heavy Research Tabs */}
+        <Suspense fallback={<ChartSkeleton />}>
+          {activeTab === 'live-research' && (
+            <LiveResearchPage activeSymbol={selectedAsset} onSelectSymbol={setSelectedAsset} />
+          )}
+
+          {activeTab === 'ablation' && (
+            <ResearchStudy symbol={selectedAsset} />
+          )}
+
+          {activeTab === 'leaderboard' && (
+            <ModelLeaderboard performanceData={performanceData} symbol={selectedAsset} />
+          )}
+
+          {activeTab === 'tracking' && (
+            <PredictionHistory predictions={predictionsHistory} symbol={selectedAsset} />
+          )}
+
+          {activeTab === 'backtest' && (
+            <BacktesterUI symbol={selectedAsset} />
+          )}
+        </Suspense>
+
+        {/* Global Search Overlay Modal */}
+        <SearchModal 
+          isOpen={isSearchOpen} 
+          onClose={() => setIsSearchOpen(false)} 
+          onSelectAsset={setSelectedAsset} 
+        />
+
+        {/* Mobile Navigation Bar */}
+        <MobileNav activeTab={activeTab} onSelectTab={setActiveTab} />
+
+        {/* Footer */}
+        <footer style={{ marginTop: '50px', paddingTop: '24px', borderTop: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', lineHeight: '1.6' }}>
+          <div>StockSense AI — Multi-Asset Machine Learning Research Platform | Predict. Explain. Verify.</div>
+          <div style={{ fontSize: '0.74rem', opacity: 0.7, marginTop: '4px' }}>
+            Built for Bloomberg-grade market research. Not financial advice. Powered by Finnhub Realtime & XGBoost ML.
           </div>
-        </>
-      )}
-
-
-      {activeTab === 'ablation' && (
-        <ResearchStudy symbol={selectedAsset} />
-      )}
-
-      {activeTab === 'live-research' && (
-        <LiveResearchPage activeSymbol={selectedAsset} onSelectSymbol={setSelectedAsset} />
-      )}
-
-
-      {activeTab === 'leaderboard' && (
-        <ModelLeaderboard performanceData={performanceData} symbol={selectedAsset} />
-      )}
-
-      {activeTab === 'tracking' && (
-        <PredictionHistory predictions={predictionsHistory} symbol={selectedAsset} />
-      )}
-
-      {activeTab === 'backtest' && (
-        <BacktesterUI symbol={selectedAsset} />
-      )}
-
-
-      {/* Footer */}
-      <footer style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-        StockSense AI — Multi-Asset Machine Learning Research Platform | Predict. Explain. Verify. | Educational Market Prediction Evaluation
-      </footer>
-    </div>
+        </footer>
+      </div>
+    </>
   );
 }
