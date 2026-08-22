@@ -893,6 +893,7 @@ def get_technical_analysis(symbol: str, db: Session = Depends(get_db)):
 # ==============================================================================
 # PHASE 11 — SYSTEM METRICS & PRODUCTION MONITORING
 # ==============================================================================
+@app.get("/system/metrics")
 @app.get("/api/system/metrics")
 def get_system_metrics():
     """GET /api/system/metrics - System telemetry, memory usage, cache statistics, & stream status."""
