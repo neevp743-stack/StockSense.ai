@@ -163,7 +163,7 @@ export default function App() {
       {/* Top Benchmark Market Ticker Bar */}
       <TopMarketBar onSelectTicker={handleSelectSymbolAndSwitchTab} />
 
-      <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '20px 24px 80px 24px' }}>
+      <div className="app-container">
         {/* Navigation Header */}
         <Header
           assetClasses={["INDIAN_EQUITY", "US_EQUITY", "CRYPTO", "FOREX", "INDEX"]}
@@ -220,7 +220,7 @@ export default function App() {
             )}
 
             {/* AI Direction & Explainability Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+            <div className="responsive-grid-2col">
               {predictionData ? (
                 <PredictionCard
                   prediction={predictionData}

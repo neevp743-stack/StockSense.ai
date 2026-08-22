@@ -121,7 +121,7 @@ export function PredictionHistory({ predictions, symbol }) {
       </div>
 
       {/* Main Resolution Table */}
-      <div style={{ overflowX: 'auto', maxHeight: '340px' }}>
+      <div className="table-responsive-container" style={{ maxHeight: '340px' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
           <thead style={{ position: 'sticky', top: 0, background: '#121824', zIndex: 1 }}>
             <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>

@@ -36,7 +36,7 @@ export function ModelLeaderboard({ performanceData, symbol }) {
         </div>
       </div>
 
-      <div style={{ overflowX: 'auto', marginBottom: '16px' }}>
+      <div className="table-responsive-container" style={{ marginBottom: '16px' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>

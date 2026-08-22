@@ -142,7 +142,7 @@ export function MarketsPage({ onSelectSymbol }) {
         </div>
       ) : (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px', marginBottom: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))', gap: '14px', marginBottom: '20px' }}>
             {marketsData.assets.map(ast => (
               <div
                 key={ast.symbol}

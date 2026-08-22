@@ -254,52 +254,54 @@ export function LiveResearchPage({ activeSymbol = "BTC-USD", onSelectSymbol }) {
           </div>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-secondary)' }}>
-              <th style={{ padding: '8px' }}>Timestamp</th>
-              <th style={{ padding: '8px' }}>Model</th>
-              <th style={{ padding: '8px' }}>UP Prob</th>
-              <th style={{ padding: '8px' }}>DOWN Prob</th>
-              <th style={{ padding: '8px' }}>Signal</th>
-              <th style={{ padding: '8px' }}>Status</th>
-              <th style={{ padding: '8px' }}>Actual</th>
-              <th style={{ padding: '8px' }}>Result</th>
-            </tr>
-          </thead>
-          <tbody>
-            {history?.items && history.items.length > 0 ? (
-              history.items.map((item) => (
-                <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td style={{ padding: '8px' }} className="mono-font">{item.prediction_timestamp ? new Date(item.prediction_timestamp).toLocaleString() : 'N/A'}</td>
-                  <td style={{ padding: '8px' }}>{item.model_version}</td>
-                  <td style={{ padding: '8px', color: 'var(--up-green)' }} className="mono-font">{(item.probability_up * 100).toFixed(1)}%</td>
-                  <td style={{ padding: '8px', color: 'var(--down-red)' }} className="mono-font">{(item.probability_down * 100).toFixed(1)}%</td>
-                  <td style={{ padding: '8px', fontWeight: 700, color: item.predicted_direction === 'UP' ? 'var(--up-green)' : 'var(--down-red)' }}>{item.predicted_direction}</td>
-                  <td style={{ padding: '8px' }}>
-                    <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '8px', background: 'rgba(0, 242, 254, 0.1)', color: 'var(--accent-cyan)' }}>{item.data_status}</span>
-                  </td>
-                  <td style={{ padding: '8px' }}>{item.resolved_direction || 'PENDING ⏳'}</td>
-                  <td style={{ padding: '8px' }}>
-                    {item.is_correct === true ? (
-                      <span style={{ color: 'var(--up-green)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={14} /> Correct</span>
-                    ) : item.is_correct === false ? (
-                      <span style={{ color: 'var(--down-red)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><XCircle size={14} /> Wrong</span>
-                    ) : (
-                      <span style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Clock size={14} /> Pending</span>
-                    )}
+        <div className="table-responsive-container">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-secondary)' }}>
+                <th style={{ padding: '8px' }}>Timestamp</th>
+                <th style={{ padding: '8px' }}>Model</th>
+                <th style={{ padding: '8px' }}>UP Prob</th>
+                <th style={{ padding: '8px' }}>DOWN Prob</th>
+                <th style={{ padding: '8px' }}>Signal</th>
+                <th style={{ padding: '8px' }}>Status</th>
+                <th style={{ padding: '8px' }}>Actual</th>
+                <th style={{ padding: '8px' }}>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history?.items && history.items.length > 0 ? (
+                history.items.map((item) => (
+                  <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <td style={{ padding: '8px' }} className="mono-font">{item.prediction_timestamp ? new Date(item.prediction_timestamp).toLocaleString() : 'N/A'}</td>
+                    <td style={{ padding: '8px' }}>{item.model_version}</td>
+                    <td style={{ padding: '8px', color: 'var(--up-green)' }} className="mono-font">{(item.probability_up * 100).toFixed(1)}%</td>
+                    <td style={{ padding: '8px', color: 'var(--down-red)' }} className="mono-font">{(item.probability_down * 100).toFixed(1)}%</td>
+                    <td style={{ padding: '8px', fontWeight: 700, color: item.predicted_direction === 'UP' ? 'var(--up-green)' : 'var(--down-red)' }}>{item.predicted_direction}</td>
+                    <td style={{ padding: '8px' }}>
+                      <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '8px', background: 'rgba(0, 242, 254, 0.1)', color: 'var(--accent-cyan)' }}>{item.data_status}</span>
+                    </td>
+                    <td style={{ padding: '8px' }}>{item.resolved_direction || 'PENDING ⏳'}</td>
+                    <td style={{ padding: '8px' }}>
+                      {item.is_correct === true ? (
+                        <span style={{ color: 'var(--up-green)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={14} /> Correct</span>
+                      ) : item.is_correct === false ? (
+                        <span style={{ color: 'var(--down-red)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><XCircle size={14} /> Wrong</span>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><Clock size={14} /> Pending</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    No live predictions logged for {symbol} yet.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  No live predictions logged for {symbol} yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* Pagination Buttons */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '16px' }}>

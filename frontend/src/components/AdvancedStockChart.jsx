@@ -124,6 +124,9 @@ export function AdvancedStockChart({ symbol = "RELIANCE", historyData = [], pred
     if (!chartContainerRef.current) return;
 
     if (!chartRef.current) {
+      const containerWidth = chartContainerRef.current.clientWidth || 600;
+      const initialHeight = window.innerWidth <= 640 ? 360 : (window.innerWidth <= 1024 ? 420 : 520);
+
       const chart = createChart(chartContainerRef.current, {
         layout: {
           background: { type: ColorType.Solid, color: '#070a11' },
@@ -138,8 +141,8 @@ export function AdvancedStockChart({ symbol = "RELIANCE", historyData = [], pred
         crosshair: { mode: 1 },
         rightPriceScale: { borderColor: 'rgba(255, 255, 255, 0.08)' },
         timeScale: { borderColor: 'rgba(255, 255, 255, 0.08)', timeVisible: true },
-        width: chartContainerRef.current.clientWidth,
-        height: 520,
+        width: containerWidth,
+        height: initialHeight,
       });
 
       chartRef.current = chart;
@@ -159,14 +162,23 @@ export function AdvancedStockChart({ symbol = "RELIANCE", historyData = [], pred
         scaleMargins: { top: 0.82, bottom: 0 },
       });
 
+      let resizeTimeout = null;
       const resizeObserver = new ResizeObserver(entries => {
         if (entries[0] && chartRef.current) {
-          chartRef.current.applyOptions({ width: entries[0].contentRect.width });
+          const newWidth = entries[0].contentRect.width;
+          const newHeight = window.innerWidth <= 640 ? 360 : (window.innerWidth <= 1024 ? 420 : 520);
+          if (newWidth > 0) {
+            if (resizeTimeout) clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+              chartRef.current.applyOptions({ width: newWidth, height: newHeight });
+            }, 50);
+          }
         }
       });
       resizeObserver.observe(chartContainerRef.current);
 
       return () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
         resizeObserver.disconnect();
         if (chartRef.current) {
           chartRef.current.remove();
@@ -369,8 +381,8 @@ export function AdvancedStockChart({ symbol = "RELIANCE", historyData = [], pred
               onClearDrawings={() => setDrawings([])}
             />
 
-            <div style={{ flexGrow: 1, position: 'relative' }}>
-              <div ref={chartContainerRef} style={{ width: '100%', height: '520px', borderRadius: '12px', overflow: 'hidden' }} />
+            <div style={{ flexGrow: 1, position: 'relative', minWidth: 0 }}>
+              <div ref={chartContainerRef} style={{ width: '100%', minHeight: '360px', borderRadius: '12px', overflow: 'hidden' }} />
             </div>
           </div>
         </div>
