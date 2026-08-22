@@ -5,7 +5,7 @@ import {
 import { Play, Sliders, AlertTriangle } from 'lucide-react';
 import { api } from '../api';
 
-export function BacktesterUI({ symbol }) {
+export function BacktesterUI({ symbol = "RELIANCE" }) {
   const [params, setParams] = useState({
     capital: 100000,
     threshold: 0.55,
