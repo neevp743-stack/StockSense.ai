@@ -161,6 +161,11 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
         {/* Details Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
           <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Market Regime:</div>
+            <strong style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)' }}>{prediction.combined_regime || 'SIDEWAYS (LOW VOL)'}</strong>
+          </div>
+
+          <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Prediction Horizon:</div>
             <strong style={{ fontSize: '0.85rem', color: '#fff' }}>{prediction.prediction_horizon || '1 trading day'}</strong>
           </div>

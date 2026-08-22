@@ -1,0 +1,194 @@
+{
+  "RELIANCE": {
+    "50-55%": {
+      "sample_count": 1013,
+      "coverage_pct": 100.0,
+      "accuracy": 0.47581441263573543,
+      "brier_score": 0.2515292402905101
+    },
+    "55-60%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "60-65%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "65-70%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "70%+": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    }
+  },
+  "INFY": {
+    "50-55%": {
+      "sample_count": 1012,
+      "coverage_pct": 99.90128331688055,
+      "accuracy": 0.3349802371541502,
+      "brier_score": 0.2566523051521868
+    },
+    "55-60%": {
+      "sample_count": 1,
+      "coverage_pct": 0.09871668311944717,
+      "accuracy": 0.0,
+      "brier_score": 0.3051763771664215
+    },
+    "60-65%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "65-70%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "70%+": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    }
+  },
+  "TCS": {
+    "50-55%": {
+      "sample_count": 830,
+      "coverage_pct": 81.93484698914116,
+      "accuracy": 0.39879518072289155,
+      "brier_score": 0.2559810849261073
+    },
+    "55-60%": {
+      "sample_count": 179,
+      "coverage_pct": 17.67028627838105,
+      "accuracy": 0.3016759776536313,
+      "brier_score": 0.27883630098769435
+    },
+    "60-65%": {
+      "sample_count": 4,
+      "coverage_pct": 0.3948667324777887,
+      "accuracy": 0.75,
+      "brier_score": 0.20874164899655112
+    },
+    "65-70%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "70%+": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    }
+  },
+  "AAPL": {
+    "50-55%": {
+      "sample_count": 265,
+      "coverage_pct": 69.01041666666666,
+      "accuracy": 0.5245283018867924,
+      "brier_score": 0.25028763762884265
+    },
+    "55-60%": {
+      "sample_count": 106,
+      "coverage_pct": 27.604166666666668,
+      "accuracy": 0.11320754716981132,
+      "brier_score": 0.3101826369994778
+    },
+    "60-65%": {
+      "sample_count": 13,
+      "coverage_pct": 3.3854166666666665,
+      "accuracy": 0.0,
+      "brier_score": 0.3757372920477931
+    },
+    "65-70%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "70%+": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    }
+  },
+  "NVDA": {
+    "50-55%": {
+      "sample_count": 265,
+      "coverage_pct": 69.01041666666666,
+      "accuracy": 0.47547169811320755,
+      "brier_score": 0.25297204919531563
+    },
+    "55-60%": {
+      "sample_count": 117,
+      "coverage_pct": 30.46875,
+      "accuracy": 0.5726495726495726,
+      "brier_score": 0.24347886787126674
+    },
+    "60-65%": {
+      "sample_count": 2,
+      "coverage_pct": 0.5208333333333333,
+      "accuracy": 0.0,
+      "brier_score": 0.36186231035836025
+    },
+    "65-70%": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    },
+    "70%+": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    }
+  },
+  "BTC-USD": {
+    "50-55%": {
+      "sample_count": 330,
+      "coverage_pct": 56.994818652849744,
+      "accuracy": 0.39090909090909093,
+      "brier_score": 0.2581083744883384
+    },
+    "55-60%": {
+      "sample_count": 196,
+      "coverage_pct": 33.85146804835924,
+      "accuracy": 0.17857142857142858,
+      "brier_score": 0.3022103866368162
+    },
+    "60-65%": {
+      "sample_count": 50,
+      "coverage_pct": 8.635578583765112,
+      "accuracy": 0.02,
+      "brier_score": 0.3793438957506495
+    },
+    "65-70%": {
+      "sample_count": 3,
+      "coverage_pct": 0.5181347150259068,
+      "accuracy": 0.0,
+      "brier_score": 0.43131980938154096
+    },
+    "70%+": {
+      "sample_count": 0,
+      "coverage_pct": 0.0,
+      "accuracy": 0.0,
+      "brier_score": 0.0
+    }
+  }
+}

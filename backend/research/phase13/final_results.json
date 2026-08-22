@@ -1,0 +1,170 @@
+{
+  "RELIANCE": {
+    "phase12_baseline_accuracy": 0.4667,
+    "phase13_calibrated_xgboost": {
+      "accuracy": 0.43820224719101125,
+      "precision": 0.4472049689440994,
+      "recall": 0.8674698795180723,
+      "f1_score": 0.5901639344262295,
+      "roc_auc": 0.4493341788205454,
+      "brier_score": 0.2516435128600255
+    },
+    "phase13_equal_weight_ensemble": {
+      "accuracy": 0.5168539325842697,
+      "precision": 0.48717948717948717,
+      "recall": 0.6867469879518072,
+      "f1_score": 0.57,
+      "roc_auc": 0.5340519974635383,
+      "brier_score": 0.24975994848137742
+    },
+    "phase13_selective_prediction": {
+      "accuracy": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "roc_auc": NaN,
+      "brier_score": 0.2873935203917219,
+      "active_coverage_pct": 0.5617977528089888
+    }
+  },
+  "INFY": {
+    "phase12_baseline_accuracy": 0.55,
+    "phase13_calibrated_xgboost": {
+      "accuracy": 0.5674157303370787,
+      "precision": 0.4782608695652174,
+      "recall": 0.44594594594594594,
+      "f1_score": 0.46153846153846156,
+      "roc_auc": 0.5080561330561331,
+      "brier_score": 0.24952247923768092
+    },
+    "phase13_equal_weight_ensemble": {
+      "accuracy": 0.48314606741573035,
+      "precision": 0.4338235294117647,
+      "recall": 0.7972972972972973,
+      "f1_score": 0.5619047619047619,
+      "roc_auc": 0.5634095634095635,
+      "brier_score": 0.2505479380733335
+    },
+    "phase13_selective_prediction": {
+      "accuracy": 0.3333333333333333,
+      "precision": 0.16666666666666666,
+      "recall": 0.25,
+      "f1_score": 0.2,
+      "roc_auc": 0.28125,
+      "brier_score": 0.26525271133036027,
+      "active_coverage_pct": 6.741573033707865
+    }
+  },
+  "TCS": {
+    "phase12_baseline_accuracy": 0.5167,
+    "phase13_calibrated_xgboost": {
+      "accuracy": 0.5786516853932584,
+      "precision": 0.6129032258064516,
+      "recall": 0.23170731707317074,
+      "f1_score": 0.336283185840708,
+      "roc_auc": 0.5102896341463415,
+      "brier_score": 0.24815873936566007
+    },
+    "phase13_equal_weight_ensemble": {
+      "accuracy": 0.4606741573033708,
+      "precision": 0.4520547945205479,
+      "recall": 0.8048780487804879,
+      "f1_score": 0.5789473684210527,
+      "roc_auc": 0.4966971544715447,
+      "brier_score": 0.252045234921576
+    },
+    "phase13_selective_prediction": {
+      "accuracy": 0.5526315789473685,
+      "precision": 0.625,
+      "recall": 0.09433962264150944,
+      "f1_score": 0.16393442622950818,
+      "roc_auc": 0.47757500773275596,
+      "brier_score": 0.24889708633097923,
+      "active_coverage_pct": 64.04494382022472
+    }
+  },
+  "AAPL": {
+    "phase12_baseline_accuracy": 0.5507,
+    "phase13_calibrated_xgboost": {
+      "accuracy": 0.5074626865671642,
+      "precision": 0.54,
+      "recall": 0.7297297297297297,
+      "f1_score": 0.6206896551724138,
+      "roc_auc": 0.4126126126126126,
+      "brier_score": 0.2520655366538608
+    },
+    "phase13_equal_weight_ensemble": {
+      "accuracy": 0.5522388059701493,
+      "precision": 0.6,
+      "recall": 0.5675675675675675,
+      "f1_score": 0.5833333333333334,
+      "roc_auc": 0.5099099099099099,
+      "brier_score": 0.2507773196754138
+    },
+    "phase13_selective_prediction": {
+      "accuracy": 0.5384615384615384,
+      "precision": 0.52,
+      "recall": 1.0,
+      "f1_score": 0.6842105263157895,
+      "roc_auc": 0.4437869822485207,
+      "brier_score": 0.250429617958614,
+      "active_coverage_pct": 38.80597014925373
+    }
+  },
+  "NVDA": {
+    "phase12_baseline_accuracy": 0.4493,
+    "phase13_calibrated_xgboost": {
+      "accuracy": 0.5223880597014925,
+      "precision": 0.3333333333333333,
+      "recall": 0.06666666666666667,
+      "f1_score": 0.1111111111111111,
+      "roc_auc": 0.5099099099099099,
+      "brier_score": 0.2487110490083213
+    },
+    "phase13_equal_weight_ensemble": {
+      "accuracy": 0.47761194029850745,
+      "precision": 0.4603174603174603,
+      "recall": 0.9666666666666667,
+      "f1_score": 0.6236559139784946,
+      "roc_auc": 0.5252252252252252,
+      "brier_score": 0.26258443463372294
+    },
+    "phase13_selective_prediction": {
+      "accuracy": 0.6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "roc_auc": 0.4733333333333333,
+      "brier_score": 0.2449394225570548,
+      "active_coverage_pct": 37.3134328358209
+    }
+  },
+  "BTC-USD": {
+    "phase12_baseline_accuracy": 0.5049,
+    "phase13_calibrated_xgboost": {
+      "accuracy": 0.4803921568627451,
+      "precision": 0.43103448275862066,
+      "recall": 0.5555555555555556,
+      "f1_score": 0.4854368932038835,
+      "roc_auc": 0.5653021442495126,
+      "brier_score": 0.24676876754164676
+    },
+    "phase13_equal_weight_ensemble": {
+      "accuracy": 0.43137254901960786,
+      "precision": 0.43010752688172044,
+      "recall": 0.8888888888888888,
+      "f1_score": 0.5797101449275363,
+      "roc_auc": 0.47446393762183237,
+      "brier_score": 0.25649473818008633
+    },
+    "phase13_selective_prediction": {
+      "accuracy": 0.6046511627906976,
+      "precision": 0.6086956521739131,
+      "recall": 0.6363636363636364,
+      "f1_score": 0.6222222222222222,
+      "roc_auc": 0.6536796536796536,
+      "brier_score": 0.23960198558744683,
+      "active_coverage_pct": 42.15686274509804
+    }
+  }
+}

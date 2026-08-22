@@ -451,6 +451,10 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
     else:
         predicted_dir_str = "UP" if predicted_dir == 1 else "DOWN"
 
+    # Phase 13 Market Regime Classification Telemetry
+    from backend.features.regime_engine import get_latest_regime
+    regime_info = get_latest_regime(df_raw)
+
     res_payload = {
         "symbol": symbol_clean,
         "latest_price": latest_price_val,
@@ -463,6 +467,9 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
         "signal": signal_label,
         "prediction_horizon": "1 trading day",
         "model_version": f"{pipe.model_name} v1.0 (Calibrated)",
+        "trend_regime": regime_info.get("trend_regime", "SIDEWAYS"),
+        "volatility_regime": regime_info.get("volatility_regime", "LOW_VOLATILITY"),
+        "combined_regime": regime_info.get("combined_regime", "SIDEWAYS (LOW VOL)"),
         "coverage_stats": {
             "confidence_threshold_bounds": [0.47, 0.53],
             "selective_signal_status": "ACTIVE" if predicted_dir_str != "NO_SIGNAL" else "NO_CLEAR_SIGNAL"

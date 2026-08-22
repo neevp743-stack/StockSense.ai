@@ -1,0 +1,230 @@
+{
+  "RELIANCE": {
+    "total_samples": 1191,
+    "trend_regimes": {
+      "counts": {
+        "BEAR": 468,
+        "BULL": 438,
+        "SIDEWAYS": 285
+      },
+      "percentages": {
+        "BEAR": 0.3929471032745592,
+        "BULL": 0.3677581863979849,
+        "SIDEWAYS": 0.23929471032745592
+      },
+      "avg_duration_days": {
+        "SIDEWAYS": 4.384615384615385,
+        "BULL": 15.10344827586207,
+        "BEAR": 13.371428571428572
+      },
+      "transitions_count": 128,
+      "transition_rate": 0.10747271200671704
+    },
+    "volatility_regimes": {
+      "counts": {
+        "LOW_VOLATILITY": 635,
+        "HIGH_VOLATILITY": 556
+      },
+      "percentages": {
+        "LOW_VOLATILITY": 0.5331654072208228,
+        "HIGH_VOLATILITY": 0.46683459277917716
+      },
+      "avg_duration_days": {
+        "LOW_VOLATILITY": 12.7,
+        "HIGH_VOLATILITY": 11.346938775510203
+      },
+      "transitions_count": 98,
+      "transition_rate": 0.08228379513014274
+    }
+  },
+  "INFY": {
+    "total_samples": 1191,
+    "trend_regimes": {
+      "counts": {
+        "BULL": 495,
+        "BEAR": 477,
+        "SIDEWAYS": 219
+      },
+      "percentages": {
+        "BULL": 0.4156171284634761,
+        "BEAR": 0.4005037783375315,
+        "SIDEWAYS": 0.18387909319899245
+      },
+      "avg_duration_days": {
+        "SIDEWAYS": 4.294117647058823,
+        "BULL": 17.678571428571427,
+        "BEAR": 20.73913043478261
+      },
+      "transitions_count": 101,
+      "transition_rate": 0.08480268681780016
+    },
+    "volatility_regimes": {
+      "counts": {
+        "LOW_VOLATILITY": 601,
+        "HIGH_VOLATILITY": 590
+      },
+      "percentages": {
+        "LOW_VOLATILITY": 0.5046179680940386,
+        "HIGH_VOLATILITY": 0.49538203190596136
+      },
+      "avg_duration_days": {
+        "LOW_VOLATILITY": 13.976744186046512,
+        "HIGH_VOLATILITY": 14.047619047619047
+      },
+      "transitions_count": 84,
+      "transition_rate": 0.07052896725440806
+    }
+  },
+  "TCS": {
+    "total_samples": 1191,
+    "trend_regimes": {
+      "counts": {
+        "BEAR": 496,
+        "BULL": 417,
+        "SIDEWAYS": 278
+      },
+      "percentages": {
+        "BEAR": 0.4164567590260285,
+        "BULL": 0.3501259445843829,
+        "SIDEWAYS": 0.23341729638958858
+      },
+      "avg_duration_days": {
+        "SIDEWAYS": 4.483870967741935,
+        "BULL": 13.9,
+        "BEAR": 15.5
+      },
+      "transitions_count": 123,
+      "transition_rate": 0.10327455919395466
+    },
+    "volatility_regimes": {
+      "counts": {
+        "LOW_VOLATILITY": 610,
+        "HIGH_VOLATILITY": 581
+      },
+      "percentages": {
+        "LOW_VOLATILITY": 0.5121746431570109,
+        "HIGH_VOLATILITY": 0.4878253568429891
+      },
+      "avg_duration_days": {
+        "LOW_VOLATILITY": 12.2,
+        "HIGH_VOLATILITY": 11.857142857142858
+      },
+      "transitions_count": 98,
+      "transition_rate": 0.08228379513014274
+    }
+  },
+  "AAPL": {
+    "total_samples": 451,
+    "trend_regimes": {
+      "counts": {
+        "BULL": 190,
+        "SIDEWAYS": 146,
+        "BEAR": 115
+      },
+      "percentages": {
+        "BULL": 0.4212860310421286,
+        "SIDEWAYS": 0.3237250554323725,
+        "BEAR": 0.2549889135254989
+      },
+      "avg_duration_days": {
+        "SIDEWAYS": 6.636363636363637,
+        "BEAR": 9.583333333333334,
+        "BULL": 21.11111111111111
+      },
+      "transitions_count": 42,
+      "transition_rate": 0.09312638580931264
+    },
+    "volatility_regimes": {
+      "counts": {
+        "LOW_VOLATILITY": 227,
+        "HIGH_VOLATILITY": 224
+      },
+      "percentages": {
+        "LOW_VOLATILITY": 0.5033259423503326,
+        "HIGH_VOLATILITY": 0.49667405764966743
+      },
+      "avg_duration_days": {
+        "LOW_VOLATILITY": 18.916666666666668,
+        "HIGH_VOLATILITY": 20.363636363636363
+      },
+      "transitions_count": 22,
+      "transition_rate": 0.04878048780487805
+    }
+  },
+  "NVDA": {
+    "total_samples": 451,
+    "trend_regimes": {
+      "counts": {
+        "BULL": 184,
+        "SIDEWAYS": 136,
+        "BEAR": 131
+      },
+      "percentages": {
+        "BULL": 0.4079822616407982,
+        "SIDEWAYS": 0.30155210643015523,
+        "BEAR": 0.29046563192904656
+      },
+      "avg_duration_days": {
+        "SIDEWAYS": 5.037037037037037,
+        "BEAR": 10.076923076923077,
+        "BULL": 12.266666666666667
+      },
+      "transitions_count": 54,
+      "transition_rate": 0.1197339246119734
+    },
+    "volatility_regimes": {
+      "counts": {
+        "LOW_VOLATILITY": 229,
+        "HIGH_VOLATILITY": 222
+      },
+      "percentages": {
+        "LOW_VOLATILITY": 0.5077605321507761,
+        "HIGH_VOLATILITY": 0.49223946784922396
+      },
+      "avg_duration_days": {
+        "LOW_VOLATILITY": 22.9,
+        "HIGH_VOLATILITY": 24.666666666666668
+      },
+      "transitions_count": 18,
+      "transition_rate": 0.03991130820399113
+    }
+  },
+  "BTC-USD": {
+    "total_samples": 681,
+    "trend_regimes": {
+      "counts": {
+        "BEAR": 270,
+        "BULL": 246,
+        "SIDEWAYS": 165
+      },
+      "percentages": {
+        "BEAR": 0.3964757709251101,
+        "BULL": 0.36123348017621143,
+        "SIDEWAYS": 0.2422907488986784
+      },
+      "avg_duration_days": {
+        "SIDEWAYS": 5.15625,
+        "BULL": 13.666666666666666,
+        "BEAR": 19.285714285714285
+      },
+      "transitions_count": 63,
+      "transition_rate": 0.09251101321585903
+    },
+    "volatility_regimes": {
+      "counts": {
+        "LOW_VOLATILITY": 423,
+        "HIGH_VOLATILITY": 258
+      },
+      "percentages": {
+        "LOW_VOLATILITY": 0.6211453744493393,
+        "HIGH_VOLATILITY": 0.3788546255506608
+      },
+      "avg_duration_days": {
+        "LOW_VOLATILITY": 19.227272727272727,
+        "HIGH_VOLATILITY": 11.727272727272727
+      },
+      "transitions_count": 43,
+      "transition_rate": 0.0631424375917768
+    }
+  }
+}
