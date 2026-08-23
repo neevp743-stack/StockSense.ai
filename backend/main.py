@@ -5,7 +5,8 @@ from datetime import datetime, timedelta, date
 
 from typing import List, Dict, Any, Optional
 
-from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks
+from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks, Response
+
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -335,7 +336,7 @@ def get_stocks_universe():
     return {"universe": stocks, "disclaimer": RESEARCH_DISCLAIMER}
 
 @app.get("/api/stocks/{symbol}/history")
-def get_stock_history(symbol: str, limit: Optional[int] = None, db: Session = Depends(get_db)):
+def get_stock_history(symbol: str, response: Response, limit: Optional[int] = None, db: Session = Depends(get_db)):
     """GET /api/stocks/{symbol}/history - Historical OHLCV data with optional limit parameter."""
     symbol_clean = symbol.upper().strip()
     df = ensure_historical_data_in_db(symbol_clean, db=db, limit=limit)
@@ -343,11 +344,13 @@ def get_stock_history(symbol: str, limit: Optional[int] = None, db: Session = De
         raise HTTPException(status_code=404, detail=f"Market data unavailable for symbol '{symbol_clean}'.")
 
     records = df.to_dict(orient="records")
+    response.headers["Cache-Control"] = "public, max-age=60"
     return {
         "symbol": symbol_clean,
         "count": len(records),
         "data": records
     }
+
 
 @app.get("/api/stocks/{symbol}/features")
 def get_stock_features(symbol: str, db: Session = Depends(get_db)):
@@ -910,13 +913,15 @@ def get_live_analytics(symbol: str):
 from backend.indicators.technical_analysis import calculate_technical_indicators, detect_support_resistance
 
 @app.get("/api/assets/{symbol}/technical-analysis")
-def get_technical_analysis(symbol: str, db: Session = Depends(get_db)):
+def get_technical_analysis(symbol: str, response: Response, db: Session = Depends(get_db)):
     """GET /api/assets/{symbol}/technical-analysis - Returns computed indicators & support/resistance levels."""
+    response.headers["Cache-Control"] = "public, max-age=60"
     symbol_clean = symbol.upper().strip()
     cache_key = f"ta_{symbol_clean}"
     cached_ta = indicators_cache.get(cache_key)
     if cached_ta is not None:
         return cached_ta
+
 
     df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
     if df_raw.empty:

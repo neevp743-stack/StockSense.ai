@@ -5,32 +5,10 @@ export function SplashScreen({ onFinish }) {
   const [stage, setStage] = useState(0); // 0: init logo, 1: text reveal, 2: fade out
 
   useEffect(() => {
-    // Respect prefers-reduced-motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isReturningUser = sessionStorage.getItem('stocksense_visited') === 'true';
-
-    if (prefersReducedMotion || isReturningUser) {
-      // Fast path for returning visitors (~300ms)
-      const timer = setTimeout(() => {
-        sessionStorage.setItem('stocksense_visited', 'true');
-        onFinish();
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-
-    // First visit animation sequence (total ~1.2s max)
     sessionStorage.setItem('stocksense_visited', 'true');
-
-    const t1 = setTimeout(() => setStage(1), 400);  // Text reveal
-    const t2 = setTimeout(() => setStage(2), 1000); // Fade out start
-    const t3 = setTimeout(() => onFinish(), 1250);   // Finish & mount app
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-    };
+    onFinish();
   }, [onFinish]);
+
 
   return (
     <div 

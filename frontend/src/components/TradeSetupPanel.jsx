@@ -18,35 +18,47 @@ export function TradeSetupPanel({ symbol }) {
     const controller = new AbortController();
     const opts = { signal: controller.signal };
 
-    Promise.all([
-      api.getTradeSetup(symbol, opts).catch(() => null),
-      api.getTradeSetupBacktest(symbol, opts).catch(() => null),
-      api.getPaperPerformance(symbol, opts).catch(() => null)
-    ]).then(([setupRes, backtestRes, paperRes]) => {
-      if (controller.signal.aborted) return;
+    // 1. Fetch Primary Trade Setup Object (Unblocked, renders immediately)
+    api.getTradeSetup(symbol, opts)
+      .then(res => {
+        if (!controller.signal.aborted) {
+          if (res && res.data) {
+            setSetup(res.data);
+          }
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) {
+          console.error("Trade setup fetch error:", err);
+          setError("Failed to load trade setup analytics.");
+          setLoading(false);
+        }
+      });
 
-      if (setupRes && setupRes.data) {
-        setSetup(setupRes.data);
-      }
-      if (backtestRes && backtestRes.data) {
-        setBacktest(backtestRes.data);
-      }
-      if (paperRes && paperRes.data) {
-        setPaperPerf(paperRes.data);
-      }
-      setLoading(false);
-    }).catch(err => {
-      if (!controller.signal.aborted) {
-        console.error("Trade setup fetch error:", err);
-        setError("Failed to load trade setup analytics.");
-        setLoading(false);
-      }
-    });
+    // 2. Fetch Secondary Backtest Analytics (Asynchronous non-blocking load)
+    api.getTradeSetupBacktest(symbol, opts)
+      .then(res => {
+        if (!controller.signal.aborted && res && res.data) {
+          setBacktest(res.data);
+        }
+      })
+      .catch(() => {});
+
+    // 3. Fetch Live Paper Tracker Analytics (Asynchronous non-blocking load)
+    api.getPaperPerformance(symbol, opts)
+      .then(res => {
+        if (!controller.signal.aborted && res && res.data) {
+          setPaperPerf(res.data);
+        }
+      })
+      .catch(() => {});
 
     return () => {
       controller.abort();
     };
   }, [symbol]);
+
 
   if (loading) {
     return (

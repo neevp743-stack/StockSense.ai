@@ -1,0 +1,46 @@
+{
+  "/api/system/status": {
+    "status_code": null,
+    "production_latency_ms": 30670.39
+  },
+  "/api/health": {
+    "status_code": null,
+    "production_latency_ms": 31429.92
+  },
+  "/api/stocks/RELIANCE/history?limit=100": {
+    "status_code": 200,
+    "production_latency_ms": 21919.95
+  },
+  "/api/stocks/RELIANCE/prediction": {
+    "status_code": 200,
+    "production_latency_ms": 2596.78
+  },
+  "/api/assets/RELIANCE/technical-analysis": {
+    "status_code": 200,
+    "production_latency_ms": 783.7
+  },
+  "/api/assets/RELIANCE/trade-setup": {
+    "status_code": null,
+    "production_latency_ms": 670.66
+  },
+  "/api/assets/INFY/trade-setup": {
+    "status_code": null,
+    "production_latency_ms": 729.93
+  },
+  "/api/assets/TCS/trade-setup": {
+    "status_code": null,
+    "production_latency_ms": 742.56
+  },
+  "/api/assets/AAPL/trade-setup": {
+    "status_code": null,
+    "production_latency_ms": 686.45
+  },
+  "/api/assets/NVDA/trade-setup": {
+    "status_code": null,
+    "production_latency_ms": 670.96
+  },
+  "/api/assets/BTC-USD/trade-setup": {
+    "status_code": null,
+    "production_latency_ms": 1712.47
+  }
+}
