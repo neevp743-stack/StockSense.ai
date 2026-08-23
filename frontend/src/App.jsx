@@ -8,7 +8,9 @@ import { PredictionCard } from './components/PredictionCard';
 import { ExplanationCard } from './components/ExplanationCard';
 import { TradeSetupPanel } from './components/TradeSetupPanel';
 import { PatternAnalysisCard } from './components/PatternAnalysisCard';
+import { ProductionMonitor } from './components/ProductionMonitor';
 import { SystemStatusBanner } from './components/SystemStatusBanner';
+
 
 
 import { SplashScreen } from './components/SplashScreen';
@@ -244,10 +246,16 @@ export default function App() {
               <TradeSetupPanel symbol={selectedAsset} />
             </div>
 
+            {/* Phase 16 Production Monitor & Live Validation */}
+            <div style={{ marginTop: '24px' }}>
+              <ProductionMonitor symbol={selectedAsset} />
+            </div>
+
             {/* Phase 15 Research Pattern Analysis Card */}
             <div style={{ marginTop: '24px' }}>
               <PatternAnalysisCard symbol={selectedAsset} />
             </div>
+
           </>
         )}
 

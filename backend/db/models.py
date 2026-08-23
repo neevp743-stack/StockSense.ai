@@ -171,15 +171,41 @@ class LivePredictionRecord(Base):
     id = Column(Integer, primary_key=True, index=True)
     symbol = Column(String(20), index=True, nullable=False)
     prediction_timestamp = Column(DateTime, nullable=False, index=True, default=datetime.utcnow)
-    feature_timestamp = Column(DateTime, nullable=False)
+    market_timestamp = Column(DateTime, nullable=True)
+    feature_timestamp = Column(DateTime, nullable=True, default=datetime.utcnow)
+    model_version = Column(String(50), nullable=False, default="XGBoost v1.0")
+    predicted_direction = Column(String(10), nullable=False)  # UP, DOWN
     probability_up = Column(Float, nullable=False)
     probability_down = Column(Float, nullable=False)
-    predicted_direction = Column(String(10), nullable=False)  # UP, DOWN
-    model_version = Column(String(50), nullable=False, default="XGBoost v1.0")
+    confidence = Column(String(20), nullable=True)           # HIGH, MODERATE, LOW
+    trend_regime = Column(String(20), nullable=True)         # BULL, BEAR, SIDEWAYS
+    volatility_regime = Column(String(20), nullable=True)    # HIGH_VOLATILITY, LOW_VOLATILITY
+    combined_regime = Column(String(50), nullable=True)     # e.g., BULL_LOW_VOLATILITY
+    current_price = Column(Float, nullable=True)
+    prediction_horizon = Column(Integer, default=1)
+    feature_version = Column(String(20), default="v12")
     data_status = Column(String(20), nullable=False, default="LIVE")  # LIVE, DELAYED, STALE
-    resolved_direction = Column(String(10), nullable=True)
-    resolved_at = Column(DateTime, nullable=True)
-    is_correct = Column(Boolean, nullable=True)
+
+    # Resolution fields
+    resolved = Column(Boolean, default=False, index=True)
+    resolution_timestamp = Column(DateTime, nullable=True)
+    resolved_at = Column(DateTime, nullable=True)  # Backward compatibility
+    actual_price = Column(Float, nullable=True)
+    actual_direction = Column(String(10), nullable=True)  # UP, DOWN
+    resolved_direction = Column(String(10), nullable=True)  # Backward compatibility
+    actual_return = Column(Float, nullable=True)
+    correct = Column(Boolean, nullable=True)
+    is_correct = Column(Boolean, nullable=True)  # Backward compatibility
+    brier_score = Column(Float, nullable=True)
+    error_reason = Column(String(255), nullable=True)
+
+    __table_args__ = (
+        Index("idx_live_pred_sym_time", "symbol", "prediction_timestamp"),
+        Index("idx_live_pred_sym_resolved", "symbol", "resolved"),
+        Index("idx_live_pred_sym_model", "symbol", "model_version"),
+        Index("idx_live_pred_model_resolved", "model_version", "resolved"),
+    )
+
 
 class PaperPredictionRecord(Base):
     __tablename__ = "paper_prediction_records"

@@ -525,7 +525,13 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
         "disclaimer": RESEARCH_DISCLAIMER
     }
     prediction_cache.set(cache_key, res_payload, ttl_seconds=60)
+    try:
+        live_prediction_tracker.record_prediction(res_payload, db_session=db)
+    except Exception as e:
+        logger.error(f"Error recording live prediction observation: {e}")
+
     return res_payload
+
 
 
 @app.get("/api/models")
@@ -995,6 +1001,12 @@ def get_system_metrics():
 from backend.cache import trade_setup_cache
 from backend.services.trade_signal_service import generate_trade_setup
 from backend.backtest.trade_setup_backtester import run_complete_trade_setup_backtest
+from backend.services.data_quality_service import data_quality_service
+from backend.services.live_prediction_tracker import live_prediction_tracker
+from backend.services.prediction_resolver import prediction_resolver
+from backend.services.model_monitor import model_monitor
+from backend.services.drift_monitor import drift_monitor
+from backend.services.production_health_service import production_health_service
 from backend.tracking.paper_tracker import log_paper_setup, get_paper_performance, resolve_pending_paper_setups
 
 @app.get("/api/assets/{symbol}/trade-setup")
@@ -1133,6 +1145,102 @@ def get_paper_performance_endpoint(symbol: str, db: Session = Depends(get_db)):
     """GET /api/assets/{symbol}/paper-performance - Live paper trading tracker performance metrics."""
     symbol_clean = symbol.upper().strip()
     return get_paper_performance(symbol_clean, db=db)
+
+
+# ==============================================================================
+# PHASE 16 — PRODUCTION RELIABILITY & LIVE MONITORING ENDPOINTS
+# ==============================================================================
+
+@app.get("/api/data-quality/{symbol}")
+def get_data_quality_endpoint(symbol: str, response: Response):
+    """GET /api/data-quality/{symbol} - Real-time market data freshness, latency, and integrity status."""
+    response.headers["Cache-Control"] = "public, max-age=10"
+    return data_quality_service.inspect_symbol_data_quality(symbol)
+
+
+@app.get("/api/model-monitor/all")
+def get_model_monitor_all_endpoint(response: Response):
+    """GET /api/model-monitor/all - Aggregated and per-symbol live model forward-testing performance."""
+    response.headers["Cache-Control"] = "public, max-age=15"
+    try:
+        prediction_resolver.resolve_unresolved_predictions()
+    except Exception:
+        pass
+    return model_monitor.get_all_metrics()
+
+
+@app.get("/api/model-monitor/{symbol}")
+def get_model_monitor_symbol_endpoint(symbol: str, response: Response, rolling_window: Optional[int] = None):
+    """GET /api/model-monitor/{symbol} - Symbol-specific live model forward-testing performance metrics."""
+    response.headers["Cache-Control"] = "public, max-age=15"
+    try:
+        prediction_resolver.resolve_unresolved_predictions(symbol)
+    except Exception:
+        pass
+    return model_monitor.get_symbol_metrics(symbol, rolling_window=rolling_window)
+
+
+@app.get("/api/model-monitor/{symbol}/calibration")
+def get_model_calibration_endpoint(symbol: str, response: Response):
+    """GET /api/model-monitor/{symbol}/calibration - Confidence calibration gaps and probability bands."""
+    response.headers["Cache-Control"] = "public, max-age=15"
+    return model_monitor.get_calibration_metrics(symbol)
+
+
+@app.get("/api/model-monitor/{symbol}/drift")
+def get_model_drift_endpoint(symbol: str, response: Response):
+    """GET /api/model-monitor/{symbol}/drift - Statistical distribution drift and PSI metrics."""
+    response.headers["Cache-Control"] = "public, max-age=15"
+    return drift_monitor.analyze_drift(symbol)
+
+
+@app.get("/api/production-health")
+def get_production_health_endpoint(response: Response):
+    """GET /api/production-health - Transparent rule-based overall production health status."""
+    response.headers["Cache-Control"] = "public, max-age=15"
+    return production_health_service.get_production_health()
+
+
+@app.get("/api/live-predictions/{symbol}")
+def get_live_predictions_endpoint(symbol: str, limit: int = 50, db: Session = Depends(get_db)):
+    """GET /api/live-predictions/{symbol} - Recent recorded live prediction observations."""
+    symbol_clean = symbol.upper().strip()
+    records = db.query(LivePredictionRecord).filter(
+        LivePredictionRecord.symbol == symbol_clean
+    ).order_by(LivePredictionRecord.prediction_timestamp.desc()).limit(limit).all()
+
+    return {
+        "symbol": symbol_clean,
+        "count": len(records),
+        "predictions": [
+            {
+                "id": r.id,
+                "prediction_timestamp": r.prediction_timestamp.isoformat() if r.prediction_timestamp else None,
+                "predicted_direction": r.predicted_direction,
+                "probability_up": r.probability_up,
+                "probability_down": r.probability_down,
+                "confidence": r.confidence,
+                "trend_regime": r.trend_regime,
+                "volatility_regime": r.volatility_regime,
+                "current_price": r.current_price,
+                "resolved": bool(r.resolved or (r.is_correct is not None)),
+                "actual_direction": r.actual_direction or r.resolved_direction,
+                "actual_price": r.actual_price,
+                "actual_return": r.actual_return,
+                "correct": r.correct if r.correct is not None else r.is_correct,
+                "brier_score": r.brier_score
+            }
+            for r in records
+        ]
+    }
+
+
+@app.get("/api/live-predictions/{symbol}/performance")
+def get_live_predictions_performance_endpoint(symbol: str):
+    """GET /api/live-predictions/{symbol}/performance - Tracker performance summary."""
+    from backend.services.live_prediction_service import live_prediction_service
+    return live_prediction_service.get_prediction_tracker_stats(symbol)
+
 
 
 

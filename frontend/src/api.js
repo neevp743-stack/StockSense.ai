@@ -78,8 +78,15 @@ export const api = {
   getPaperPerformance: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/paper-performance`, options),
   getPhase15ResearchStatus: (options = {}) => axios.get(`${API_BASE_URL}/research/phase15/status`, options),
   getSystemStatus: (options = {}) => axios.get(`${API_BASE_URL}/system/status`, options),
-  getHealth: (options = {}) => axios.get(`${BACKEND_ROOT_URL}/health`, options)
+  getHealth: (options = {}) => axios.get(`${BACKEND_ROOT_URL}/health`, options),
+  getDataQuality: (symbol, options = {}) => axios.get(`${API_BASE_URL}/data-quality/${symbol}`, options),
+  getModelMonitor: (symbol, options = {}) => axios.get(`${API_BASE_URL}/model-monitor/${symbol}`, options),
+  getModelMonitorAll: (options = {}) => axios.get(`${API_BASE_URL}/model-monitor/all`, options),
+  getModelCalibration: (symbol, options = {}) => axios.get(`${API_BASE_URL}/model-monitor/${symbol}/calibration`, options),
+  getModelDrift: (symbol, options = {}) => axios.get(`${API_BASE_URL}/model-monitor/${symbol}/drift`, options),
+  getProductionHealth: (options = {}) => axios.get(`${API_BASE_URL}/production-health`, options)
 };
+
 
 
 
