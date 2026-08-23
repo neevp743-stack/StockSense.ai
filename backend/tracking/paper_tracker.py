@@ -93,16 +93,32 @@ def resolve_pending_paper_setups(symbol: Optional[str] = None, db: Optional[Sess
             query = query.filter(PaperPredictionRecord.symbol == symbol.upper().strip())
 
         pending = query.all()
+        if not pending:
+            return 0
+
+        # Batch fetch all required StockPrice rows in a single query
+        needed_symbols = set()
+        needed_dates = set()
+        for pred in pending:
+            needed_symbols.add(pred.symbol)
+            needed_dates.add(pred.as_of_date)
+            needed_dates.add(pred.prediction_date)
+
+        price_rows = db.query(StockPrice).filter(
+            and_(
+                StockPrice.symbol.in_(needed_symbols),
+                StockPrice.date.in_(needed_dates)
+            )
+        ).all()
+        price_map = {(r.symbol, r.date): r for r in price_rows}
+
         resolved_count = 0
 
         for pred in pending:
-            # Look up price on as_of_date and prediction_date
-            p_t = db.query(StockPrice).filter(
-                and_(StockPrice.symbol == pred.symbol, StockPrice.date == pred.as_of_date)
-            ).first()
-            p_next = db.query(StockPrice).filter(
-                and_(StockPrice.symbol == pred.symbol, StockPrice.date == pred.prediction_date)
-            ).first()
+            # Look up price on as_of_date and prediction_date from pre-fetched map
+            p_t = price_map.get((pred.symbol, pred.as_of_date))
+            p_next = price_map.get((pred.symbol, pred.prediction_date))
+
 
             if p_t and p_next:
                 act_dir = "UP" if p_next.close > p_t.close else "DOWN"

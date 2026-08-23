@@ -1,0 +1,152 @@
+{
+  "/api/system/status": {
+    "before_cold_ms": 21.0,
+    "after_cold_ms": 17.93,
+    "cold_improvement_pct": 14.62,
+    "before_warm_p50_ms": 7.7,
+    "after_warm_p50_ms": 2.65,
+    "before_warm_p95_ms": 12.21,
+    "after_warm_p95_ms": 3.75,
+    "warm_improvement_pct": 62.72
+  },
+  "/api/health": {
+    "before_cold_ms": 12.53,
+    "after_cold_ms": 2.7,
+    "cold_improvement_pct": 78.45,
+    "before_warm_p50_ms": 5.45,
+    "after_warm_p50_ms": 2.41,
+    "before_warm_p95_ms": 8.45,
+    "after_warm_p95_ms": 4.51,
+    "warm_improvement_pct": 53.93
+  },
+  "/api/stocks/RELIANCE/history?limit=100": {
+    "before_cold_ms": 50.11,
+    "after_cold_ms": 27.52,
+    "cold_improvement_pct": 45.08,
+    "before_warm_p50_ms": 9.25,
+    "after_warm_p50_ms": 5.12,
+    "before_warm_p95_ms": 11.58,
+    "after_warm_p95_ms": 6.28,
+    "warm_improvement_pct": 42.74
+  },
+  "/api/stocks/INFY/history?limit=100": {
+    "before_cold_ms": 15.05,
+    "after_cold_ms": 9.48,
+    "cold_improvement_pct": 37.01,
+    "before_warm_p50_ms": 8.33,
+    "after_warm_p50_ms": 5.66,
+    "before_warm_p95_ms": 9.01,
+    "after_warm_p95_ms": 6.23,
+    "warm_improvement_pct": 29.55
+  },
+  "/api/stocks/TCS/history?limit=100": {
+    "before_cold_ms": 17.46,
+    "after_cold_ms": 24.85,
+    "cold_improvement_pct": -42.33,
+    "before_warm_p50_ms": 6.6,
+    "after_warm_p50_ms": 5.98,
+    "before_warm_p95_ms": 12.41,
+    "after_warm_p95_ms": 8.63,
+    "warm_improvement_pct": 20.22
+  },
+  "/api/stocks/RELIANCE/prediction": {
+    "before_cold_ms": 2582.0,
+    "after_cold_ms": 4213.08,
+    "cold_improvement_pct": -63.17,
+    "before_warm_p50_ms": 4.18,
+    "after_warm_p50_ms": 3.29,
+    "before_warm_p95_ms": 6.66,
+    "after_warm_p95_ms": 4.71,
+    "warm_improvement_pct": 25.21
+  },
+  "/api/stocks/INFY/prediction": {
+    "before_cold_ms": 1161.59,
+    "after_cold_ms": 1327.61,
+    "cold_improvement_pct": -14.29,
+    "before_warm_p50_ms": 4.23,
+    "after_warm_p50_ms": 3.5,
+    "before_warm_p95_ms": 6.01,
+    "after_warm_p95_ms": 4.52,
+    "warm_improvement_pct": 19.64
+  },
+  "/api/stocks/TCS/prediction": {
+    "before_cold_ms": 1044.98,
+    "after_cold_ms": 1090.09,
+    "cold_improvement_pct": -4.32,
+    "before_warm_p50_ms": 3.25,
+    "after_warm_p50_ms": 4.72,
+    "before_warm_p95_ms": 5.18,
+    "after_warm_p95_ms": 6.74,
+    "warm_improvement_pct": -37.3
+  },
+  "/api/assets/RELIANCE/technical-analysis": {
+    "before_cold_ms": 11.41,
+    "after_cold_ms": 25.1,
+    "cold_improvement_pct": -119.98,
+    "before_warm_p50_ms": 2.78,
+    "after_warm_p50_ms": 3.34,
+    "before_warm_p95_ms": 5.39,
+    "after_warm_p95_ms": 4.74,
+    "warm_improvement_pct": -6.1
+  },
+  "/api/assets/RELIANCE/trade-setup": {
+    "before_cold_ms": 49.88,
+    "after_cold_ms": 1098.56,
+    "cold_improvement_pct": -2102.41,
+    "before_warm_p50_ms": 6.2,
+    "after_warm_p50_ms": 5.92,
+    "before_warm_p95_ms": 8.24,
+    "after_warm_p95_ms": 8.01,
+    "warm_improvement_pct": -4.3
+  },
+  "/api/assets/INFY/trade-setup": {
+    "before_cold_ms": 34.45,
+    "after_cold_ms": 1232.22,
+    "cold_improvement_pct": -3476.84,
+    "before_warm_p50_ms": 3.12,
+    "after_warm_p50_ms": 5.39,
+    "before_warm_p95_ms": 4.81,
+    "after_warm_p95_ms": 7.21,
+    "warm_improvement_pct": -58.38
+  },
+  "/api/assets/TCS/trade-setup": {
+    "before_cold_ms": 29.28,
+    "after_cold_ms": 1169.8,
+    "cold_improvement_pct": -3895.22,
+    "before_warm_p50_ms": 2.89,
+    "after_warm_p50_ms": 3.84,
+    "before_warm_p95_ms": 4.46,
+    "after_warm_p95_ms": 8.59,
+    "warm_improvement_pct": -50.31
+  },
+  "/api/assets/AAPL/trade-setup": {
+    "before_cold_ms": 1092.3,
+    "after_cold_ms": 1230.35,
+    "cold_improvement_pct": -12.64,
+    "before_warm_p50_ms": 6.62,
+    "after_warm_p50_ms": 4.61,
+    "before_warm_p95_ms": 12.5,
+    "after_warm_p95_ms": 6.81,
+    "warm_improvement_pct": 31.21
+  },
+  "/api/assets/NVDA/trade-setup": {
+    "before_cold_ms": 1283.95,
+    "after_cold_ms": 1028.66,
+    "cold_improvement_pct": 19.88,
+    "before_warm_p50_ms": 4.01,
+    "after_warm_p50_ms": 4.64,
+    "before_warm_p95_ms": 5.8,
+    "after_warm_p95_ms": 8.32,
+    "warm_improvement_pct": -23.2
+  },
+  "/api/assets/BTC-USD/trade-setup": {
+    "before_cold_ms": 1490.16,
+    "after_cold_ms": 1318.42,
+    "cold_improvement_pct": 11.52,
+    "before_warm_p50_ms": 5.16,
+    "after_warm_p50_ms": 7.25,
+    "before_warm_p95_ms": 6.83,
+    "after_warm_p95_ms": 9.4,
+    "warm_improvement_pct": -33.76
+  }
+}

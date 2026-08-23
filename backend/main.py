@@ -377,14 +377,16 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
     risk/signal category, SHAP explanation breakdown, and disclaimers.
     """
     symbol_clean = symbol.upper().strip()
-    cache_key = f"pred_{symbol_clean}_{model_name}"
+    df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
+    if df_raw.empty:
+        raise HTTPException(status_code=404, detail="Market data unavailable — configure data provider.")
+
+    last_d = str(df_raw["date"].iloc[-1]) if "date" in df_raw.columns and not df_raw.empty else "NO_DATE"
+    cache_key = f"pred_{symbol_clean}_{model_name}_v1.0_{last_d}"
     cached_pred = prediction_cache.get(cache_key)
     if cached_pred is not None:
         return cached_pred
 
-    df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
-    if df_raw.empty:
-        raise HTTPException(status_code=404, detail="Market data unavailable — configure data provider.")
 
     df_feat = compute_features_and_target(df_raw)
     if df_feat.empty:

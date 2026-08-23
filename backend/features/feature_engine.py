@@ -83,6 +83,8 @@ def calculate_atr(df: pd.DataFrame, period: int = 14) -> pd.Series:
     atr = tr.rolling(window=period, min_periods=period).mean()
     return atr
 
+from backend.cache import feature_cache
+
 def compute_features_and_target(df: pd.DataFrame, target_horizon: int = 1) -> pd.DataFrame:
     """
     Calculates all Phase 12 technical, momentum, volatility, volume, & regime indicators.
@@ -95,7 +97,17 @@ def compute_features_and_target(df: pd.DataFrame, target_horizon: int = 1) -> pd
     if df is None or df.empty or len(df) < 60:
         return pd.DataFrame()
 
+    symbol = str(df["symbol"].iloc[0]).upper().strip() if "symbol" in df.columns and not df.empty else "UNKNOWN"
+    len_df = len(df)
+    last_date = str(df["date"].iloc[-1]) if "date" in df.columns and not df.empty else "NO_DATE"
+    cache_key = f"feat_{symbol}_len{len_df}_last{last_date}_h{target_horizon}_v12"
+
+    cached = feature_cache.get(cache_key)
+    if cached is not None:
+        return cached.copy()
+
     df_feat = df.copy().sort_values("date").reset_index(drop=True)
+
     close = df_feat["close"]
     high = df_feat["high"] if "high" in df_feat.columns else close
     low = df_feat["low"] if "low" in df_feat.columns else close
@@ -187,7 +199,9 @@ def compute_features_and_target(df: pd.DataFrame, target_horizon: int = 1) -> pd
 
     # Drop early warm-up rows where 50-day SMA is NaN
     df_clean = df_feat.dropna(subset=["sma_50"]).reset_index(drop=True)
+    feature_cache.set(cache_key, df_clean, ttl_seconds=300)
     return df_clean
+
 
 def compute_phase15_features(df: pd.DataFrame) -> pd.DataFrame:
     """

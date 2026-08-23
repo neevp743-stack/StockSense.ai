@@ -1,0 +1,122 @@
+{
+  "/api/system/status": {
+    "status_code": 200,
+    "cold_ms": 17.93,
+    "warm_ms": 2.9,
+    "p50_ms": 2.65,
+    "p95_ms": 3.75,
+    "p99_ms": 3.9
+  },
+  "/api/health": {
+    "status_code": 200,
+    "cold_ms": 2.7,
+    "warm_ms": 2.81,
+    "p50_ms": 2.41,
+    "p95_ms": 4.51,
+    "p99_ms": 5.0
+  },
+  "/api/stocks/RELIANCE/history?limit=100": {
+    "status_code": 200,
+    "cold_ms": 27.52,
+    "warm_ms": 5.36,
+    "p50_ms": 5.12,
+    "p95_ms": 6.28,
+    "p99_ms": 6.41
+  },
+  "/api/stocks/INFY/history?limit=100": {
+    "status_code": 200,
+    "cold_ms": 9.48,
+    "warm_ms": 5.53,
+    "p50_ms": 5.66,
+    "p95_ms": 6.23,
+    "p99_ms": 6.29
+  },
+  "/api/stocks/TCS/history?limit=100": {
+    "status_code": 200,
+    "cold_ms": 24.85,
+    "warm_ms": 6.39,
+    "p50_ms": 5.98,
+    "p95_ms": 8.63,
+    "p99_ms": 8.86
+  },
+  "/api/stocks/RELIANCE/prediction": {
+    "status_code": 200,
+    "cold_ms": 4213.08,
+    "warm_ms": 3.59,
+    "p50_ms": 3.29,
+    "p95_ms": 4.71,
+    "p99_ms": 4.75
+  },
+  "/api/stocks/INFY/prediction": {
+    "status_code": 200,
+    "cold_ms": 1327.61,
+    "warm_ms": 3.6,
+    "p50_ms": 3.5,
+    "p95_ms": 4.52,
+    "p99_ms": 4.58
+  },
+  "/api/stocks/TCS/prediction": {
+    "status_code": 200,
+    "cold_ms": 1090.09,
+    "warm_ms": 5.08,
+    "p50_ms": 4.72,
+    "p95_ms": 6.74,
+    "p99_ms": 6.85
+  },
+  "/api/assets/RELIANCE/technical-analysis": {
+    "status_code": 200,
+    "cold_ms": 25.1,
+    "warm_ms": 3.48,
+    "p50_ms": 3.34,
+    "p95_ms": 4.74,
+    "p99_ms": 4.84
+  },
+  "/api/assets/RELIANCE/trade-setup": {
+    "status_code": 200,
+    "cold_ms": 1098.56,
+    "warm_ms": 6.3,
+    "p50_ms": 5.92,
+    "p95_ms": 8.01,
+    "p99_ms": 8.1
+  },
+  "/api/assets/INFY/trade-setup": {
+    "status_code": 200,
+    "cold_ms": 1232.22,
+    "warm_ms": 5.48,
+    "p50_ms": 5.39,
+    "p95_ms": 7.21,
+    "p99_ms": 7.58
+  },
+  "/api/assets/TCS/trade-setup": {
+    "status_code": 200,
+    "cold_ms": 1169.8,
+    "warm_ms": 4.78,
+    "p50_ms": 3.84,
+    "p95_ms": 8.59,
+    "p99_ms": 10.37
+  },
+  "/api/assets/AAPL/trade-setup": {
+    "status_code": 200,
+    "cold_ms": 1230.35,
+    "warm_ms": 4.87,
+    "p50_ms": 4.61,
+    "p95_ms": 6.81,
+    "p99_ms": 7.36
+  },
+  "/api/assets/NVDA/trade-setup": {
+    "status_code": 200,
+    "cold_ms": 1028.66,
+    "warm_ms": 5.31,
+    "p50_ms": 4.64,
+    "p95_ms": 8.32,
+    "p99_ms": 8.54
+  },
+  "/api/assets/BTC-USD/trade-setup": {
+    "status_code": 200,
+    "cold_ms": 1318.42,
+    "warm_ms": 7.37,
+    "p50_ms": 7.25,
+    "p95_ms": 9.4,
+    "p99_ms": 9.49
+  }
+}

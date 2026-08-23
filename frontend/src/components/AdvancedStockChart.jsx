@@ -78,6 +78,8 @@ export function AdvancedStockChart({ symbol = "RELIANCE", historyData = [], pred
     return () => { controller.abort(); };
   }, [symbol]);
 
+  const tickThrottleRef = useRef(null);
+
   // Real-time WebSocket Subscription
   useEffect(() => {
     if (!symbol) return;
@@ -97,7 +99,6 @@ export function AdvancedStockChart({ symbol = "RELIANCE", historyData = [], pred
             setTimeout(() => setPriceFlashClass(''), 800);
           }
           prevPriceRef.current = newPrice;
-          setLiveTick(data);
 
           // Lightweight update on latest candle without full re-render
           if (candleSeriesRef.current) {
@@ -110,14 +111,26 @@ export function AdvancedStockChart({ symbol = "RELIANCE", historyData = [], pred
               close: data.price
             });
           }
+
+          // Micro-throttle React UI state updates to prevent re-render thrashing
+          if (!tickThrottleRef.current) {
+            tickThrottleRef.current = requestAnimationFrame(() => {
+              setLiveTick(data);
+              tickThrottleRef.current = null;
+            });
+          }
         }
       } catch (err) {
         console.error("Error parsing WS tick:", err);
       }
     };
 
-    return () => ws.close();
+    return () => {
+      if (tickThrottleRef.current) cancelAnimationFrame(tickThrottleRef.current);
+      ws.close();
+    };
   }, [symbol]);
+
 
   // 1. Initialize Chart Canvas Instance ONCE
   useEffect(() => {

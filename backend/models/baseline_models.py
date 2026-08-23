@@ -192,6 +192,8 @@ class ModelPipeline:
         clean_symbol = symbol.upper().strip()
         cache_key = f"model_{clean_symbol}_{model_name}"
         cached_model = model_cache.get(cache_key)
+
+
         if cached_model is not None:
             return cached_model
 

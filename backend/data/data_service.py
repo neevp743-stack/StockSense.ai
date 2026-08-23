@@ -94,18 +94,12 @@ def save_prices_to_db(df: pd.DataFrame, db: Optional[Session] = None) -> int:
         close_db = True
 
     try:
-        symbol_name = df["symbol"].iloc[0] if "symbol" in df.columns and not df.empty else None
-        records_data = []
-        for row in df.to_dict(orient="records"):
-            records_data.append({
-                "symbol": str(row["symbol"]).upper().strip(),
-                "date": row["date"],
-                "open": float(row["open"]),
-                "high": float(row["high"]),
-                "low": float(row["low"]),
-                "close": float(row["close"]),
-                "volume": float(row["volume"])
-            })
+        symbol_name = str(df["symbol"].iloc[0]).upper().strip() if "symbol" in df.columns and not df.empty else None
+        df_prepared = df.copy()
+        if "symbol" in df_prepared.columns:
+            df_prepared["symbol"] = df_prepared["symbol"].astype(str).str.upper().str.strip()
+        records_data = df_prepared[["symbol", "date", "open", "high", "low", "close", "volume"]].to_dict(orient="records")
+
 
         if records_data:
             stmt = sqlite_upsert(StockPrice)

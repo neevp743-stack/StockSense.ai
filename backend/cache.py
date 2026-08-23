@@ -54,11 +54,13 @@ TTL_MODEL = 3600       # 1 hour for loaded ML model pipelines
 # Global singleton cache instances
 history_cache = TTLCacheManager(default_ttl_seconds=TTL_HISTORY)
 indicators_cache = TTLCacheManager(default_ttl_seconds=TTL_INDICATORS)
+feature_cache = TTLCacheManager(default_ttl_seconds=300)
 prediction_cache = TTLCacheManager(default_ttl_seconds=TTL_PREDICTION)
 quote_cache = TTLCacheManager(default_ttl_seconds=TTL_QUOTE)
 model_cache = TTLCacheManager(default_ttl_seconds=TTL_MODEL)
 dashboard_cache = TTLCacheManager(default_ttl_seconds=60)
 trade_setup_cache = TTLCacheManager(default_ttl_seconds=45)
+
 
 
 
