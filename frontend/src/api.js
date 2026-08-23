@@ -76,9 +76,11 @@ export const api = {
   getTradeSetupBacktest: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/trade-setup/backtest`, options),
   getTradeSetupHistory: (symbol, limit = 50, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/trade-setup/history`, { params: { limit }, ...options }),
   getPaperPerformance: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/paper-performance`, options),
+  getPhase15ResearchStatus: (options = {}) => axios.get(`${API_BASE_URL}/research/phase15/status`, options),
   getSystemStatus: (options = {}) => axios.get(`${API_BASE_URL}/system/status`, options),
   getHealth: (options = {}) => axios.get(`${BACKEND_ROOT_URL}/health`, options)
 };
+
 
 
 

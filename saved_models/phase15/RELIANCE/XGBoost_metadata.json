@@ -1,8 +1,8 @@
 {
-  "symbol": "TEST",
-  "model_name": "RandomForest",
+  "symbol": "RELIANCE",
+  "model_name": "XGBoost",
   "version": "1.0.0",
-  "trained_at": "2026-08-23T07:46:23.851202Z",
+  "trained_at": "2026-08-23T07:40:30.356358Z",
   "features_used": [
     "sma_10",
     "sma_20",
@@ -20,23 +20,6 @@
     "rolling_volatility",
     "volume_change"
   ],
-  "metrics": {
-    "accuracy": 0.5333333333333333,
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1_score": 0.0,
-    "roc_auc": 0.6071428571428571,
-    "brier_score": 0.24569956432166878,
-    "confusion_matrix": [
-      [
-        8,
-        0
-      ],
-      [
-        7,
-        0
-      ]
-    ]
-  },
+  "metrics": {},
   "disclaimer": "Educational & Research Purposes Only. Past performance does not guarantee future results."
 }

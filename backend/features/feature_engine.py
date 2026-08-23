@@ -188,3 +188,23 @@ def compute_features_and_target(df: pd.DataFrame, target_horizon: int = 1) -> pd
     # Drop early warm-up rows where 50-day SMA is NaN
     df_clean = df_feat.dropna(subset=["sma_50"]).reset_index(drop=True)
     return df_clean
+
+def compute_phase15_features(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Computes complete Phase 15 feature set (Phase 12 Technicals + Candlestick + Price Action + Chart Structure).
+    Uses strict temporal ordering without future data leakage.
+    """
+    from backend.features.candlestick_features import compute_candlestick_features
+    from backend.features.price_action_features import compute_price_action_features
+    from backend.features.structure_features import compute_structure_features
+
+    df_base = compute_features_and_target(df)
+    if df_base.empty:
+        return df_base
+
+    df_c = compute_candlestick_features(df_base)
+    df_pa = compute_price_action_features(df_c)
+    df_full = compute_structure_features(df_pa)
+
+    return df_full
+

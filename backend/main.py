@@ -16,8 +16,9 @@ from sqlalchemy.orm import Session
 
 from backend.config import (
     DEFAULT_UNIVERSE, SYMBOL_MAP, SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, RESEARCH_DISCLAIMER,
-    ENVIRONMENT, CORS_ALLOWED_ORIGINS, REALTIME_PROVIDER
+    ENVIRONMENT, CORS_ALLOWED_ORIGINS, REALTIME_PROVIDER, PROJECT_ROOT
 )
+
 from backend.db.database import get_db, init_db, SessionLocal
 from backend.db.models import StockPrice, FeatureRecord, ModelMetadata, PredictionRecord, UserRecord
 from backend.data.data_service import (
@@ -202,7 +203,29 @@ def search_stock_universe(q: str = "", limit: int = 20):
         "assets": results
     }
 
+@app.get("/api/research/phase15/status")
+def get_phase15_research_status():
+    """GET /api/research/phase15/status - Returns Phase 15 research study status and statistical verdict."""
+    verdict_path = os.path.join(PROJECT_ROOT, "backend", "research", "phase15", "phase15_verdict.json")
+    verdict_data = None
+    if os.path.exists(verdict_path):
+        try:
+            with open(verdict_path, "r", encoding="utf-8") as f:
+                verdict_data = json.load(f)
+        except Exception:
+            pass
+
+    return {
+        "current_production_model": "Phase 12 Calibrated XGBoost v1.0",
+        "phase15_status": "COMPLETED",
+        "phase15_verdict": verdict_data.get("verdict", "PHASE15_RESEARCH_CANDIDATE") if verdict_data else "PHASE15_RESEARCH_CANDIDATE",
+        "verdict_reason": verdict_data.get("verdict_reason", "Phase 15 feature evaluation complete.") if verdict_data else "Study executed successfully.",
+        "research_details": verdict_data,
+        "timestamp": datetime.utcnow().isoformat() + "Z"
+    }
+
 @app.get("/api/markets")
+
 @app.get("/api/markets/{exchange}")
 def get_markets_universe(exchange: Optional[str] = None, asset_class: Optional[str] = None, page: int = 1, limit: int = 50):
     """GET /api/markets - Paginated market universe endpoint."""

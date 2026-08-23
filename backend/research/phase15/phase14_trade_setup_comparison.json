@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-08-23T07:42:50.104596Z",
+  "data": {
+    "RELIANCE": {
+      "baseline_phase12": {
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      "candidate_phase15": {
+        "candidate_name": "MODEL_A",
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      }
+    },
+    "INFY": {
+      "baseline_phase12": {
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      "candidate_phase15": {
+        "candidate_name": "MODEL_D",
+        "trades": 3,
+        "win_rate_pct": 33.33,
+        "net_return_pct": 0.46,
+        "profit_factor": 1.35
+      }
+    },
+    "TCS": {
+      "baseline_phase12": {
+        "trades": 26,
+        "win_rate_pct": 57.69,
+        "net_return_pct": 0.64,
+        "profit_factor": 1.54
+      },
+      "candidate_phase15": {
+        "candidate_name": "MODEL_A",
+        "trades": 26,
+        "win_rate_pct": 57.69,
+        "net_return_pct": 0.64,
+        "profit_factor": 1.54
+      }
+    },
+    "AAPL": {
+      "baseline_phase12": {
+        "trades": 5,
+        "win_rate_pct": 100.0,
+        "net_return_pct": 3.98,
+        "profit_factor": 99.0
+      },
+      "candidate_phase15": {
+        "candidate_name": "MODEL_C",
+        "trades": 4,
+        "win_rate_pct": 100.0,
+        "net_return_pct": 3.91,
+        "profit_factor": 99.0
+      }
+    },
+    "NVDA": {
+      "baseline_phase12": {
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      "candidate_phase15": {
+        "candidate_name": "MODEL_E",
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      }
+    },
+    "BTC-USD": {
+      "baseline_phase12": {
+        "trades": 11,
+        "win_rate_pct": 27.27,
+        "net_return_pct": -0.7,
+        "profit_factor": 0.57
+      },
+      "candidate_phase15": {
+        "candidate_name": "MODEL_B",
+        "trades": 2,
+        "win_rate_pct": 0.0,
+        "net_return_pct": -4.12,
+        "profit_factor": 0.0
+      }
+    }
+  }
+}

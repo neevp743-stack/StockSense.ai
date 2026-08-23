@@ -1,0 +1,149 @@
+{
+  "generated_at": "2026-08-23T07:42:50.104596Z",
+  "data": {
+    "RELIANCE": {
+      "sample_size": 178,
+      "best_candidate_model": "MODEL_A",
+      "baseline_model_a": {
+        "accuracy": 0.4438202247191011,
+        "roc_auc": 0.49067850348763475,
+        "f1": 0.5959183673469388,
+        "precision": 0.4506172839506173,
+        "recall": 0.8795180722891566,
+        "brier_score": 0.2510911162582126,
+        "log_loss": 0.6953306989162268
+      },
+      "candidate_model": {
+        "accuracy": 0.4438202247191011,
+        "roc_auc": 0.49067850348763475,
+        "f1": 0.5959183673469388,
+        "precision": 0.4506172839506173,
+        "recall": 0.8795180722891566,
+        "brier_score": 0.2510911162582126,
+        "log_loss": 0.6953306989162268
+      },
+      "roc_auc_delta": 0.0,
+      "brier_delta": 0.0
+    },
+    "INFY": {
+      "sample_size": 178,
+      "best_candidate_model": "MODEL_D",
+      "baseline_model_a": {
+        "accuracy": 0.5674157303370787,
+        "roc_auc": 0.5153326403326403,
+        "f1": 0.42105263157894735,
+        "precision": 0.4745762711864407,
+        "recall": 0.3783783783783784,
+        "brier_score": 0.24922552440600307,
+        "log_loss": 0.6916028820205871
+      },
+      "candidate_model": {
+        "accuracy": 0.5617977528089888,
+        "roc_auc": 0.5283264033264033,
+        "f1": 0.390625,
+        "precision": 0.46296296296296297,
+        "recall": 0.33783783783783783,
+        "brier_score": 0.2479812612498669,
+        "log_loss": 0.689109067746353
+      },
+      "roc_auc_delta": 0.012993762993763092,
+      "brier_delta": -0.001244263156136155
+    },
+    "TCS": {
+      "sample_size": 178,
+      "best_candidate_model": "MODEL_A",
+      "baseline_model_a": {
+        "accuracy": 0.5730337078651685,
+        "roc_auc": 0.5152439024390244,
+        "f1": 0.4153846153846154,
+        "precision": 0.5625,
+        "recall": 0.32926829268292684,
+        "brier_score": 0.2486937122921383,
+        "log_loss": 0.6905626930884341
+      },
+      "candidate_model": {
+        "accuracy": 0.5730337078651685,
+        "roc_auc": 0.5152439024390244,
+        "f1": 0.4153846153846154,
+        "precision": 0.5625,
+        "recall": 0.32926829268292684,
+        "brier_score": 0.2486937122921383,
+        "log_loss": 0.6905626930884341
+      },
+      "roc_auc_delta": 0.0,
+      "brier_delta": 0.0
+    },
+    "AAPL": {
+      "sample_size": 67,
+      "best_candidate_model": "MODEL_C",
+      "baseline_model_a": {
+        "accuracy": 0.5522388059701493,
+        "roc_auc": 0.47837837837837843,
+        "f1": 0.7115384615384616,
+        "precision": 0.5522388059701493,
+        "recall": 1.0,
+        "brier_score": 0.2481446004329027,
+        "log_loss": 0.6894372013892159
+      },
+      "candidate_model": {
+        "accuracy": 0.5373134328358209,
+        "roc_auc": 0.5018018018018018,
+        "f1": 0.6990291262135923,
+        "precision": 0.5454545454545454,
+        "recall": 0.972972972972973,
+        "brier_score": 0.2480161412096809,
+        "log_loss": 0.6891773084385759
+      },
+      "roc_auc_delta": 0.02342342342342335,
+      "brier_delta": -0.0001284592232217996
+    },
+    "NVDA": {
+      "sample_size": 67,
+      "best_candidate_model": "MODEL_E",
+      "baseline_model_a": {
+        "accuracy": 0.5522388059701493,
+        "roc_auc": 0.5531531531531532,
+        "f1": 0.5588235294117647,
+        "precision": 0.5,
+        "recall": 0.6333333333333333,
+        "brier_score": 0.24958846886611835,
+        "log_loss": 0.6923222365222249
+      },
+      "candidate_model": {
+        "accuracy": 0.4925373134328358,
+        "roc_auc": 0.4405405405405405,
+        "f1": 0.34615384615384615,
+        "precision": 0.4090909090909091,
+        "recall": 0.3,
+        "brier_score": 0.25101008334040864,
+        "log_loss": 0.6951717050047985
+      },
+      "roc_auc_delta": -0.11261261261261268,
+      "brier_delta": 0.0014216144742902892
+    },
+    "BTC-USD": {
+      "sample_size": 102,
+      "best_candidate_model": "MODEL_B",
+      "baseline_model_a": {
+        "accuracy": 0.5098039215686274,
+        "roc_auc": 0.45964912280701753,
+        "f1": 0.40476190476190477,
+        "precision": 0.4358974358974359,
+        "recall": 0.37777777777777777,
+        "brier_score": 0.25209994568005273,
+        "log_loss": 0.6973783362342934
+      },
+      "candidate_model": {
+        "accuracy": 0.5490196078431373,
+        "roc_auc": 0.5321637426900585,
+        "f1": 0.5208333333333334,
+        "precision": 0.49019607843137253,
+        "recall": 0.5555555555555556,
+        "brier_score": 0.2501734899176415,
+        "log_loss": 0.6935030639982918
+      },
+      "roc_auc_delta": 0.07251461988304098,
+      "brier_delta": -0.0019264557624112388
+    }
+  }
+}

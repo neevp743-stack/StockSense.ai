@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-08-23T07:42:50.104596Z",
+  "phase": "Phase 15 \u2014 Candlestick + Price Action + Chart Structure Feature Research",
+  "verdict": "PHASE15_REJECTED",
+  "verdict_reason": "Phase 15 candlestick/price-action features did NOT demonstrate consistent out-of-sample improvement over Phase 12 baseline (Holdout ROC-AUC: 0.5015 vs 0.5021, Brier: 0.2495 vs 0.2498). Phase 12 Calibrated XGBoost v1.0 remains production prediction engine.",
+  "production_model": "Phase 12 Calibrated XGBoost v1.0",
+  "average_holdout_baseline_roc_auc": 0.5020726167663081,
+  "average_holdout_candidate_roc_auc": 0.5014591490475772,
+  "average_holdout_baseline_brier": 0.24980722798923796,
+  "average_holdout_candidate_brier": 0.2494943007113248
+}

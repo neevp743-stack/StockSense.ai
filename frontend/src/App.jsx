@@ -7,7 +7,9 @@ import { AdvancedStockChart } from './components/AdvancedStockChart';
 import { PredictionCard } from './components/PredictionCard';
 import { ExplanationCard } from './components/ExplanationCard';
 import { TradeSetupPanel } from './components/TradeSetupPanel';
+import { PatternAnalysisCard } from './components/PatternAnalysisCard';
 import { SystemStatusBanner } from './components/SystemStatusBanner';
+
 
 import { SplashScreen } from './components/SplashScreen';
 import { SearchModal } from './components/SearchModal';
@@ -241,8 +243,14 @@ export default function App() {
             <div style={{ marginTop: '24px' }}>
               <TradeSetupPanel symbol={selectedAsset} />
             </div>
+
+            {/* Phase 15 Research Pattern Analysis Card */}
+            <div style={{ marginTop: '24px' }}>
+              <PatternAnalysisCard symbol={selectedAsset} />
+            </div>
           </>
         )}
+
 
 
         {/* Lazy Loaded Market Universe & Research Tabs */}

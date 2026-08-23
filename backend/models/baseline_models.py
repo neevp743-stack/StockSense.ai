@@ -90,6 +90,19 @@ class ModelPipeline:
         else:
             raise ValueError(f"Unknown model_name: {self.model_name}")
 
+    def fit_custom(self, train_df: pd.DataFrame, feature_names: List[str]):
+        """Fits model on arbitrary feature subset."""
+        self.features_used = feature_names
+        X_tr = train_df[feature_names].values
+        y_tr = train_df["target"].values.astype(int)
+
+        if self.model_name == "LogisticRegression":
+            X_tr = self.scaler.fit_transform(X_tr)
+
+        self.model = self._init_raw_model()
+        self.model.fit(X_tr, y_tr)
+        self.is_trained = True
+
     def train(self, train_df: pd.DataFrame, val_df: pd.DataFrame) -> Dict[str, Any]:
         """Trains model on chronological train_df, evaluates on val_df."""
         X_train = train_df[FEATURE_COLUMNS].values
@@ -115,6 +128,7 @@ class ModelPipeline:
 
         return self.metrics
 
+
     def predict(self, df_features: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
         """Returns (predicted_labels, proba_up)."""
         if not self.is_trained or self.model is None:
@@ -129,16 +143,18 @@ class ModelPipeline:
         preds = (probs >= 0.5).astype(int)
         return preds, probs
 
-    def save_model(self, extra_meta: Optional[Dict[str, Any]] = None):
+    def save_model(self, extra_meta: Optional[Dict[str, Any]] = None, custom_dir: Optional[str] = None):
         import json
         from datetime import datetime
 
+        target_base = custom_dir if custom_dir else MODELS_DIR
         clean_symbol = self.symbol.upper().strip()
-        asset_dir = os.path.join(MODELS_DIR, clean_symbol)
+        asset_dir = os.path.join(target_base, clean_symbol)
         os.makedirs(asset_dir, exist_ok=True)
 
-        filepath_flat = os.path.join(MODELS_DIR, f"{clean_symbol}_{self.model_name}.joblib")
+        filepath_flat = os.path.join(target_base, f"{clean_symbol}_{self.model_name}.joblib")
         filepath_nested = os.path.join(asset_dir, f"{self.model_name}.joblib")
+
 
         data = {
             "model_name": self.model_name,

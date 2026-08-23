@@ -1,0 +1,189 @@
+{
+  "generated_at": "2026-08-23T07:42:50.104596Z",
+  "data": {
+    "RELIANCE": [
+      {
+        "pattern": "pattern_doji",
+        "occurrences": 129,
+        "next_period_up_rate_pct": 48.837209302325576,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_hammer",
+        "occurrences": 68,
+        "next_period_up_rate_pct": 38.23529411764706,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_inverted_hammer",
+        "occurrences": 83,
+        "next_period_up_rate_pct": 59.036144578313255,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_shooting_star",
+        "occurrences": 105,
+        "next_period_up_rate_pct": 57.14285714285714,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_hanging_man",
+        "occurrences": 85,
+        "next_period_up_rate_pct": 41.17647058823529,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bullish_engulfing",
+        "occurrences": 35,
+        "next_period_up_rate_pct": 40.0,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bearish_engulfing",
+        "occurrences": 63,
+        "next_period_up_rate_pct": 65.07936507936508,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bullish_harami",
+        "occurrences": 66,
+        "next_period_up_rate_pct": 54.54545454545454,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bearish_harami",
+        "occurrences": 35,
+        "next_period_up_rate_pct": 48.57142857142857,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_harami",
+        "occurrences": 101,
+        "next_period_up_rate_pct": 52.475247524752476,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_morning_star",
+        "occurrences": 49,
+        "next_period_up_rate_pct": 63.26530612244898,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_evening_star",
+        "occurrences": 38,
+        "next_period_up_rate_pct": 50.0,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_marubozu",
+        "occurrences": 73,
+        "next_period_up_rate_pct": 52.054794520547944,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_volume_confirmation",
+        "occurrences": 1,
+        "next_period_up_rate_pct": 0.0,
+        "status": "INSUFFICIENT_SAMPLE"
+      },
+      {
+        "pattern": "pattern_range_strength",
+        "occurrences": 6,
+        "next_period_up_rate_pct": 33.33333333333333,
+        "status": "INSUFFICIENT_SAMPLE"
+      }
+    ],
+    "AAPL": [
+      {
+        "pattern": "pattern_doji",
+        "occurrences": 56,
+        "next_period_up_rate_pct": 51.78571428571429,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_hammer",
+        "occurrences": 39,
+        "next_period_up_rate_pct": 66.66666666666666,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_inverted_hammer",
+        "occurrences": 31,
+        "next_period_up_rate_pct": 38.70967741935484,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_shooting_star",
+        "occurrences": 43,
+        "next_period_up_rate_pct": 46.51162790697674,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_hanging_man",
+        "occurrences": 44,
+        "next_period_up_rate_pct": 65.9090909090909,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bullish_engulfing",
+        "occurrences": 18,
+        "next_period_up_rate_pct": 50.0,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bearish_engulfing",
+        "occurrences": 20,
+        "next_period_up_rate_pct": 70.0,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bullish_harami",
+        "occurrences": 12,
+        "next_period_up_rate_pct": 58.333333333333336,
+        "status": "INSUFFICIENT_SAMPLE"
+      },
+      {
+        "pattern": "pattern_bearish_harami",
+        "occurrences": 14,
+        "next_period_up_rate_pct": 35.714285714285715,
+        "status": "INSUFFICIENT_SAMPLE"
+      },
+      {
+        "pattern": "pattern_harami",
+        "occurrences": 26,
+        "next_period_up_rate_pct": 46.15384615384615,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_morning_star",
+        "occurrences": 27,
+        "next_period_up_rate_pct": 62.96296296296296,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_evening_star",
+        "occurrences": 19,
+        "next_period_up_rate_pct": 42.10526315789473,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_marubozu",
+        "occurrences": 31,
+        "next_period_up_rate_pct": 61.29032258064516,
+        "status": "VALID_SAMPLE"
+      },
+      {
+        "pattern": "pattern_volume_confirmation",
+        "occurrences": 1,
+        "next_period_up_rate_pct": 0.0,
+        "status": "INSUFFICIENT_SAMPLE"
+      },
+      {
+        "pattern": "pattern_range_strength",
+        "occurrences": 1,
+        "next_period_up_rate_pct": 0.0,
+        "status": "INSUFFICIENT_SAMPLE"
+      }
+    ]
+  }
+}
