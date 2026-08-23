@@ -34,3 +34,5 @@ stocksense.db
 *.log
 scratch/
 .tempmediaStorage/
+*.parquet
+backend/research/phase17/data/

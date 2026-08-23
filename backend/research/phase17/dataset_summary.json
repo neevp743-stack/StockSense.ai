@@ -1,0 +1,606 @@
+{
+  "timestamp": "2026-08-23T17:23:20.820521",
+  "total_symbols": 109,
+  "total_rows": 118156,
+  "feature_count": 44,
+  "target_count": 1,
+  "feature_columns": [
+    "open",
+    "high",
+    "low",
+    "close",
+    "adjusted_close",
+    "volume",
+    "daily_return",
+    "return_1d",
+    "return_3d",
+    "return_5d",
+    "return_10d",
+    "sma_10",
+    "sma_20",
+    "sma_50",
+    "ema_10",
+    "ema_20",
+    "close_to_sma10",
+    "close_to_sma20",
+    "close_to_sma50",
+    "sma10_to_sma50",
+    "rsi",
+    "macd",
+    "macd_signal",
+    "macd_hist",
+    "roc_10",
+    "stoch_k",
+    "stoch_d",
+    "williams_r",
+    "rsi_change_3d",
+    "macd_hist_change_3d",
+    "bb_upper",
+    "bb_lower",
+    "bb_width",
+    "rolling_volatility",
+    "atr_14",
+    "volatility_change_5d",
+    "volume_change",
+    "volume_ratio_5d",
+    "obv_slope",
+    "volatility_regime",
+    "trend_regime",
+    "target_5d",
+    "target_10d",
+    "target_threshold"
+  ],
+  "training_rows": 82709,
+  "validation_rows": 17723,
+  "holdout_rows": 17724,
+  "rows_per_symbol": {
+    "ADA-USD": 1674,
+    "AVAX-USD": 1684,
+    "BNB-USD": 1603,
+    "BTC-USD": 1576,
+    "DOGE-USD": 1652,
+    "ETH-USD": 1666,
+    "SOL-USD": 1692,
+    "XRP-USD": 1628,
+    "ADANIENT": 1058,
+    "ADANIPORTS": 1057,
+    "AMBUJACEM": 1039,
+    "APOLLOHOSP": 1014,
+    "ASIANPAINT": 1034,
+    "AXISBANK": 1011,
+    "BAJAJ-AUTO": 1034,
+    "BAJFINANCE": 1063,
+    "BANKBARODA": 1080,
+    "BEL": 1059,
+    "BHARTIARTL": 1006,
+    "BPCL": 1060,
+    "BRITANNIA": 967,
+    "CANBK": 1077,
+    "CIPLA": 992,
+    "COALINDIA": 1024,
+    "DIVISLAB": 1026,
+    "DLF": 1078,
+    "DRREDDY": 1003,
+    "EICHERMOT": 1034,
+    "GODREJCP": 1029,
+    "GRASIM": 1006,
+    "HAL": 1064,
+    "HAVELLS": 1019,
+    "HCLTECH": 1025,
+    "HDFCBANK": 974,
+    "HEROMOTOCO": 1055,
+    "HINDALCO": 1056,
+    "ICICIBANK": 977,
+    "INDUSINDBK": 1040,
+    "INFY": 1058,
+    "ITC": 982,
+    "JIOFIN": 626,
+    "JSWSTEEL": 1026,
+    "KOTAKBANK": 1006,
+    "LT": 1025,
+    "MARUTI": 1007,
+    "NESTLEIND": 968,
+    "NTPC": 1006,
+    "ONGC": 1044,
+    "PIDILITIND": 1014,
+    "PNB": 1060,
+    "POWERGRID": 990,
+    "RELIANCE": 1023,
+    "SBIN": 1029,
+    "SIEMENS": 1073,
+    "SUNPHARMA": 998,
+    "TATASTEEL": 1066,
+    "TCS": 1017,
+    "TITAN": 1041,
+    "TRENT": 1068,
+    "ULTRACEMCO": 1014,
+    "VBL": 1059,
+    "WIPRO": 1044,
+    "AAPL": 1066,
+    "ABBV": 1018,
+    "ACN": 1071,
+    "ADBE": 1077,
+    "AMAT": 1106,
+    "AMD": 1130,
+    "AMZN": 1073,
+    "AVGO": 1096,
+    "BAC": 1069,
+    "BRK-B": 999,
+    "CAT": 1073,
+    "COST": 1033,
+    "CRM": 1096,
+    "CSCO": 1030,
+    "CVX": 1027,
+    "DHR": 1070,
+    "DIS": 1062,
+    "GE": 1081,
+    "GOOGL": 1077,
+    "HD": 1050,
+    "INTC": 1108,
+    "INTU": 1092,
+    "ISRG": 1074,
+    "JNJ": 1002,
+    "JPM": 1062,
+    "KO": 974,
+    "LIN": 992,
+    "MA": 1031,
+    "MCD": 996,
+    "META": 1082,
+    "MRK": 1030,
+    "MSFT": 1061,
+    "NFLX": 1103,
+    "NOW": 1094,
+    "NVDA": 1119,
+    "PEP": 974,
+    "PFE": 1065,
+    "PG": 992,
+    "PM": 1058,
+    "QCOM": 1101,
+    "TSLA": 1135,
+    "TXN": 1058,
+    "UBER": 1110,
+    "UNH": 1048,
+    "V": 1024,
+    "WMT": 1036,
+    "XOM": 1051
+  },
+  "date_range_per_symbol": {
+    "ADA-USD": {
+      "start": "2021-10-12",
+      "end": "2026-08-13"
+    },
+    "AVAX-USD": {
+      "start": "2021-10-11",
+      "end": "2026-08-13"
+    },
+    "BNB-USD": {
+      "start": "2021-10-11",
+      "end": "2026-08-13"
+    },
+    "BTC-USD": {
+      "start": "2021-10-11",
+      "end": "2026-08-13"
+    },
+    "DOGE-USD": {
+      "start": "2021-10-11",
+      "end": "2026-08-12"
+    },
+    "ETH-USD": {
+      "start": "2021-10-11",
+      "end": "2026-08-13"
+    },
+    "SOL-USD": {
+      "start": "2021-10-11",
+      "end": "2026-08-13"
+    },
+    "XRP-USD": {
+      "start": "2021-10-12",
+      "end": "2026-08-13"
+    },
+    "ADANIENT": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "ADANIPORTS": {
+      "start": "2021-11-02",
+      "end": "2026-08-06"
+    },
+    "AMBUJACEM": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "APOLLOHOSP": {
+      "start": "2021-11-02",
+      "end": "2026-08-06"
+    },
+    "ASIANPAINT": {
+      "start": "2021-11-03",
+      "end": "2026-08-07"
+    },
+    "AXISBANK": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "BAJAJ-AUTO": {
+      "start": "2021-11-02",
+      "end": "2026-08-05"
+    },
+    "BAJFINANCE": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "BANKBARODA": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "BEL": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "BHARTIARTL": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "BPCL": {
+      "start": "2021-11-02",
+      "end": "2026-08-06"
+    },
+    "BRITANNIA": {
+      "start": "2021-11-04",
+      "end": "2026-08-07"
+    },
+    "CANBK": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "CIPLA": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "COALINDIA": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "DIVISLAB": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "DLF": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "DRREDDY": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "EICHERMOT": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "GODREJCP": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "GRASIM": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "HAL": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "HAVELLS": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "HCLTECH": {
+      "start": "2021-11-03",
+      "end": "2026-08-06"
+    },
+    "HDFCBANK": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "HEROMOTOCO": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "HINDALCO": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "ICICIBANK": {
+      "start": "2021-11-02",
+      "end": "2026-08-06"
+    },
+    "INDUSINDBK": {
+      "start": "2021-11-02",
+      "end": "2026-08-06"
+    },
+    "INFY": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "ITC": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "JIOFIN": {
+      "start": "2023-11-01",
+      "end": "2026-08-07"
+    },
+    "JSWSTEEL": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "KOTAKBANK": {
+      "start": "2021-11-03",
+      "end": "2026-08-05"
+    },
+    "LT": {
+      "start": "2021-11-02",
+      "end": "2026-08-05"
+    },
+    "MARUTI": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "NESTLEIND": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "NTPC": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "ONGC": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "PIDILITIND": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "PNB": {
+      "start": "2021-11-03",
+      "end": "2026-08-07"
+    },
+    "POWERGRID": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "RELIANCE": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "SBIN": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "SIEMENS": {
+      "start": "2021-11-02",
+      "end": "2026-08-06"
+    },
+    "SUNPHARMA": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "TATASTEEL": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "TCS": {
+      "start": "2021-11-08",
+      "end": "2026-08-07"
+    },
+    "TITAN": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "TRENT": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "ULTRACEMCO": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "VBL": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "WIPRO": {
+      "start": "2021-11-03",
+      "end": "2026-08-07"
+    },
+    "AAPL": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "ABBV": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "ACN": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "ADBE": {
+      "start": "2021-11-01",
+      "end": "2026-08-06"
+    },
+    "AMAT": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "AMD": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "AMZN": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "AVGO": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "BAC": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "BRK-B": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "CAT": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "COST": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "CRM": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "CSCO": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "CVX": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "DHR": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "DIS": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "GE": {
+      "start": "2021-11-01",
+      "end": "2026-08-06"
+    },
+    "GOOGL": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "HD": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "INTC": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "INTU": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "ISRG": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "JNJ": {
+      "start": "2021-11-02",
+      "end": "2026-08-06"
+    },
+    "JPM": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "KO": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    },
+    "LIN": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "MA": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "MCD": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "META": {
+      "start": "2021-11-01",
+      "end": "2026-08-06"
+    },
+    "MRK": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "MSFT": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "NFLX": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "NOW": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "NVDA": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "PEP": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "PFE": {
+      "start": "2021-11-01",
+      "end": "2026-08-06"
+    },
+    "PG": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "PM": {
+      "start": "2021-11-01",
+      "end": "2026-08-05"
+    },
+    "QCOM": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "TSLA": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "TXN": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "UBER": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "UNH": {
+      "start": "2021-11-01",
+      "end": "2026-08-07"
+    },
+    "V": {
+      "start": "2021-11-01",
+      "end": "2026-08-06"
+    },
+    "WMT": {
+      "start": "2021-11-03",
+      "end": "2026-08-07"
+    },
+    "XOM": {
+      "start": "2021-11-02",
+      "end": "2026-08-07"
+    }
+  },
+  "symbols_with_insufficient_observations": []
+}

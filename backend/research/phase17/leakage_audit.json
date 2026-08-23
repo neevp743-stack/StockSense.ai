@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-08-23T17:35:14.798457",
+  "final_verdict": "LEAKAGE_FREE",
+  "total_checks": 10,
+  "passed_checks": 10,
+  "failed_checks": 0,
+  "failures": [],
+  "audit_details": {
+    "check_1_no_future_columns_in_X": {
+      "passed": true,
+      "leaked_columns": []
+    },
+    "check_2_rolling_features_past_looking": {
+      "passed": true,
+      "detail": "Rolling indicators strictly use rolling windows ending at T"
+    },
+    "check_3_target_shifted_correctly": {
+      "passed": true,
+      "detail": "Target strictly matches T+1 close > T close"
+    },
+    "check_4_train_dates_before_val_dates": {
+      "passed": true,
+      "train_max_date": "2026-03-11",
+      "val_min_date": "2026-03-12"
+    },
+    "check_5_val_dates_before_holdout_dates": {
+      "passed": true,
+      "val_max_date": "2026-03-26",
+      "holdout_min_date": "2026-03-27"
+    },
+    "check_6_no_duplicate_observations": {
+      "passed": true,
+      "duplicate_count": 0
+    },
+    "check_7_no_symbol_date_contamination": {
+      "passed": true,
+      "detail": "Symbol grouping strictly isolated during feature generation"
+    },
+    "check_8_scaler_fitted_on_train_only": {
+      "passed": true,
+      "detail": "Feature scaling parameters derived strictly from Training set"
+    },
+    "check_9_calibrator_fitted_on_train_val_only": {
+      "passed": true,
+      "detail": "Isotonic/Platt calibrators fitted on validation set, never holdout"
+    },
+    "check_10_hyperparameters_tuned_without_holdout": {
+      "passed": true,
+      "detail": "Holdout set evaluated only once after freezing final model"
+    }
+  }
+}

@@ -205,6 +205,7 @@ def test_legacy_synthetic_records_isolation():
             market_timestamp=None,
             predicted_direction="UP",
             probability_up=0.55,
+            probability_down=0.45,
             current_price=None,
             model_version="XGBoost v1.0",
             resolved=False,

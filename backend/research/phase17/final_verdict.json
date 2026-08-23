@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-08-23T17:27:27.239952",
+  "final_verdict": "PHASE17_READY_FOR_REVIEW",
+  "reason": "Model demonstrated out-of-sample holdout accuracy of 65.62%, ROC-AUC 0.6709, and Brier Score 0.2249.",
+  "holdout_accuracy": 0.6561724215752652,
+  "holdout_roc_auc": 0.6708567526149144,
+  "holdout_brier_score": 0.22487517633953952,
+  "phase12_production_model_status": "UNTOUCHED_AND_ACTIVE"
+}
