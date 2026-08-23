@@ -1,0 +1,90 @@
+{
+  "sampled_symbols": [
+    "RELIANCE",
+    "TCS",
+    "INFY",
+    "AAPL",
+    "NVDA",
+    "BTC-USD"
+  ],
+  "results": {
+    "RELIANCE": {
+      "symbol": "RELIANCE",
+      "status": "LIVE",
+      "latest_price": 1309.8,
+      "latest_candle_timestamp": "2026-08-21",
+      "latest_tick_timestamp": null,
+      "data_age_seconds": null,
+      "missing_candles": 0,
+      "duplicate_candles": 0,
+      "abnormal_price_move": false,
+      "volume_available": true,
+      "provider": "FINNHUB"
+    },
+    "TCS": {
+      "symbol": "TCS",
+      "status": "LIVE",
+      "latest_price": 2272.4,
+      "latest_candle_timestamp": "2026-08-21",
+      "latest_tick_timestamp": null,
+      "data_age_seconds": null,
+      "missing_candles": 0,
+      "duplicate_candles": 0,
+      "abnormal_price_move": false,
+      "volume_available": true,
+      "provider": "FINNHUB"
+    },
+    "INFY": {
+      "symbol": "INFY",
+      "status": "LIVE",
+      "latest_price": 1122.1,
+      "latest_candle_timestamp": "2026-08-21",
+      "latest_tick_timestamp": null,
+      "data_age_seconds": null,
+      "missing_candles": 0,
+      "duplicate_candles": 0,
+      "abnormal_price_move": false,
+      "volume_available": true,
+      "provider": "FINNHUB"
+    },
+    "AAPL": {
+      "symbol": "AAPL",
+      "status": "LIVE",
+      "latest_price": 316.83,
+      "latest_candle_timestamp": "2026-08-19",
+      "latest_tick_timestamp": null,
+      "data_age_seconds": null,
+      "missing_candles": 0,
+      "duplicate_candles": 0,
+      "abnormal_price_move": false,
+      "volume_available": true,
+      "provider": "FINNHUB"
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "status": "LIVE",
+      "latest_price": 217.56,
+      "latest_candle_timestamp": "2026-08-19",
+      "latest_tick_timestamp": null,
+      "data_age_seconds": null,
+      "missing_candles": 0,
+      "duplicate_candles": 0,
+      "abnormal_price_move": false,
+      "volume_available": true,
+      "provider": "FINNHUB"
+    },
+    "BTC-USD": {
+      "symbol": "BTC-USD",
+      "status": "LIVE",
+      "latest_price": 69519.81,
+      "latest_candle_timestamp": "2026-08-20",
+      "latest_tick_timestamp": null,
+      "data_age_seconds": null,
+      "missing_candles": 0,
+      "duplicate_candles": 0,
+      "abnormal_price_move": false,
+      "volume_available": true,
+      "provider": "FINNHUB"
+    }
+  }
+}

@@ -251,3 +251,53 @@ def infer_asset_metadata(symbol: str) -> Dict[str, Any]:
         "trading_calendar": "US_EQUITY",
         "timezone": "America/New_York"
     }
+
+
+def get_all_universe_symbol_mappings() -> Dict[str, Dict[str, Any]]:
+    """
+    Returns provider symbol mapping for the complete 109+ configured universe.
+    Maps internal_symbol -> provider_symbol, finnhub_ws_symbol, region, exchange, asset_type, timezone.
+    """
+    from backend.data.universe import ALL_SYMBOLS, INDIA_SYMBOLS, US_SYMBOLS, CRYPTO_SYMBOLS
+
+    mapping = {}
+    for sym in ALL_SYMBOLS:
+        sym_clean = sym.upper().strip()
+        meta = infer_asset_metadata(sym_clean)
+
+        if sym_clean in INDIA_SYMBOLS:
+            region = "INDIA"
+            exchange = "NSE"
+            asset_type = "INDIAN_EQUITY"
+            finnhub_ws = f"{sym_clean}.NS"
+            prov_sym = f"{sym_clean}.NS"
+            tz = "Asia/Kolkata"
+        elif sym_clean in CRYPTO_SYMBOLS or "-USD" in sym_clean:
+            region = "GLOBAL"
+            exchange = "CRYPTO"
+            asset_type = "CRYPTO"
+            base_crypto = sym_clean.replace("-USD", "").replace("USD", "")
+            finnhub_ws = f"BINANCE:{base_crypto}USDT"
+            prov_sym = sym_clean
+            tz = "UTC"
+        else:
+            region = "USA"
+            exchange = "NASDAQ"
+            asset_type = "US_EQUITY"
+            finnhub_ws = sym_clean
+            prov_sym = sym_clean
+            tz = "America/New_York"
+
+        mapping[sym_clean] = {
+            "internal_symbol": sym_clean,
+            "provider_symbol": prov_sym,
+            "finnhub_ws_symbol": finnhub_ws,
+            "region": region,
+            "exchange": exchange,
+            "asset_type": asset_type,
+            "timezone": tz,
+            "display_name": meta.get("display_name", sym_clean)
+        }
+
+    return mapping
+

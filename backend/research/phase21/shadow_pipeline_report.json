@@ -1,0 +1,14 @@
+{
+  "symbol": "RELIANCE",
+  "status": "SUCCESS",
+  "live_price": 1316.0,
+  "predicted_direction": "UP",
+  "probability_up": 0.5251,
+  "probability_down": 0.4749,
+  "model_version": "XGBoost v1.0",
+  "prediction_timestamp": "2026-08-23T16:51:13.026522",
+  "feature_timestamp": "2026-08-21",
+  "data_status": "DELAYED",
+  "provider": "yfinance",
+  "risk_category": "HIGH"
+}

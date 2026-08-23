@@ -1,0 +1,5 @@
+{
+  "total_db_shadow_records": 20,
+  "resolved_shadow_records": 14,
+  "resolution_method": "Strict T+1 Calendar Settlement"
+}

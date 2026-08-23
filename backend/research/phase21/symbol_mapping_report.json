@@ -1,0 +1,1145 @@
+{
+  "total_configured_symbols": 114,
+  "mapped_universe": {
+    "AAPL": {
+      "internal_symbol": "AAPL",
+      "provider_symbol": "AAPL",
+      "finnhub_ws_symbol": "AAPL",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Apple Inc."
+    },
+    "ABBV": {
+      "internal_symbol": "ABBV",
+      "provider_symbol": "ABBV",
+      "finnhub_ws_symbol": "ABBV",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "AbbVie Inc."
+    },
+    "ACN": {
+      "internal_symbol": "ACN",
+      "provider_symbol": "ACN",
+      "finnhub_ws_symbol": "ACN",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "ACN Inc."
+    },
+    "ADA-USD": {
+      "internal_symbol": "ADA-USD",
+      "provider_symbol": "ADA-USD",
+      "finnhub_ws_symbol": "BINANCE:ADAUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "Cardano / US Dollar"
+    },
+    "ADANIENT": {
+      "internal_symbol": "ADANIENT",
+      "provider_symbol": "ADANIENT.NS",
+      "finnhub_ws_symbol": "ADANIENT.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Adani Enterprises Ltd"
+    },
+    "ADANIPORTS": {
+      "internal_symbol": "ADANIPORTS",
+      "provider_symbol": "ADANIPORTS.NS",
+      "finnhub_ws_symbol": "ADANIPORTS.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Adani Ports and Special Economic Zone Ltd"
+    },
+    "ADBE": {
+      "internal_symbol": "ADBE",
+      "provider_symbol": "ADBE",
+      "finnhub_ws_symbol": "ADBE",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "ADBE Inc."
+    },
+    "AMAT": {
+      "internal_symbol": "AMAT",
+      "provider_symbol": "AMAT",
+      "finnhub_ws_symbol": "AMAT",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "AMAT Inc."
+    },
+    "AMBUJACEM": {
+      "internal_symbol": "AMBUJACEM",
+      "provider_symbol": "AMBUJACEM.NS",
+      "finnhub_ws_symbol": "AMBUJACEM.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "AMBUJACEM Inc."
+    },
+    "AMD": {
+      "internal_symbol": "AMD",
+      "provider_symbol": "AMD",
+      "finnhub_ws_symbol": "AMD",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Advanced Micro Devices, Inc."
+    },
+    "AMZN": {
+      "internal_symbol": "AMZN",
+      "provider_symbol": "AMZN",
+      "finnhub_ws_symbol": "AMZN",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Amazon.com Inc."
+    },
+    "APOLLOHOSP": {
+      "internal_symbol": "APOLLOHOSP",
+      "provider_symbol": "APOLLOHOSP.NS",
+      "finnhub_ws_symbol": "APOLLOHOSP.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Apollo Hospitals Enterprise Ltd"
+    },
+    "ASIANPAINT": {
+      "internal_symbol": "ASIANPAINT",
+      "provider_symbol": "ASIANPAINT.NS",
+      "finnhub_ws_symbol": "ASIANPAINT.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Asian Paints Ltd"
+    },
+    "AVAX-USD": {
+      "internal_symbol": "AVAX-USD",
+      "provider_symbol": "AVAX-USD",
+      "finnhub_ws_symbol": "BINANCE:AVAXUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "Avalanche / US Dollar"
+    },
+    "AVGO": {
+      "internal_symbol": "AVGO",
+      "provider_symbol": "AVGO",
+      "finnhub_ws_symbol": "AVGO",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Broadcom Inc."
+    },
+    "AXISBANK": {
+      "internal_symbol": "AXISBANK",
+      "provider_symbol": "AXISBANK.NS",
+      "finnhub_ws_symbol": "AXISBANK.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Axis Bank Ltd"
+    },
+    "BAC": {
+      "internal_symbol": "BAC",
+      "provider_symbol": "BAC",
+      "finnhub_ws_symbol": "BAC",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Bank of America Corp"
+    },
+    "BAJAJ-AUTO": {
+      "internal_symbol": "BAJAJ-AUTO",
+      "provider_symbol": "BAJAJ-AUTO.NS",
+      "finnhub_ws_symbol": "BAJAJ-AUTO.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Bajaj Auto Ltd"
+    },
+    "BAJFINANCE": {
+      "internal_symbol": "BAJFINANCE",
+      "provider_symbol": "BAJFINANCE.NS",
+      "finnhub_ws_symbol": "BAJFINANCE.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Bajaj Finance Ltd"
+    },
+    "BANKBARODA": {
+      "internal_symbol": "BANKBARODA",
+      "provider_symbol": "BANKBARODA.NS",
+      "finnhub_ws_symbol": "BANKBARODA.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "BANKBARODA Inc."
+    },
+    "BEL": {
+      "internal_symbol": "BEL",
+      "provider_symbol": "BEL.NS",
+      "finnhub_ws_symbol": "BEL.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Bharat Electronics Ltd"
+    },
+    "BHARTIARTL": {
+      "internal_symbol": "BHARTIARTL",
+      "provider_symbol": "BHARTIARTL.NS",
+      "finnhub_ws_symbol": "BHARTIARTL.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Bharti Airtel Ltd"
+    },
+    "BNB-USD": {
+      "internal_symbol": "BNB-USD",
+      "provider_symbol": "BNB-USD",
+      "finnhub_ws_symbol": "BINANCE:BNBUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "BNB / US Dollar"
+    },
+    "BPCL": {
+      "internal_symbol": "BPCL",
+      "provider_symbol": "BPCL.NS",
+      "finnhub_ws_symbol": "BPCL.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Bharat Petroleum Corporation Ltd"
+    },
+    "BRITANNIA": {
+      "internal_symbol": "BRITANNIA",
+      "provider_symbol": "BRITANNIA.NS",
+      "finnhub_ws_symbol": "BRITANNIA.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Britannia Industries Ltd"
+    },
+    "BRK-B": {
+      "internal_symbol": "BRK-B",
+      "provider_symbol": "BRK-B",
+      "finnhub_ws_symbol": "BRK-B",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Berkshire Hathaway Inc."
+    },
+    "BTC-USD": {
+      "internal_symbol": "BTC-USD",
+      "provider_symbol": "BTC-USD",
+      "finnhub_ws_symbol": "BINANCE:BTCUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "Bitcoin / US Dollar"
+    },
+    "CANBK": {
+      "internal_symbol": "CANBK",
+      "provider_symbol": "CANBK.NS",
+      "finnhub_ws_symbol": "CANBK.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "CANBK Inc."
+    },
+    "CAT": {
+      "internal_symbol": "CAT",
+      "provider_symbol": "CAT",
+      "finnhub_ws_symbol": "CAT",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "CAT Inc."
+    },
+    "CIPLA": {
+      "internal_symbol": "CIPLA",
+      "provider_symbol": "CIPLA.NS",
+      "finnhub_ws_symbol": "CIPLA.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Cipla Ltd"
+    },
+    "COALINDIA": {
+      "internal_symbol": "COALINDIA",
+      "provider_symbol": "COALINDIA.NS",
+      "finnhub_ws_symbol": "COALINDIA.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Coal India Ltd"
+    },
+    "COST": {
+      "internal_symbol": "COST",
+      "provider_symbol": "COST",
+      "finnhub_ws_symbol": "COST",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Costco Wholesale Corporation"
+    },
+    "CRM": {
+      "internal_symbol": "CRM",
+      "provider_symbol": "CRM",
+      "finnhub_ws_symbol": "CRM",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Salesforce, Inc."
+    },
+    "CSCO": {
+      "internal_symbol": "CSCO",
+      "provider_symbol": "CSCO",
+      "finnhub_ws_symbol": "CSCO",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "CSCO Inc."
+    },
+    "CVX": {
+      "internal_symbol": "CVX",
+      "provider_symbol": "CVX",
+      "finnhub_ws_symbol": "CVX",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Chevron Corporation"
+    },
+    "DHR": {
+      "internal_symbol": "DHR",
+      "provider_symbol": "DHR",
+      "finnhub_ws_symbol": "DHR",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "DHR Inc."
+    },
+    "DIS": {
+      "internal_symbol": "DIS",
+      "provider_symbol": "DIS",
+      "finnhub_ws_symbol": "DIS",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "DIS Inc."
+    },
+    "DIVISLAB": {
+      "internal_symbol": "DIVISLAB",
+      "provider_symbol": "DIVISLAB.NS",
+      "finnhub_ws_symbol": "DIVISLAB.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Divi's Laboratories Ltd"
+    },
+    "DLF": {
+      "internal_symbol": "DLF",
+      "provider_symbol": "DLF.NS",
+      "finnhub_ws_symbol": "DLF.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "DLF Ltd"
+    },
+    "DOGE-USD": {
+      "internal_symbol": "DOGE-USD",
+      "provider_symbol": "DOGE-USD",
+      "finnhub_ws_symbol": "BINANCE:DOGEUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "Dogecoin / US Dollar"
+    },
+    "DRREDDY": {
+      "internal_symbol": "DRREDDY",
+      "provider_symbol": "DRREDDY.NS",
+      "finnhub_ws_symbol": "DRREDDY.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Dr. Reddy's Laboratories Ltd"
+    },
+    "EICHERMOT": {
+      "internal_symbol": "EICHERMOT",
+      "provider_symbol": "EICHERMOT.NS",
+      "finnhub_ws_symbol": "EICHERMOT.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Eicher Motors Ltd"
+    },
+    "ELY": {
+      "internal_symbol": "ELY",
+      "provider_symbol": "ELY",
+      "finnhub_ws_symbol": "ELY",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "ELY Inc."
+    },
+    "ETH-USD": {
+      "internal_symbol": "ETH-USD",
+      "provider_symbol": "ETH-USD",
+      "finnhub_ws_symbol": "BINANCE:ETHUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "Ethereum / US Dollar"
+    },
+    "GE": {
+      "internal_symbol": "GE",
+      "provider_symbol": "GE",
+      "finnhub_ws_symbol": "GE",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "GE Inc."
+    },
+    "GODREJCP": {
+      "internal_symbol": "GODREJCP",
+      "provider_symbol": "GODREJCP.NS",
+      "finnhub_ws_symbol": "GODREJCP.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "GODREJCP Inc."
+    },
+    "GOOGL": {
+      "internal_symbol": "GOOGL",
+      "provider_symbol": "GOOGL",
+      "finnhub_ws_symbol": "GOOGL",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Alphabet Inc. (Class A)"
+    },
+    "GRASIM": {
+      "internal_symbol": "GRASIM",
+      "provider_symbol": "GRASIM.NS",
+      "finnhub_ws_symbol": "GRASIM.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Grasim Industries Ltd"
+    },
+    "HAL": {
+      "internal_symbol": "HAL",
+      "provider_symbol": "HAL.NS",
+      "finnhub_ws_symbol": "HAL.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Hindustan Aeronautics Ltd"
+    },
+    "HAVELLS": {
+      "internal_symbol": "HAVELLS",
+      "provider_symbol": "HAVELLS.NS",
+      "finnhub_ws_symbol": "HAVELLS.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "HAVELLS Inc."
+    },
+    "HCLTECH": {
+      "internal_symbol": "HCLTECH",
+      "provider_symbol": "HCLTECH.NS",
+      "finnhub_ws_symbol": "HCLTECH.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "HCL Technologies Ltd"
+    },
+    "HD": {
+      "internal_symbol": "HD",
+      "provider_symbol": "HD",
+      "finnhub_ws_symbol": "HD",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "The Home Depot, Inc."
+    },
+    "HDFCBANK": {
+      "internal_symbol": "HDFCBANK",
+      "provider_symbol": "HDFCBANK.NS",
+      "finnhub_ws_symbol": "HDFCBANK.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "HDFC Bank Limited"
+    },
+    "HEROMOTOCO": {
+      "internal_symbol": "HEROMOTOCO",
+      "provider_symbol": "HEROMOTOCO.NS",
+      "finnhub_ws_symbol": "HEROMOTOCO.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Hero MotoCorp Ltd"
+    },
+    "HINDALCO": {
+      "internal_symbol": "HINDALCO",
+      "provider_symbol": "HINDALCO.NS",
+      "finnhub_ws_symbol": "HINDALCO.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Hindalco Industries Ltd"
+    },
+    "ICICIBANK": {
+      "internal_symbol": "ICICIBANK",
+      "provider_symbol": "ICICIBANK.NS",
+      "finnhub_ws_symbol": "ICICIBANK.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "ICICI Bank Limited"
+    },
+    "INDUSINDBK": {
+      "internal_symbol": "INDUSINDBK",
+      "provider_symbol": "INDUSINDBK.NS",
+      "finnhub_ws_symbol": "INDUSINDBK.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "IndusInd Bank Ltd"
+    },
+    "INFY": {
+      "internal_symbol": "INFY",
+      "provider_symbol": "INFY.NS",
+      "finnhub_ws_symbol": "INFY.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Infosys Limited"
+    },
+    "INTC": {
+      "internal_symbol": "INTC",
+      "provider_symbol": "INTC",
+      "finnhub_ws_symbol": "INTC",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "INTC Inc."
+    },
+    "INTU": {
+      "internal_symbol": "INTU",
+      "provider_symbol": "INTU",
+      "finnhub_ws_symbol": "INTU",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "INTU Inc."
+    },
+    "ISRG": {
+      "internal_symbol": "ISRG",
+      "provider_symbol": "ISRG",
+      "finnhub_ws_symbol": "ISRG",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "ISRG Inc."
+    },
+    "ITC": {
+      "internal_symbol": "ITC",
+      "provider_symbol": "ITC.NS",
+      "finnhub_ws_symbol": "ITC.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "ITC Limited"
+    },
+    "JIOFIN": {
+      "internal_symbol": "JIOFIN",
+      "provider_symbol": "JIOFIN.NS",
+      "finnhub_ws_symbol": "JIOFIN.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Jio Financial Services Ltd"
+    },
+    "JNJ": {
+      "internal_symbol": "JNJ",
+      "provider_symbol": "JNJ",
+      "finnhub_ws_symbol": "JNJ",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Johnson & Johnson"
+    },
+    "JPM": {
+      "internal_symbol": "JPM",
+      "provider_symbol": "JPM",
+      "finnhub_ws_symbol": "JPM",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "JPMorgan Chase & Co."
+    },
+    "JSWSTEEL": {
+      "internal_symbol": "JSWSTEEL",
+      "provider_symbol": "JSWSTEEL.NS",
+      "finnhub_ws_symbol": "JSWSTEEL.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "JSW Steel Ltd"
+    },
+    "KO": {
+      "internal_symbol": "KO",
+      "provider_symbol": "KO",
+      "finnhub_ws_symbol": "KO",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "The Coca-Cola Company"
+    },
+    "KOTAKBANK": {
+      "internal_symbol": "KOTAKBANK",
+      "provider_symbol": "KOTAKBANK.NS",
+      "finnhub_ws_symbol": "KOTAKBANK.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Kotak Mahindra Bank Ltd"
+    },
+    "LIN": {
+      "internal_symbol": "LIN",
+      "provider_symbol": "LIN",
+      "finnhub_ws_symbol": "LIN",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "LIN Inc."
+    },
+    "LT": {
+      "internal_symbol": "LT",
+      "provider_symbol": "LT.NS",
+      "finnhub_ws_symbol": "LT.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Larsen & Toubro Ltd"
+    },
+    "LTIM": {
+      "internal_symbol": "LTIM",
+      "provider_symbol": "LTIM.NS",
+      "finnhub_ws_symbol": "LTIM.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "LTIMindtree Ltd"
+    },
+    "MA": {
+      "internal_symbol": "MA",
+      "provider_symbol": "MA",
+      "finnhub_ws_symbol": "MA",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Mastercard Incorporated"
+    },
+    "MARUTI": {
+      "internal_symbol": "MARUTI",
+      "provider_symbol": "MARUTI.NS",
+      "finnhub_ws_symbol": "MARUTI.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Maruti Suzuki India Ltd"
+    },
+    "MCD": {
+      "internal_symbol": "MCD",
+      "provider_symbol": "MCD",
+      "finnhub_ws_symbol": "MCD",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "MCD Inc."
+    },
+    "META": {
+      "internal_symbol": "META",
+      "provider_symbol": "META",
+      "finnhub_ws_symbol": "META",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Meta Platforms, Inc."
+    },
+    "MRK": {
+      "internal_symbol": "MRK",
+      "provider_symbol": "MRK",
+      "finnhub_ws_symbol": "MRK",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "MRK Inc."
+    },
+    "MSFT": {
+      "internal_symbol": "MSFT",
+      "provider_symbol": "MSFT",
+      "finnhub_ws_symbol": "MSFT",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Microsoft Corporation"
+    },
+    "NESTLEIND": {
+      "internal_symbol": "NESTLEIND",
+      "provider_symbol": "NESTLEIND.NS",
+      "finnhub_ws_symbol": "NESTLEIND.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Nestle India Ltd"
+    },
+    "NFLX": {
+      "internal_symbol": "NFLX",
+      "provider_symbol": "NFLX",
+      "finnhub_ws_symbol": "NFLX",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Netflix, Inc."
+    },
+    "NOW": {
+      "internal_symbol": "NOW",
+      "provider_symbol": "NOW",
+      "finnhub_ws_symbol": "NOW",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "NOW Inc."
+    },
+    "NTPC": {
+      "internal_symbol": "NTPC",
+      "provider_symbol": "NTPC.NS",
+      "finnhub_ws_symbol": "NTPC.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "NTPC Ltd"
+    },
+    "NVDA": {
+      "internal_symbol": "NVDA",
+      "provider_symbol": "NVDA",
+      "finnhub_ws_symbol": "NVDA",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "NVIDIA Corporation"
+    },
+    "ONGC": {
+      "internal_symbol": "ONGC",
+      "provider_symbol": "ONGC.NS",
+      "finnhub_ws_symbol": "ONGC.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Oil & Natural Gas Corporation Ltd"
+    },
+    "PEP": {
+      "internal_symbol": "PEP",
+      "provider_symbol": "PEP",
+      "finnhub_ws_symbol": "PEP",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "PepsiCo, Inc."
+    },
+    "PFE": {
+      "internal_symbol": "PFE",
+      "provider_symbol": "PFE",
+      "finnhub_ws_symbol": "PFE",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "PFE Inc."
+    },
+    "PG": {
+      "internal_symbol": "PG",
+      "provider_symbol": "PG",
+      "finnhub_ws_symbol": "PG",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "The Procter & Gamble Company"
+    },
+    "PIDILITIND": {
+      "internal_symbol": "PIDILITIND",
+      "provider_symbol": "PIDILITIND.NS",
+      "finnhub_ws_symbol": "PIDILITIND.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "PIDILITIND Inc."
+    },
+    "PM": {
+      "internal_symbol": "PM",
+      "provider_symbol": "PM",
+      "finnhub_ws_symbol": "PM",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "PM Inc."
+    },
+    "PNB": {
+      "internal_symbol": "PNB",
+      "provider_symbol": "PNB.NS",
+      "finnhub_ws_symbol": "PNB.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "PNB Inc."
+    },
+    "POWERGRID": {
+      "internal_symbol": "POWERGRID",
+      "provider_symbol": "POWERGRID.NS",
+      "finnhub_ws_symbol": "POWERGRID.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Power Grid Corporation of India Ltd"
+    },
+    "QCOM": {
+      "internal_symbol": "QCOM",
+      "provider_symbol": "QCOM",
+      "finnhub_ws_symbol": "QCOM",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "QCOM Inc."
+    },
+    "RELIANCE": {
+      "internal_symbol": "RELIANCE",
+      "provider_symbol": "RELIANCE.NS",
+      "finnhub_ws_symbol": "RELIANCE.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Reliance Industries Ltd"
+    },
+    "SBIN": {
+      "internal_symbol": "SBIN",
+      "provider_symbol": "SBIN.NS",
+      "finnhub_ws_symbol": "SBIN.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "State Bank of India"
+    },
+    "SIEMENS": {
+      "internal_symbol": "SIEMENS",
+      "provider_symbol": "SIEMENS.NS",
+      "finnhub_ws_symbol": "SIEMENS.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "SIEMENS Inc."
+    },
+    "SOL-USD": {
+      "internal_symbol": "SOL-USD",
+      "provider_symbol": "SOL-USD",
+      "finnhub_ws_symbol": "BINANCE:SOLUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "Solana / US Dollar"
+    },
+    "SUNPHARMA": {
+      "internal_symbol": "SUNPHARMA",
+      "provider_symbol": "SUNPHARMA.NS",
+      "finnhub_ws_symbol": "SUNPHARMA.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Sun Pharmaceutical Industries Ltd"
+    },
+    "TATAMOTORS": {
+      "internal_symbol": "TATAMOTORS",
+      "provider_symbol": "TATAMOTORS.NS",
+      "finnhub_ws_symbol": "TATAMOTORS.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Tata Motors Ltd"
+    },
+    "TATASTEEL": {
+      "internal_symbol": "TATASTEEL",
+      "provider_symbol": "TATASTEEL.NS",
+      "finnhub_ws_symbol": "TATASTEEL.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Tata Steel Ltd"
+    },
+    "TCM": {
+      "internal_symbol": "TCM",
+      "provider_symbol": "TCM",
+      "finnhub_ws_symbol": "TCM",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "TCM Inc."
+    },
+    "TCS": {
+      "internal_symbol": "TCS",
+      "provider_symbol": "TCS.NS",
+      "finnhub_ws_symbol": "TCS.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Tata Consultancy Services Ltd"
+    },
+    "TITAN": {
+      "internal_symbol": "TITAN",
+      "provider_symbol": "TITAN.NS",
+      "finnhub_ws_symbol": "TITAN.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Titan Company Ltd"
+    },
+    "TRENT": {
+      "internal_symbol": "TRENT",
+      "provider_symbol": "TRENT.NS",
+      "finnhub_ws_symbol": "TRENT.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Trent Ltd"
+    },
+    "TSLA": {
+      "internal_symbol": "TSLA",
+      "provider_symbol": "TSLA",
+      "finnhub_ws_symbol": "TSLA",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Tesla, Inc."
+    },
+    "TXN": {
+      "internal_symbol": "TXN",
+      "provider_symbol": "TXN",
+      "finnhub_ws_symbol": "TXN",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "TXN Inc."
+    },
+    "UBER": {
+      "internal_symbol": "UBER",
+      "provider_symbol": "UBER",
+      "finnhub_ws_symbol": "UBER",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "UBER Inc."
+    },
+    "ULTRACEMCO": {
+      "internal_symbol": "ULTRACEMCO",
+      "provider_symbol": "ULTRACEMCO.NS",
+      "finnhub_ws_symbol": "ULTRACEMCO.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "UltraTech Cement Ltd"
+    },
+    "UNH": {
+      "internal_symbol": "UNH",
+      "provider_symbol": "UNH",
+      "finnhub_ws_symbol": "UNH",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "UnitedHealth Group Inc."
+    },
+    "V": {
+      "internal_symbol": "V",
+      "provider_symbol": "V",
+      "finnhub_ws_symbol": "V",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Visa Inc."
+    },
+    "VBL": {
+      "internal_symbol": "VBL",
+      "provider_symbol": "VBL.NS",
+      "finnhub_ws_symbol": "VBL.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Varun Beverages Ltd"
+    },
+    "WIPRO": {
+      "internal_symbol": "WIPRO",
+      "provider_symbol": "WIPRO.NS",
+      "finnhub_ws_symbol": "WIPRO.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Wipro Ltd"
+    },
+    "WMT": {
+      "internal_symbol": "WMT",
+      "provider_symbol": "WMT",
+      "finnhub_ws_symbol": "WMT",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Walmart Inc."
+    },
+    "XOM": {
+      "internal_symbol": "XOM",
+      "provider_symbol": "XOM",
+      "finnhub_ws_symbol": "XOM",
+      "region": "USA",
+      "exchange": "NASDAQ",
+      "asset_type": "US_EQUITY",
+      "timezone": "America/New_York",
+      "display_name": "Exxon Mobil Corporation"
+    },
+    "XRP-USD": {
+      "internal_symbol": "XRP-USD",
+      "provider_symbol": "XRP-USD",
+      "finnhub_ws_symbol": "BINANCE:XRPUSDT",
+      "region": "GLOBAL",
+      "exchange": "CRYPTO",
+      "asset_type": "CRYPTO",
+      "timezone": "UTC",
+      "display_name": "XRP / US Dollar"
+    },
+    "ZOMATO": {
+      "internal_symbol": "ZOMATO",
+      "provider_symbol": "ZOMATO.NS",
+      "finnhub_ws_symbol": "ZOMATO.NS",
+      "region": "INDIA",
+      "exchange": "NSE",
+      "asset_type": "INDIAN_EQUITY",
+      "timezone": "Asia/Kolkata",
+      "display_name": "Zomato Ltd"
+    }
+  }
+}

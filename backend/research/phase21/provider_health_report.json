@@ -1,0 +1,16 @@
+{
+  "provider": "FINNHUB",
+  "status": "PROVIDER_DISCONNECTED",
+  "configured": true,
+  "websocket_connected": false,
+  "rest_available": false,
+  "provider_last_success_timestamp": null,
+  "provider_last_error_timestamp": null,
+  "provider_last_error_reason": null,
+  "last_tick_timestamp": null,
+  "subscribed_symbol_count": 114,
+  "valid_tick_count": 0,
+  "invalid_tick_count": 0,
+  "stale_threshold_seconds": 30,
+  "active_listeners": 0
+}

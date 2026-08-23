@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown, Radio } from 'lucide-react';
+import { api } from '../api';
 
 const INITIAL_INDICES = [
   { symbol: 'NIFTY 50', price: '24,820.40', change: '+0.42%', isPos: true },
@@ -11,6 +12,24 @@ const INITIAL_INDICES = [
 
 export function TopMarketBar({ onSelectTicker }) {
   const [indices, setIndices] = useState(INITIAL_INDICES);
+  const [providerStatus, setProviderStatus] = useState("UNAVAILABLE");
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const res = await api.getPhase19AStatus();
+        if (res?.data?.data_status) {
+          setProviderStatus(res.data.data_status.toUpperCase());
+        }
+      } catch (err) {
+        setProviderStatus("UNAVAILABLE");
+      }
+    };
+
+    fetchStatus();
+    const intervalId = setInterval(fetchStatus, 15000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   // Subtle real-time jitter simulation for non-WS indices to keep bar feeling alive
   useEffect(() => {
@@ -34,6 +53,20 @@ export function TopMarketBar({ onSelectTicker }) {
     return () => clearInterval(interval);
   }, []);
 
+  let statusColor = "var(--down-red)";
+  let statusText = "UNAVAILABLE ● NO FEED";
+
+  if (providerStatus === "LIVE") {
+    statusColor = "var(--up-green)";
+    statusText = "REALTIME ● LIVE";
+  } else if (providerStatus === "DELAYED") {
+    statusColor = "#f59e0b";
+    statusText = "DELAYED ● FEED";
+  } else if (providerStatus === "STALE") {
+    statusColor = "#f59e0b";
+    statusText = "STALE ● FEED";
+  }
+
   return (
     <div 
       style={{ 
@@ -51,7 +84,7 @@ export function TopMarketBar({ onSelectTicker }) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', flexShrink: 0 }}>
-        <Radio size={12} color="var(--up-green)" className="spin" />
+        <Radio size={12} color={statusColor} className={providerStatus === "LIVE" ? "spin" : ""} />
         <span style={{ fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>MARKET TICKER</span>
       </div>
 
@@ -90,8 +123,8 @@ export function TopMarketBar({ onSelectTicker }) {
         ))}
       </div>
 
-      <div style={{ color: 'var(--text-muted)', fontSize: '0.74rem', flexShrink: 0 }} className="mono-font">
-        REALTIME ● FEED ACTIVE
+      <div style={{ color: statusColor, fontSize: '0.74rem', flexShrink: 0 }} className="mono-font">
+        {statusText}
       </div>
     </div>
   );

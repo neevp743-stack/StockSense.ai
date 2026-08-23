@@ -31,91 +31,79 @@ class Phase19AService:
         - Symbol status breakdown across ALL_SYMBOLS
         - Today's shadow pipeline observation counts
         """
-        ws_conn = realtime_provider_manager.connection_status.upper()
-        # WebSocket statuses: CONNECTED (or LIVE), DISCONNECTED (or UNAVAILABLE), CONNECTING (or RECONNECTING)
-        if ws_conn in ["LIVE", "CONNECTED"]:
+        # Fetch real provider health payload
+        health = realtime_provider_manager.get_provider_health()
+        prov_status = health["status"]
+
+        if prov_status == "PROVIDER_CONNECTED":
             ws_status = "CONNECTED"
             rest_fallback = "STANDBY"
-        elif ws_conn in ["RECONNECTING", "CONNECTING"]:
+        elif prov_status == "PROVIDER_REST_ONLY":
+            ws_status = "DISCONNECTED"
+            rest_fallback = "ACTIVE"
+        elif prov_status == "PROVIDER_DEGRADED":
             ws_status = "CONNECTING"
             rest_fallback = "ACTIVE"
         else:
             ws_status = "DISCONNECTED"
-            rest_fallback = "ACTIVE"
+            rest_fallback = "ACTIVE" if health["rest_available"] else "UNAVAILABLE"
 
-        # Finnhub API Key configuration check
-        api_key_configured = realtime_provider_manager.is_configured()
-        if not api_key_configured and rest_fallback == "ACTIVE":
-            # If no API key set, REST fallback also operates in fallback mode
-            pass
-
-        # Inspect ticks for latest valid tick age & symbol breakdown
-        latest_tick_age: Optional[float] = None
+        # Inspect symbol data quality across sample active symbols
+        latest_tick_age: Optional[float] = health.get("last_tick_timestamp")
         data_status_counts = {"LIVE": 0, "DELAYED": 0, "STALE": 0, "UNAVAILABLE": 0}
 
-        sample_symbols = ["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK", "AAPL", "NVDA", "BTC-USD"]
-        for sym in sample_symbols:
+        for sym in ALL_SYMBOLS:
             dq = data_quality_service.inspect_symbol_data_quality(sym)
             st = dq.get("status", "UNAVAILABLE")
             data_status_counts[st] = data_status_counts.get(st, 0) + 1
 
-            tick_age = dq.get("last_tick_age_seconds")
-            if tick_age is not None:
-                if latest_tick_age is None or tick_age < latest_tick_age:
-                    latest_tick_age = tick_age
-
-        # Scale total count representation to match ALL_SYMBOLS universe
-        remaining = len(ALL_SYMBOLS) - len(sample_symbols)
-        if remaining > 0:
-            data_status_counts["UNAVAILABLE"] += remaining
-
-        # Determine overall data status
-        if data_status_counts["LIVE"] > 0:
+        # Determine overall data status strictly based on real provider connectivity & ticks
+        if health["websocket_connected"] and data_status_counts["LIVE"] > 0:
             overall_data_status = "LIVE"
-        elif data_status_counts["DELAYED"] > 0:
+        elif health["rest_available"] or data_status_counts["DELAYED"] > 0:
             overall_data_status = "DELAYED"
         elif data_status_counts["STALE"] > 0:
             overall_data_status = "STALE"
         else:
             overall_data_status = "UNAVAILABLE"
 
-        # Query today's Phase 18 shadow pipeline observations
+        # Query Phase 18 shadow pipeline observations from DB (filtering out synthetic records)
         today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         observations_today = 0
         paired_today = 0
         failed_today = 0
-        last_success_ts: Optional[str] = None
+        last_success_ts: Optional[str] = health.get("provider_last_success_timestamp")
 
         try:
             with get_db_context() as db:
                 recs_today = db.query(Phase18ShadowPredictionRecord).filter(
-                    Phase18ShadowPredictionRecord.prediction_timestamp >= today_start
+                    Phase18ShadowPredictionRecord.prediction_timestamp >= today_start,
+                    ~Phase18ShadowPredictionRecord.symbol.startswith("TEST_"),
+                    ~Phase18ShadowPredictionRecord.symbol.startswith("MOCK_")
                 ).all()
 
                 observations_today = len(recs_today)
                 failed_today = sum(1 for r in recs_today if r.error_reason is not None)
 
-                # Find last successful observation timestamp
                 resolved_recs = [r for r in recs_today if r.resolved and r.correct is not None]
                 if resolved_recs:
                     sorted_recs = sorted(resolved_recs, key=lambda x: x.prediction_timestamp, reverse=True)
                     last_success_ts = sorted_recs[0].prediction_timestamp.isoformat()
 
-                # Count paired resolved today
                 champ_keys = set(
                     (r.symbol, r.market_timestamp, r.feature_timestamp)
-                    for r in recs_today if r.model_role == "CHAMPION" and r.resolved
+                    for r in recs_today if r.model_role == "CHAMPION"
                 )
                 chall_keys = set(
                     (r.symbol, r.market_timestamp, r.feature_timestamp)
-                    for r in recs_today if r.model_role == "CHALLENGER" and r.resolved
+                    for r in recs_today if r.model_role == "CHALLENGER"
                 )
                 paired_today = len(champ_keys.intersection(chall_keys))
         except Exception as e:
             logger.error(f"Error querying Phase 18 shadow stats for Phase 19A: {e}")
 
         # Determine pipeline status
-        if failed_today > 0 and observations_today > 0 and failed_today == observations_today:
+        if prov_status == "PROVIDER_DISCONNECTED" or prov_status == "PROVIDER_INVALID_CONFIGURATION":
             pipeline_status = "UNAVAILABLE"
         elif failed_today > 0 or overall_data_status in ["DELAYED", "STALE"]:
             pipeline_status = "DEGRADED"
@@ -125,10 +113,11 @@ class Phase19AService:
         return {
             "mode": "RESEARCH",
             "phase": "PHASE19A",
-            "provider": "FINNHUB",
+            "provider": health["provider"],
+            "provider_status": prov_status,
             "websocket_status": ws_status,
             "rest_fallback_status": rest_fallback,
-            "latest_valid_tick_age_seconds": latest_tick_age,
+            "latest_valid_tick_age_seconds": health.get("last_tick_timestamp"),
             "data_status": overall_data_status,
             "symbol_counts": {
                 "total_symbols": len(ALL_SYMBOLS),

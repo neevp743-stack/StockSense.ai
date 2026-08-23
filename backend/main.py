@@ -1401,3 +1401,12 @@ def get_phase20_symbol_endpoint(symbol: str):
     return phase20_service.get_symbol(symbol)
 
 
+@app.get("/api/research/phase19/provider-health")
+@app.get("/api/research/phase21/provider-health")
+def get_provider_health_endpoint():
+    """GET /api/research/phase19/provider-health - Detailed provider connectivity & tick health payload."""
+    from backend.data.realtime_provider import realtime_provider_manager
+    return realtime_provider_manager.get_provider_health()
+
+
+
