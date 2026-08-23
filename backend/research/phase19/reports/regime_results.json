@@ -1,0 +1,202 @@
+{
+  "BULL": {
+    "regime": "BULL",
+    "sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "status": "INSUFFICIENT_FORWARD_DATA"
+    }
+  },
+  "BEAR": {
+    "regime": "BEAR",
+    "sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "status": "INSUFFICIENT_FORWARD_DATA"
+    }
+  },
+  "SIDEWAYS": {
+    "regime": "SIDEWAYS",
+    "sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "status": "INSUFFICIENT_FORWARD_DATA"
+    }
+  },
+  "HIGH_VOLATILITY": {
+    "regime": "HIGH_VOLATILITY",
+    "sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "status": "INSUFFICIENT_FORWARD_DATA"
+    }
+  },
+  "LOW_VOLATILITY": {
+    "regime": "LOW_VOLATILITY",
+    "sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "status": "INSUFFICIENT_FORWARD_DATA"
+    }
+  }
+}

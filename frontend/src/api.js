@@ -88,7 +88,17 @@ export const api = {
   getPhase18Status: (options = {}) => axios.get(`${API_BASE_URL}/research/phase18/status`, options),
   getPhase18Comparison: (symbol = '', options = {}) => axios.get(`${API_BASE_URL}/research/phase18/comparison`, { params: symbol ? { symbol } : {}, ...options }),
   getPhase18Trades: (options = {}) => axios.get(`${API_BASE_URL}/research/phase18/trades`, options),
-  getPhase18Statistics: (options = {}) => axios.get(`${API_BASE_URL}/research/phase18/statistics`, options)
+  getPhase18Statistics: (options = {}) => axios.get(`${API_BASE_URL}/research/phase18/statistics`, options),
+  getPhase19Status: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/status`, options),
+  getPhase19Summary: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/summary`, options),
+  getPhase19Rolling: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/rolling`, options),
+  getPhase19Symbols: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/symbols`, options),
+  getPhase19Regimes: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/regimes`, options),
+  getPhase19Calibration: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/calibration`, options),
+  getPhase19Trades: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/trades`, options),
+  getPhase19Statistics: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/statistics`, options),
+  getPhase19PromotionReadiness: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/promotion-readiness`, options),
+  getPhase19DataQuality: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/data-quality`, options)
 };
 
 

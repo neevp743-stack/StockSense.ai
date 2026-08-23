@@ -1,0 +1,87 @@
+{
+  "total_records": 0,
+  "champion_confidence_bands": {
+    "0.50-0.55": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.55-0.60": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.60-0.70": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.70-0.80": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.80+": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    }
+  },
+  "challenger_confidence_bands": {
+    "0.50-0.55": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.55-0.60": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.60-0.70": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.70-0.80": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    },
+    "0.80+": {
+      "sample_count": 0,
+      "actual_success_rate": null,
+      "avg_probability": null,
+      "calibration_gap": null,
+      "brier_score": null,
+      "accuracy": null
+    }
+  }
+}

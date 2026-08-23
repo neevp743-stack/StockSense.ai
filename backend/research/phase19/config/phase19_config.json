@@ -1,0 +1,30 @@
+{
+  "phase": "PHASE19",
+  "mode": "SHADOW",
+  "champion": {
+    "role": "CHAMPION",
+    "name": "Phase 12 XGBoost v1.0",
+    "version": "XGBoost v1.0 Calibrated",
+    "status": "PRODUCTION"
+  },
+  "challenger": {
+    "role": "CHALLENGER",
+    "name": "Phase 17 Large XGBoost",
+    "version": "Phase17 Large XGBoost",
+    "status": "SHADOW"
+  },
+  "rolling_windows": [20, 50, 100, 250],
+  "sample_thresholds": {
+    "min_metrics_sample": 10,
+    "min_promotion_review_sample": 100,
+    "preferred_promotion_sample": 250
+  },
+  "alpha": 0.05,
+  "confidence_bins": [
+    {"label": "0.50-0.55", "min": 0.50, "max": 0.55},
+    {"label": "0.55-0.60", "min": 0.55, "max": 0.60},
+    {"label": "0.60-0.70", "min": 0.60, "max": 0.70},
+    {"label": "0.70-0.80", "min": 0.70, "max": 0.80},
+    {"label": "0.80+", "min": 0.80, "max": 1.01}
+  ]
+}

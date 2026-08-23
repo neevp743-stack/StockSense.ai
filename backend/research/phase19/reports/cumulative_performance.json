@@ -1,0 +1,8 @@
+{
+  "total_observations": 0,
+  "time_series": [],
+  "cumulative_summary": {
+    "champion_accuracy": null,
+    "challenger_accuracy": null
+  }
+}

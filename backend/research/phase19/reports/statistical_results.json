@@ -1,0 +1,22 @@
+{
+  "sample_size": 0,
+  "status": "INSUFFICIENT_FORWARD_DATA",
+  "alpha": 0.05,
+  "contingency_table": {
+    "both_correct": 0,
+    "champion_only_correct": 0,
+    "challenger_only_correct": 0,
+    "both_incorrect": 0
+  },
+  "mcnemar": {
+    "statistic": null,
+    "p_value": null
+  },
+  "bootstrap_ci": {
+    "mean_diff": null,
+    "ci_lower": null,
+    "ci_upper": null
+  },
+  "effect_size_accuracy": null,
+  "statistically_significant": false
+}

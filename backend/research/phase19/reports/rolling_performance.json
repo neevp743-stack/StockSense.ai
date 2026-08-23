@@ -1,0 +1,162 @@
+{
+  "window_20": {
+    "window_size": 20,
+    "actual_sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "challenger_superior_accuracy": false
+    }
+  },
+  "window_50": {
+    "window_size": 50,
+    "actual_sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "challenger_superior_accuracy": false
+    }
+  },
+  "window_100": {
+    "window_size": 100,
+    "actual_sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "challenger_superior_accuracy": false
+    }
+  },
+  "window_250": {
+    "window_size": 250,
+    "actual_sample_size": 0,
+    "champion": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "challenger": {
+      "sample_size": 0,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "f1_score": null,
+      "roc_auc": null,
+      "brier_score": null,
+      "log_loss": null,
+      "ece": null,
+      "avg_probability": null,
+      "correct_count": 0,
+      "incorrect_count": 0,
+      "reason": "insufficient_forward_validation_data"
+    },
+    "comparison": {
+      "accuracy_delta": null,
+      "brier_delta": null,
+      "roc_auc_delta": null,
+      "challenger_superior_accuracy": false
+    }
+  }
+}

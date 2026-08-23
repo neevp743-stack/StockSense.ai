@@ -1279,12 +1279,67 @@ def get_phase18_symbol_comparison_endpoint(symbol: str):
     return forward_validation_service.get_comparison(symbol=symbol)
 
 
+# =====================================================================
+# PHASE 19 API ENDPOINTS — FORWARD DECISION SUPPORT & MONITORING
+# =====================================================================
+from backend.services.phase19_service import phase19_service
 
 
+@app.get("/api/research/phase19/status")
+def get_phase19_status_endpoint():
+    """GET /api/research/phase19/status - Decision status & final verdict."""
+    return phase19_service.get_status()
 
 
+@app.get("/api/research/phase19/summary")
+def get_phase19_summary_endpoint():
+    """GET /api/research/phase19/summary - Cumulative time-series performance summary."""
+    return phase19_service.get_summary()
 
 
+@app.get("/api/research/phase19/rolling")
+def get_phase19_rolling_endpoint():
+    """GET /api/research/phase19/rolling - Rolling window performance (N=20, 50, 100, 250)."""
+    return phase19_service.get_rolling()
 
 
+@app.get("/api/research/phase19/symbols")
+def get_phase19_symbols_endpoint():
+    """GET /api/research/phase19/symbols - Per-symbol Champion vs Challenger metrics across ALL_SYMBOLS."""
+    return phase19_service.get_symbols()
 
+
+@app.get("/api/research/phase19/regimes")
+def get_phase19_regimes_endpoint():
+    """GET /api/research/phase19/regimes - Market regime performance breakdowns."""
+    return phase19_service.get_regimes()
+
+
+@app.get("/api/research/phase19/calibration")
+def get_phase19_calibration_endpoint():
+    """GET /api/research/phase19/calibration - Reliability curve, ECE, & confidence band breakdowns."""
+    return phase19_service.get_calibration()
+
+
+@app.get("/api/research/phase19/trades")
+def get_phase19_trades_endpoint():
+    """GET /api/research/phase19/trades - Phase 14 trade setup comparison."""
+    return phase19_service.get_trades()
+
+
+@app.get("/api/research/phase19/statistics")
+def get_phase19_statistics_endpoint():
+    """GET /api/research/phase19/statistics - McNemar test, 95% bootstrap CIs, effect size."""
+    return phase19_service.get_statistics()
+
+
+@app.get("/api/research/phase19/promotion-readiness")
+def get_phase19_promotion_readiness_endpoint():
+    """GET /api/research/phase19/promotion-readiness - 12-point promotion readiness scorecard."""
+    return phase19_service.get_promotion_readiness()
+
+
+@app.get("/api/research/phase19/data-quality")
+def get_phase19_data_quality_endpoint():
+    """GET /api/research/phase19/data-quality - 17-point data eligibility audit report."""
+    return phase19_service.get_data_quality()

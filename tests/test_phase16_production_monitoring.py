@@ -28,6 +28,10 @@ client = TestClient(app)
 def reset_provider_state():
     from backend.data.realtime_provider import realtime_provider_manager
     realtime_provider_manager.connection_status = "CONNECTED"
+    try:
+        realtime_provider_manager.tick_cache.clear()
+    except Exception:
+        pass
     from backend.db.database import SessionLocal
     db = SessionLocal()
     try:

@@ -1,0 +1,70 @@
+{
+  "mode": "RESEARCH",
+  "production_model": "XGBoost v1.0 Calibrated",
+  "challenger_model": "Phase 17 Large XGBoost",
+  "promotion_policy": "NOT_AUTOMATIC",
+  "sample_size": 0,
+  "min_required_sample": 100,
+  "scorecard": {
+    "forward_sample_size_ge_100": {
+      "name": "Forward Sample Size (N >= 100)",
+      "status": "INSUFFICIENT",
+      "details": "N = 0 (Threshold = 100)"
+    },
+    "overall_accuracy_superior": {
+      "name": "Overall Forward Accuracy Superior",
+      "status": "INSUFFICIENT",
+      "details": "Insufficient sample"
+    },
+    "roc_auc_superior": {
+      "name": "Overall ROC-AUC Superior",
+      "status": "INSUFFICIENT",
+      "details": "Insufficient sample"
+    },
+    "brier_score_superior": {
+      "name": "Brier Calibration Loss Superior (Lower)",
+      "status": "INSUFFICIENT",
+      "details": "Insufficient sample"
+    },
+    "calibration_ece_superior": {
+      "name": "Expected Calibration Error (ECE) Superior",
+      "status": "INSUFFICIENT",
+      "details": "Insufficient sample"
+    },
+    "statistical_significance": {
+      "name": "McNemar Statistical Significance (p < 0.05)",
+      "status": "INSUFFICIENT",
+      "details": "Insufficient sample"
+    },
+    "asset_group_consistency": {
+      "name": "Asset Group Consistency (India, USA, Crypto)",
+      "status": "INSUFFICIENT",
+      "details": "INDIA: null, USA: null, CRYPTO: null"
+    },
+    "regime_consistency": {
+      "name": "Market Regime Consistency (BULL, BEAR, SIDEWAYS)",
+      "status": "INSUFFICIENT",
+      "details": "BULL: null, BEAR: null, SIDEWAYS: null"
+    },
+    "rolling_window_consistency": {
+      "name": "Rolling Window Consistency",
+      "status": "FAILED"
+    },
+    "phase14_trade_profitability": {
+      "name": "Phase 14 Trade Setup Profit Factor",
+      "status": "INSUFFICIENT",
+      "details": "Insufficient trades"
+    },
+    "recent_performance_stability": {
+      "name": "Recent Performance Stability",
+      "status": "PASSED"
+    },
+    "data_quality_audit": {
+      "name": "17-Point Data Eligibility Audit",
+      "status": "PASSED",
+      "details": "Eligible = 133, Synthetic Excluded = 8"
+    }
+  },
+  "final_verdict": "PHASE19_INSUFFICIENT_FORWARD_DATA",
+  "verdict_explanation": "Insufficient genuine forward observations (N = 0 < 100). Phase 12 remains production."
+}

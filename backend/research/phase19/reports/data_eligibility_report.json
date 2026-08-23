@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-08-23T16:02:41.142077+00:00",
+  "total_records": 631,
+  "eligible_records": 133,
+  "excluded_records": 498,
+  "synthetic_records_excluded": 8,
+  "duplicate_records_excluded": 0,
+  "invalid_records_excluded": 498,
+  "exclusion_reasons": {
+    "PREDICTION_TIMESTAMPS_NOT_BEFORE_OUTCOME": 498,
+    "NON_LIVE_DATA_STATUS": 4,
+    "INVALID_UNIVERSE_SYMBOL": 4,
+    "SYNTHETIC_FIXTURE_SYMBOL": 4
+  },
+  "audit_status": "PASSED"
+}

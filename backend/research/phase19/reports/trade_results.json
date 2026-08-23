@@ -1,0 +1,33 @@
+{
+  "sample_size": 0,
+  "status": "INSUFFICIENT_FORWARD_DATA",
+  "champion": {
+    "signal_distribution": {
+      "BUY": 0,
+      "SELL": 0,
+      "HOLD": 0
+    },
+    "trade_performance": {
+      "total_trades": 0,
+      "win_rate": null,
+      "avg_net_return": null,
+      "cumulative_net_return": null,
+      "profit_factor": null
+    }
+  },
+  "challenger": {
+    "signal_distribution": {
+      "BUY": 0,
+      "SELL": 0,
+      "HOLD": 0
+    },
+    "trade_performance": {
+      "total_trades": 0,
+      "win_rate": null,
+      "avg_net_return": null,
+      "cumulative_net_return": null,
+      "profit_factor": null
+    }
+  },
+  "comparison": {}
+}

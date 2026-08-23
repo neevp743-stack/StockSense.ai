@@ -1,0 +1,179 @@
+{
+  "sample_size": 0,
+  "champion": {
+    "brier_score": null,
+    "ece": null,
+    "reliability_bins": [
+      {
+        "bin_index": 0,
+        "bin_range": "0.0-0.1",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.05,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 1,
+        "bin_range": "0.1-0.2",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.15,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 2,
+        "bin_range": "0.2-0.3",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.25,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 3,
+        "bin_range": "0.3-0.4",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.35,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 4,
+        "bin_range": "0.4-0.5",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.45,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 5,
+        "bin_range": "0.5-0.6",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.55,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 6,
+        "bin_range": "0.6-0.7",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.65,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 7,
+        "bin_range": "0.7-0.8",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.75,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 8,
+        "bin_range": "0.8-0.9",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.85,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 9,
+        "bin_range": "0.9-1.0",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.95,
+        "calibration_gap": null
+      }
+    ]
+  },
+  "challenger": {
+    "brier_score": null,
+    "ece": null,
+    "reliability_bins": [
+      {
+        "bin_index": 0,
+        "bin_range": "0.0-0.1",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.05,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 1,
+        "bin_range": "0.1-0.2",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.15,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 2,
+        "bin_range": "0.2-0.3",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.25,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 3,
+        "bin_range": "0.3-0.4",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.35,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 4,
+        "bin_range": "0.4-0.5",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.45,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 5,
+        "bin_range": "0.5-0.6",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.55,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 6,
+        "bin_range": "0.6-0.7",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.65,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 7,
+        "bin_range": "0.7-0.8",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.75,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 8,
+        "bin_range": "0.8-0.9",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.85,
+        "calibration_gap": null
+      },
+      {
+        "bin_index": 9,
+        "bin_range": "0.9-1.0",
+        "sample_count": 0,
+        "actual_frequency": null,
+        "mean_predicted_probability": 0.95,
+        "calibration_gap": null
+      }
+    ]
+  },
+  "comparison": {
+    "brier_delta": null,
+    "ece_delta": null
+  }
+}
