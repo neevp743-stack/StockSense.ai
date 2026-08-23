@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "sample_size": 49,
+    "status": "EVALUATED",
+    "champion": {
+      "signal_distribution": {
+        "BUY": 11,
+        "SELL": 4,
+        "HOLD": 34
+      },
+      "trade_performance": {
+        "total_trades": 15,
+        "win_rate": 0.3333333333333333,
+        "avg_net_return": -0.003322136993194449,
+        "cumulative_net_return": -0.049832054897916735,
+        "profit_factor": 0.4967081540756671
+      }
+    },
+    "challenger": {
+      "signal_distribution": {
+        "BUY": 0,
+        "SELL": 49,
+        "HOLD": 0
+      },
+      "trade_performance": {
+        "total_trades": 49,
+        "win_rate": 0.42857142857142855,
+        "avg_net_return": -0.2189783633538814,
+        "cumulative_net_return": -10.729939804340189,
+        "profit_factor": 0.020827174678017337
+      }
+    },
+    "comparison": {
+      "win_rate_delta": 0.09523809523809523,
+      "avg_return_delta": -0.21565622636068696,
+      "profit_factor_delta": -0.4758809793976498
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "sample_size": 49,
+    "accuracy": 0.42857142857142855,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1_score": 0.0,
+    "roc_auc": 0.49829931972789115,
+    "brier_score": 0.3031226405401414,
+    "log_loss": 0.8051531545575039,
+    "ece": 0.24420633395107433,
+    "avg_probability": 0.3272222374774972
+  }
+}

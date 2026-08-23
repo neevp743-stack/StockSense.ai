@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "champion": {
+      "0.50-0.55": {
+        "count": 28,
+        "actual_accuracy": 0.6428571428571429,
+        "avg_probability": 0.5240570731844609,
+        "calibration_gap": 0.11880006967268197
+      },
+      "0.55-0.60": {
+        "count": 11,
+        "actual_accuracy": 0.36363636363636365,
+        "avg_probability": 0.5750183667446812,
+        "calibration_gap": -0.21138200310831756
+      }
+    },
+    "challenger": {}
+  }
+}

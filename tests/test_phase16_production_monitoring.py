@@ -26,6 +26,7 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def reset_provider_state():
+    from backend.data.realtime_provider import realtime_provider_manager
     realtime_provider_manager.connection_status = "CONNECTED"
     from backend.db.database import SessionLocal
     db = SessionLocal()

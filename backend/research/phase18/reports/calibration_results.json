@@ -1,0 +1,11 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "champion_ece": 0.049923449921544315,
+    "challenger_ece": 0.24420633395107433
+  }
+}

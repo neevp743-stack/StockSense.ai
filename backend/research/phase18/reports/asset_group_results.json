@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "INDIA": {
+      "sample_size": 21,
+      "champion": {
+        "sample_size": 21,
+        "accuracy": 0.5238095238095238,
+        "precision": 0.6153846153846154,
+        "recall": 0.6153846153846154,
+        "f1_score": 0.6153846153846154,
+        "roc_auc": 0.4038461538461539,
+        "brier_score": 0.2594475136121567,
+        "log_loss": 0.7122332857774187,
+        "ece": 0.11198959070597604,
+        "avg_probability": 0.5070580283416432
+      },
+      "challenger": {
+        "sample_size": 21,
+        "accuracy": 0.38095238095238093,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "roc_auc": 0.4230769230769231,
+        "brier_score": 0.32123856487760993,
+        "log_loss": 0.8432367767654542,
+        "ece": 0.2889966453824725,
+        "avg_probability": 0.3300509736651466
+      },
+      "accuracy_delta": -0.1428571428571429,
+      "auc_delta": 0.019230769230769162,
+      "brier_delta": 0.061791051265453256
+    },
+    "USA": {
+      "sample_size": 20,
+      "champion": {
+        "sample_size": 20,
+        "accuracy": 0.45,
+        "precision": 0.45,
+        "recall": 1.0,
+        "f1_score": 0.6206896551724138,
+        "roc_auc": 0.21212121212121213,
+        "brier_score": 0.2655106907266929,
+        "log_loss": 0.7243590320317288,
+        "ece": 0.09424356563965935,
+        "avg_probability": 0.5442435656396594
+      },
+      "challenger": {
+        "sample_size": 20,
+        "accuracy": 0.55,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1_score": 0.0,
+        "roc_auc": 0.6262626262626263,
+        "brier_score": 0.2587768708711969,
+        "log_loss": 0.7122987796367846,
+        "ece": 0.1129116415977478,
+        "avg_probability": 0.3370883584022522
+      },
+      "accuracy_delta": 0.10000000000000003,
+      "auc_delta": 0.41414141414141414,
+      "brier_delta": -0.006733819855496037
+    },
+    "CRYPTO": {
+      "sample_size": 8,
+      "status": "INSUFFICIENT_DATA",
+      "accuracy": null
+    }
+  }
+}

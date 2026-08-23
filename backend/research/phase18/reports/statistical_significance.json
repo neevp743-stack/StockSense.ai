@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "sample_size": 49,
+    "status": "EVALUATED",
+    "alpha": 0.05,
+    "contingency_table": {
+      "both_correct": 4,
+      "champion_only_correct": 22,
+      "challenger_only_correct": 17,
+      "both_incorrect": 6
+    },
+    "mcnemar": {
+      "statistic": 0.41025641025641024,
+      "p_value": 0.5218393903336151
+    },
+    "bootstrap_ci": {
+      "mean_diff": -0.10657142857142855,
+      "ci_lower": -0.34744897959183674,
+      "ci_upper": 0.14285714285714285
+    },
+    "effect_size_accuracy": -0.10657142857142855,
+    "statistically_significant": false
+  }
+}

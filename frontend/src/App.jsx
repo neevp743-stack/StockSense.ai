@@ -9,6 +9,7 @@ import { ExplanationCard } from './components/ExplanationCard';
 import { TradeSetupPanel } from './components/TradeSetupPanel';
 import { PatternAnalysisCard } from './components/PatternAnalysisCard';
 import { ProductionMonitor } from './components/ProductionMonitor';
+import { Phase18ShadowMonitor } from './components/Phase18ShadowMonitor';
 import { SystemStatusBanner } from './components/SystemStatusBanner';
 
 
@@ -249,6 +250,11 @@ export default function App() {
             {/* Phase 16 Production Monitor & Live Validation */}
             <div style={{ marginTop: '24px' }}>
               <ProductionMonitor symbol={selectedAsset} />
+            </div>
+
+            {/* Phase 18 Shadow Forward Validation Monitor */}
+            <div style={{ marginTop: '24px' }}>
+              <Phase18ShadowMonitor symbol={selectedAsset} />
             </div>
 
             {/* Phase 15 Research Pattern Analysis Card */}

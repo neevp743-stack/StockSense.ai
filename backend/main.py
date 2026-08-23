@@ -35,6 +35,7 @@ from backend.risk.risk_assessor import categorize_risk_and_signal
 from backend.tracking.tracker import log_prediction, resolve_pending_predictions, get_prediction_history
 from backend.backtest.backtester import run_backtest
 from backend.models.trainer import train_all_models_for_symbol, train_entire_universe
+from backend.services.forward_validation_service import forward_validation_service
 
 # Password Hashing & OAuth2
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -1242,6 +1243,41 @@ def get_live_predictions_performance_endpoint(symbol: str):
     """GET /api/live-predictions/{symbol}/performance - Tracker performance summary."""
     from backend.services.live_prediction_service import live_prediction_service
     return live_prediction_service.get_prediction_tracker_stats(symbol)
+
+
+# =====================================================================
+# PHASE 18 API ENDPOINTS — FORWARD VALIDATION & SHADOW MONITORING
+# =====================================================================
+
+@app.get("/api/research/phase18/status")
+def get_phase18_status_endpoint():
+    """GET /api/research/phase18/status - Phase 18 Shadow Mode validation status."""
+    return forward_validation_service.get_status()
+
+
+@app.get("/api/research/phase18/comparison")
+def get_phase18_comparison_endpoint(symbol: Optional[str] = None):
+    """GET /api/research/phase18/comparison - Paired Champion vs Challenger performance comparison."""
+    return forward_validation_service.get_comparison(symbol=symbol)
+
+
+@app.get("/api/research/phase18/trades")
+def get_phase18_trades_endpoint():
+    """GET /api/research/phase18/trades - Phase 14 trade setup comparison between Champion & Challenger."""
+    return forward_validation_service.get_trades()
+
+
+@app.get("/api/research/phase18/statistics")
+def get_phase18_statistics_endpoint():
+    """GET /api/research/phase18/statistics - Statistical hypothesis tests (McNemar test, bootstrap 95% CIs)."""
+    return forward_validation_service.get_statistics()
+
+
+@app.get("/api/research/phase18/{symbol}")
+def get_phase18_symbol_comparison_endpoint(symbol: str):
+    """GET /api/research/phase18/{symbol} - Symbol-specific Champion vs Challenger metrics."""
+    return forward_validation_service.get_comparison(symbol=symbol)
+
 
 
 

@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "AAPL": {
+      "sample_size": 4,
+      "status": "INSUFFICIENT_DATA",
+      "reason": "insufficient_forward_validation_data",
+      "champion": {
+        "accuracy": null,
+        "sample_size": 4
+      },
+      "challenger": {
+        "accuracy": null,
+        "sample_size": 4
+      },
+      "comparison": {}
+    },
+    "AMZN": {
+      "sample_size": 4,
+      "status": "INSUFFICIENT_DATA",
+      "reason": "insufficient_forward_validation_data",
+      "champion": {
+        "accuracy": null,
+        "sample_size": 4
+      },
+      "challenger": {
+        "accuracy": null,
+        "sample_size": 4
+      },
+      "comparison": {}
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "timestamp": "2026-08-23T12:30:14.383866+00:00Z",
+    "phase": "PHASE18",
+    "mode": "SHADOW"
+  },
+  "data": {
+    "compatibility": {
+      "status": "OK",
+      "champion_available": true,
+      "challenger_available": true,
+      "champion_model_name": "XGBoost v1.0 Calibrated",
+      "challenger_model_name": "Phase17 Large XGBoost",
+      "challenger_hash": "2b81e847ddea96ef",
+      "feature_count_champ": 15,
+      "feature_count_challenger": 44
+    },
+    "counts": {
+      "total_observations": 615,
+      "champion": {
+        "total": 69,
+        "resolved": 53
+      },
+      "challenger": {
+        "total": 546,
+        "resolved": 437
+      },
+      "paired_resolved": 53
+    },
+    "verdict": "PHASE18_INSUFFICIENT_FORWARD_DATA"
+  }
+}

@@ -84,7 +84,11 @@ export const api = {
   getModelMonitorAll: (options = {}) => axios.get(`${API_BASE_URL}/model-monitor/all`, options),
   getModelCalibration: (symbol, options = {}) => axios.get(`${API_BASE_URL}/model-monitor/${symbol}/calibration`, options),
   getModelDrift: (symbol, options = {}) => axios.get(`${API_BASE_URL}/model-monitor/${symbol}/drift`, options),
-  getProductionHealth: (options = {}) => axios.get(`${API_BASE_URL}/production-health`, options)
+  getProductionHealth: (options = {}) => axios.get(`${API_BASE_URL}/production-health`, options),
+  getPhase18Status: (options = {}) => axios.get(`${API_BASE_URL}/research/phase18/status`, options),
+  getPhase18Comparison: (symbol = '', options = {}) => axios.get(`${API_BASE_URL}/research/phase18/comparison`, { params: symbol ? { symbol } : {}, ...options }),
+  getPhase18Trades: (options = {}) => axios.get(`${API_BASE_URL}/research/phase18/trades`, options),
+  getPhase18Statistics: (options = {}) => axios.get(`${API_BASE_URL}/research/phase18/statistics`, options)
 };
 
 

@@ -1,0 +1,17 @@
+{
+  "champion_model": "XGBoost v1.0 Calibrated",
+  "challenger_model": "Phase17 Large XGBoost",
+  "mode": "SHADOW",
+  "minimum_metric_sample": 10,
+  "minimum_promotion_sample": 100,
+  "alpha": 0.05,
+  "rolling_windows": [20, 50, 100, 250],
+  "confidence_bins": [
+    [0.50, 0.55],
+    [0.55, 0.60],
+    [0.60, 0.65],
+    [0.65, 0.70],
+    [0.70, 0.80],
+    [0.80, 1.00]
+  ]
+}

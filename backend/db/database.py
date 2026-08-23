@@ -31,6 +31,7 @@ def get_db_context():
 from sqlalchemy import text
 
 def init_db():
+    from backend.models.phase18_shadow_prediction_record import Phase18ShadowPredictionRecord  # noqa: F401
     Base.metadata.create_all(bind=engine)
     # Ensure SQLite column migrations for existing databases
     with engine.connect() as conn:
