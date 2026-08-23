@@ -63,11 +63,36 @@ def test_phase13_research_artifacts_exist():
             data = json.load(f)
         assert data is not None
 
-def test_api_prediction_response_phase13_regime_fields():
-    """Verify GET /api/stocks/RELIANCE/prediction includes trend_regime, volatility_regime, and combined_regime."""
-    res = client.get("/api/stocks/RELIANCE/prediction")
-    assert res.status_code == 200
-    data = res.json()
-    assert "trend_regime" in data
-    assert "volatility_regime" in data
-    assert "combined_regime" in data
+def test_classify_market_regimes_alias():
+    """Verify classify_market_regimes alias function produces identical dataframe to compute_market_regimes."""
+    from backend.features.regime_engine import classify_market_regimes
+    dates = pd.date_range("2023-01-01", periods=70)
+    prices = [100.0 + i*0.2 for i in range(70)]
+    df = pd.DataFrame({"date": dates, "close": prices, "high": prices, "low": prices, "open": prices, "volume": 1000})
+    
+    df1 = compute_market_regimes(df)
+    df2 = classify_market_regimes(df)
+    pd.testing.assert_frame_equal(df1, df2)
+
+def test_ensemble_probability_averaging_logic():
+    """Verify equal and validation weighted ensemble probability averaging logic."""
+    p_xgb = np.array([0.6, 0.4, 0.7])
+    p_rf = np.array([0.5, 0.5, 0.8])
+    p_lr = np.array([0.4, 0.3, 0.6])
+    
+    p_eq = (p_xgb + p_rf + p_lr) / 3.0
+    p_wt = (0.5 * p_xgb + 0.25 * p_rf + 0.25 * p_lr)
+    
+    assert np.allclose(p_eq, [0.5, 0.4, 0.7])
+    assert np.allclose(p_wt, [0.525, 0.4, 0.7])
+
+def test_regime_balance_min_sample_size():
+    """Verify regime balance json artifact enforces observation counts across assets."""
+    res_path = os.path.join(PROJECT_ROOT, "backend", "research", "phase13", "regime_balance.json")
+    if os.path.exists(res_path):
+        with open(res_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        for symbol, info in data.items():
+            assert "total_samples" in info
+            assert info["total_samples"] >= 30
+

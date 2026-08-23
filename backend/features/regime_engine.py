@@ -49,6 +49,11 @@ def compute_market_regimes(df: pd.DataFrame) -> pd.DataFrame:
 
     return df_res
 
+def classify_market_regimes(df: pd.DataFrame) -> pd.DataFrame:
+    """Alias for compute_market_regimes."""
+    return compute_market_regimes(df)
+
+
 def get_latest_regime(df: pd.DataFrame) -> Dict[str, str]:
     """Returns the latest market regime status dict for a given asset dataframe."""
     if df is None or df.empty or "trend_regime" not in df.columns:

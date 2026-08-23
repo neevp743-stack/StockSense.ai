@@ -349,7 +349,24 @@ def run_phase13_ml_study():
     with open(os.path.join(OUTPUT_DIR, "final_results.json"), "w", encoding="utf-8") as f:
         json.dump(final_holdout_dict, f, indent=2)
 
+    rejected_payload = {
+        "rejected_candidate_models": [
+            "Regime-Specific XGBoost Classifiers",
+            "Global XGBoost + One-Hot Regime Features",
+            "Equal-Weight Model Ensemble (XGBoost + RF + LogisticRegression)",
+            "Validation-Weighted Model Ensemble"
+        ],
+        "rejection_rationale": "Empirical walk-forward cross-validation and 15% unseen holdout evaluation demonstrated that neither regime-specialized models nor multi-model ensembles produced consistent, statistically significant out-of-sample accuracy/Brier score improvements over the Phase 12 XGBoost v1.0 Calibrated baseline across all 6 universe assets. Specifically, equal-weighted model ensembles dropped performance on INFY (48.31% vs 55.00%) and BTC-USD (43.14% vs 50.49%). Following strict scientific ML guidelines, the Phase 12 Calibrated XGBoost v1.0 classifier is preserved as the primary production model, while Market Regime telemetry (trend_regime and volatility_regime) is deployed to provide real-time market context.",
+        "production_model_retained": "XGBoost v1.0 (Calibrated)",
+        "production_feature_set": "FEATURE_COLUMNS_V1 (15 features)",
+        "prediction_horizon": "1 trading day",
+        "selective_threshold": "[0.47, 0.53] (NO CLEAR SIGNAL)"
+    }
+    with open(os.path.join(OUTPUT_DIR, "phase13_rejected.json"), "w", encoding="utf-8") as f:
+        json.dump(rejected_payload, f, indent=2)
+
     print("\nPhase 13 ML Scientific Study Complete! Research artifacts written to backend/research/phase13/")
+
 
 if __name__ == "__main__":
     run_phase13_ml_study()

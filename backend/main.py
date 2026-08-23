@@ -389,6 +389,9 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
         quote_info = provider.get_latest_quote(symbol_clean)
         latest_price_val = quote_info.get("price") or (float(df_raw["close"].iloc[-1]) if not df_raw.empty else None)
         
+        from backend.features.regime_engine import get_latest_regime
+        regime_info = get_latest_regime(df_raw)
+
         fallback_res = {
             "symbol": symbol_clean,
             "latest_price": latest_price_val,
@@ -398,6 +401,16 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
             "predicted_direction": "UP" if predicted_dir == 1 else "DOWN",
             "probability_up": prob_up,
             "probability_down": 1.0 - prob_up,
+            "signal": risk_info.get("signal", "NEUTRAL"),
+            "prediction_horizon": "1 trading day",
+            "model_version": f"{model_name} (Technical Fallback)",
+            "trend_regime": regime_info.get("trend_regime", "SIDEWAYS"),
+            "volatility_regime": regime_info.get("volatility_regime", "LOW_VOLATILITY"),
+            "combined_regime": regime_info.get("combined_regime", "SIDEWAYS (LOW VOL)"),
+            "coverage_stats": {
+                "confidence_threshold_bounds": [0.47, 0.53],
+                "selective_signal_status": "ACTIVE"
+            },
             "risk": risk_info,
             "model": {
                 "name": f"{model_name} (Technical Fallback)",
@@ -406,6 +419,7 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
             "explanations": [{"feature": "RSI Baseline", "importance": 0.50}],
             "disclaimer": RESEARCH_DISCLAIMER
         }
+
         prediction_cache.set(cache_key, fallback_res, ttl_seconds=60)
         return fallback_res
 
