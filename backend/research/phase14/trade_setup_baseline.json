@@ -1,0 +1,65 @@
+{
+  "generated_at": "2026-08-23T07:13:43.691483Z",
+  "data": {
+    "RELIANCE": {
+      "symbol": "RELIANCE",
+      "total_samples": 1241,
+      "number_of_setups": 1166,
+      "number_of_trades": 2,
+      "win_rate_pct": 50.0,
+      "profit_factor": 2.06,
+      "max_drawdown_pct": 1.19,
+      "avg_net_return_pct": 0.63
+    },
+    "INFY": {
+      "symbol": "INFY",
+      "total_samples": 1241,
+      "number_of_setups": 1166,
+      "number_of_trades": 1,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "max_drawdown_pct": 0.0,
+      "avg_net_return_pct": -4.65
+    },
+    "TCS": {
+      "symbol": "TCS",
+      "total_samples": 1241,
+      "number_of_setups": 1166,
+      "number_of_trades": 272,
+      "win_rate_pct": 49.63,
+      "profit_factor": 0.88,
+      "max_drawdown_pct": 54.51,
+      "avg_net_return_pct": -0.15
+    },
+    "AAPL": {
+      "symbol": "AAPL",
+      "total_samples": 501,
+      "number_of_setups": 426,
+      "number_of_trades": 68,
+      "win_rate_pct": 51.47,
+      "profit_factor": 0.75,
+      "max_drawdown_pct": 59.29,
+      "avg_net_return_pct": -0.38
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "total_samples": 501,
+      "number_of_setups": 426,
+      "number_of_trades": 78,
+      "win_rate_pct": 53.85,
+      "profit_factor": 1.31,
+      "max_drawdown_pct": 44.67,
+      "avg_net_return_pct": 0.64
+    },
+    "BTC-USD": {
+      "symbol": "BTC-USD",
+      "total_samples": 731,
+      "number_of_setups": 656,
+      "number_of_trades": 0,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "max_drawdown_pct": 0.0,
+      "avg_net_return_pct": 0.0
+    }
+  }
+}

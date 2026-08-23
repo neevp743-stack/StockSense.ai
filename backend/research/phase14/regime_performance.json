@@ -1,0 +1,167 @@
+{
+  "generated_at": "2026-08-23T07:13:43.691483Z",
+  "data": {
+    "RELIANCE": {
+      "BULL": {
+        "trades": 2,
+        "wins": 1,
+        "net_return": 1.2560981974753225
+      },
+      "BEAR": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "SIDEWAYS": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "HIGH_VOLATILITY": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "LOW_VOLATILITY": {
+        "trades": 2,
+        "wins": 1,
+        "net_return": 1.2560981974753225
+      }
+    },
+    "INFY": {
+      "BULL": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "BEAR": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "SIDEWAYS": {
+        "trades": 1,
+        "wins": 0,
+        "net_return": -4.648429058136529
+      },
+      "HIGH_VOLATILITY": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "LOW_VOLATILITY": {
+        "trades": 1,
+        "wins": 0,
+        "net_return": -4.648429058136529
+      }
+    },
+    "TCS": {
+      "BULL": {
+        "trades": 46,
+        "wins": 25,
+        "net_return": -4.318459498256565
+      },
+      "BEAR": {
+        "trades": 137,
+        "wins": 68,
+        "net_return": -47.54065309101047
+      },
+      "SIDEWAYS": {
+        "trades": 89,
+        "wins": 42,
+        "net_return": 11.495326545595223
+      },
+      "HIGH_VOLATILITY": {
+        "trades": 143,
+        "wins": 76,
+        "net_return": 8.956320217343471
+      },
+      "LOW_VOLATILITY": {
+        "trades": 129,
+        "wins": 59,
+        "net_return": -49.32010626101526
+      }
+    },
+    "AAPL": {
+      "BULL": {
+        "trades": 21,
+        "wins": 15,
+        "net_return": 11.021262775324232
+      },
+      "BEAR": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "SIDEWAYS": {
+        "trades": 47,
+        "wins": 20,
+        "net_return": -37.003256672453
+      },
+      "HIGH_VOLATILITY": {
+        "trades": 16,
+        "wins": 1,
+        "net_return": -53.0019155528213
+      },
+      "LOW_VOLATILITY": {
+        "trades": 52,
+        "wins": 34,
+        "net_return": 27.01992165569253
+      }
+    },
+    "NVDA": {
+      "BULL": {
+        "trades": 39,
+        "wins": 25,
+        "net_return": 33.5160859748463
+      },
+      "BEAR": {
+        "trades": 5,
+        "wins": 0,
+        "net_return": -37.35899449006383
+      },
+      "SIDEWAYS": {
+        "trades": 34,
+        "wins": 17,
+        "net_return": 53.8036987396608
+      },
+      "HIGH_VOLATILITY": {
+        "trades": 37,
+        "wins": 16,
+        "net_return": -28.114541659308628
+      },
+      "LOW_VOLATILITY": {
+        "trades": 41,
+        "wins": 26,
+        "net_return": 78.07533188375194
+      }
+    },
+    "BTC-USD": {
+      "BULL": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "BEAR": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "SIDEWAYS": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "HIGH_VOLATILITY": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      },
+      "LOW_VOLATILITY": {
+        "trades": 0,
+        "wins": 0,
+        "net_return": 0.0
+      }
+    }
+  }
+}

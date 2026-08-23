@@ -953,10 +953,157 @@ def get_system_metrics():
             "dashboard_cache_entries": dashboard_cache.size(),
             "prediction_cache_entries": prediction_cache.size(),
             "history_cache_entries": history_cache.size(),
-            "model_cache_entries": model_cache.size()
+            "model_cache_entries": model_cache.size(),
+            "trade_setup_cache_entries": trade_setup_cache.size()
         },
         "realtime": realtime_provider_manager.get_stream_status()
     }
+
+# ==============================================================================
+# PHASE 14 — AI TRADE SETUP, BACKTESTING, & PAPER TRADING TRACKER
+# ==============================================================================
+from backend.cache import trade_setup_cache
+from backend.services.trade_signal_service import generate_trade_setup
+from backend.backtest.trade_setup_backtester import run_complete_trade_setup_backtest
+from backend.tracking.paper_tracker import log_paper_setup, get_paper_performance, resolve_pending_paper_setups
+
+@app.get("/api/assets/{symbol}/trade-setup")
+def get_trade_setup_endpoint(symbol: str, db: Session = Depends(get_db)):
+    """
+    GET /api/assets/{symbol}/trade-setup
+    Returns unified trade setup object (Signal, Entry, Stop Loss, Target 1&2, R:R, Liquidity, Expected Move).
+    Target warm latency < 100ms via trade_setup_cache.
+    """
+    symbol_clean = symbol.upper().strip()
+    cache_key = f"trade_setup_{symbol_clean}"
+    cached = trade_setup_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    # Fetch Prediction and Historical data
+    df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
+    if df_raw.empty:
+        raise HTTPException(status_code=404, detail=f"Market data unavailable for asset '{symbol_clean}'.")
+
+    df_feat = compute_features_and_target(df_raw)
+    pred_payload = get_stock_prediction(symbol_clean, model_name="XGBoost", db=db)
+
+    prob_up = float(pred_payload.get("probability_up", 0.5))
+    pred_dir_str = pred_payload.get("predicted_direction", "UP")
+    pred_dir = 1 if pred_dir_str == "UP" else 0
+    quote_info = pred_payload.get("quote_info", {})
+
+    setup_obj = generate_trade_setup(
+        symbol=symbol_clean,
+        df_raw=df_raw,
+        df_feat=df_feat,
+        prob_up=prob_up,
+        predicted_dir=pred_dir,
+        model_name="XGBoost",
+        model_version="1.0",
+        quote_info=quote_info
+    )
+
+    # Persist live paper prediction record (prevents duplicates within 30s)
+    as_of_str = pred_payload.get("as_of_date", str(date.today()))
+    pred_d_str = pred_payload.get("prediction_date", str(date.today()))
+    try:
+        as_of_d = datetime.strptime(as_of_str, "%Y-%m-%d").date()
+        pred_d = datetime.strptime(pred_d_str, "%Y-%m-%d").date()
+    except Exception:
+        as_of_d = date.today()
+        pred_d = date.today() + timedelta(days=1)
+
+    log_paper_setup(setup_obj, as_of_d=as_of_d, pred_d=pred_d, db=db)
+
+    trade_setup_cache.set(cache_key, setup_obj, ttl_seconds=45)
+    return setup_obj
+
+@app.get("/api/assets/{symbol}/trade-setup/backtest")
+def get_trade_setup_backtest_endpoint(symbol: str, db: Session = Depends(get_db)):
+    """
+    GET /api/assets/{symbol}/trade-setup/backtest
+    Runs complete trade setup backtest over historical out-of-sample data with transaction costs.
+    """
+    symbol_clean = symbol.upper().strip()
+    cache_key = f"ts_backtest_{symbol_clean}"
+    cached = trade_setup_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    df_raw = ensure_historical_data_in_db(symbol_clean, db=db)
+    if df_raw.empty or len(df_raw) < 40:
+        raise HTTPException(status_code=400, detail=f"Insufficient price rows for trade setup backtest on '{symbol_clean}'.")
+
+    df_feat = compute_features_and_target(df_raw)
+
+    # Generate probabilities using Phase 12 Model or Technical Baseline
+    pipe = ModelPipeline.load_model(symbol_clean, "XGBoost")
+    if pipe and pipe.is_trained:
+        preds, probs = pipe.predict(df_feat)
+        probs_up = probs[:, 1] if probs.ndim > 1 else probs
+    else:
+        rsi_series = df_feat.get("rsi", pd.Series([50.0]*len(df_feat)))
+        probs_up = np.where(rsi_series > 50, 0.56, 0.44)
+
+    bt_results = run_complete_trade_setup_backtest(
+        df_raw=df_raw,
+        predictions_prob=probs_up,
+        initial_capital=100000.0
+    )
+    bt_results["symbol"] = symbol_clean
+
+    trade_setup_cache.set(cache_key, bt_results, ttl_seconds=300)
+    return bt_results
+
+@app.get("/api/assets/{symbol}/trade-setup/history")
+def get_trade_setup_history_endpoint(symbol: str, limit: int = 50, db: Session = Depends(get_db)):
+    """GET /api/assets/{symbol}/trade-setup/history - Returns recent paper prediction records."""
+    from backend.db.models import PaperPredictionRecord
+    symbol_clean = symbol.upper().strip()
+    resolve_pending_paper_setups(symbol_clean, db=db)
+
+    records = db.query(PaperPredictionRecord).filter(
+        PaperPredictionRecord.symbol == symbol_clean
+    ).order_by(PaperPredictionRecord.prediction_timestamp.desc()).limit(limit).all()
+
+    res = []
+    for r in records:
+        res.append({
+            "id": r.id,
+            "symbol": r.symbol,
+            "prediction_timestamp": r.prediction_timestamp.isoformat() if r.prediction_timestamp else None,
+            "as_of_date": str(r.as_of_date),
+            "prediction_date": str(r.prediction_date),
+            "signal": r.signal,
+            "probability_up": r.probability_up,
+            "confidence": r.confidence,
+            "combined_regime": r.combined_regime,
+            "current_price": r.current_price,
+            "entry_low": r.entry_low,
+            "entry_high": r.entry_high,
+            "stop_loss": r.stop_loss,
+            "target_1": r.target_1,
+            "target_2": r.target_2,
+            "risk_reward_target_1": r.risk_reward_target_1,
+            "outcome": r.outcome or "PENDING",
+            "realized_return_pct": r.realized_return_pct,
+            "resolved_at": r.resolved_at.isoformat() if r.resolved_at else None,
+            "is_correct": r.is_correct
+        })
+
+    return {
+        "symbol": symbol_clean,
+        "count": len(res),
+        "history": res
+    }
+
+@app.get("/api/assets/{symbol}/paper-performance")
+def get_paper_performance_endpoint(symbol: str, db: Session = Depends(get_db)):
+    """GET /api/assets/{symbol}/paper-performance - Live paper trading tracker performance metrics."""
+    symbol_clean = symbol.upper().strip()
+    return get_paper_performance(symbol_clean, db=db)
+
 
 
 

@@ -6,7 +6,9 @@ import { Watchlist } from './components/Watchlist';
 import { AdvancedStockChart } from './components/AdvancedStockChart';
 import { PredictionCard } from './components/PredictionCard';
 import { ExplanationCard } from './components/ExplanationCard';
+import { TradeSetupPanel } from './components/TradeSetupPanel';
 import { SystemStatusBanner } from './components/SystemStatusBanner';
+
 import { SplashScreen } from './components/SplashScreen';
 import { SearchModal } from './components/SearchModal';
 import { MobileNav } from './components/MobileNav';
@@ -234,8 +236,14 @@ export default function App() {
 
               <ExplanationCard explanations={predictionData?.explanations} />
             </div>
+
+            {/* Phase 14 AI Trade Setup Panel */}
+            <div style={{ marginTop: '24px' }}>
+              <TradeSetupPanel symbol={selectedAsset} />
+            </div>
           </>
         )}
+
 
         {/* Lazy Loaded Market Universe & Research Tabs */}
         <Suspense fallback={<ChartSkeleton />}>

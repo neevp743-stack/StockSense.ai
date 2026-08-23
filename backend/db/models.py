@@ -181,4 +181,48 @@ class LivePredictionRecord(Base):
     resolved_at = Column(DateTime, nullable=True)
     is_correct = Column(Boolean, nullable=True)
 
+class PaperPredictionRecord(Base):
+    __tablename__ = "paper_prediction_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    symbol = Column(String(20), index=True, nullable=False)
+    prediction_timestamp = Column(DateTime, nullable=False, index=True, default=datetime.utcnow)
+    as_of_date = Column(Date, nullable=False)
+    prediction_date = Column(Date, nullable=False)
+    signal = Column(String(10), nullable=False)  # BUY, SELL, HOLD
+    probability_up = Column(Float, nullable=False)
+    probability_down = Column(Float, nullable=False)
+    confidence = Column(String(20), nullable=False)  # HIGH, MODERATE, LOW
+    trend_regime = Column(String(20), nullable=False)
+    volatility_regime = Column(String(20), nullable=False)
+    combined_regime = Column(String(50), nullable=False)
+    current_price = Column(Float, nullable=False)
+    entry_low = Column(Float, nullable=False)
+    entry_high = Column(Float, nullable=False)
+    stop_loss = Column(Float, nullable=False)
+    target_1 = Column(Float, nullable=False)
+    target_2 = Column(Float, nullable=False)
+    risk_reward_target_1 = Column(Float, nullable=False)
+    risk_reward_target_2 = Column(Float, nullable=False)
+    model_version = Column(String(50), nullable=False, default="XGBoost v1.0")
+    horizon_days = Column(Integer, default=1)
+    
+    # Resolution fields
+    actual_direction = Column(String(10), nullable=True)
+    actual_close_price = Column(Float, nullable=True)
+    target_hit = Column(Boolean, nullable=True)
+    stop_hit = Column(Boolean, nullable=True)
+    outcome = Column(String(25), nullable=True)  # TARGET_1_HIT, TARGET_2_HIT, STOP_HIT, EXPIRED_HOLD, AMBIGUOUS, PENDING
+    realized_return_pct = Column(Float, nullable=True)
+    resolved_at = Column(DateTime, nullable=True)
+    is_correct = Column(Boolean, nullable=True)
+
+    __table_args__ = (
+        Index("idx_paper_pred_symbol_time", "symbol", "prediction_timestamp"),
+        Index("idx_paper_pred_symbol_resolved", "symbol", "resolved_at"),
+        Index("idx_paper_pred_symbol_model", "symbol", "model_version"),
+    )
+
+
+
 

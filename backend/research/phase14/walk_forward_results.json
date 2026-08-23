@@ -1,0 +1,161 @@
+{
+  "generated_at": "2026-08-23T07:13:43.691483Z",
+  "data": {
+    "RELIANCE": [
+      {
+        "fold": 1,
+        "sample_count": 413,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      {
+        "fold": 2,
+        "sample_count": 413,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      {
+        "fold": 3,
+        "sample_count": 413,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      }
+    ],
+    "INFY": [
+      {
+        "fold": 1,
+        "sample_count": 413,
+        "trades": 1,
+        "win_rate_pct": 0.0,
+        "net_return_pct": -4.65,
+        "profit_factor": 0.0
+      },
+      {
+        "fold": 2,
+        "sample_count": 413,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      {
+        "fold": 3,
+        "sample_count": 413,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      }
+    ],
+    "TCS": [
+      {
+        "fold": 1,
+        "sample_count": 413,
+        "trades": 84,
+        "win_rate_pct": 40.48,
+        "net_return_pct": -0.41,
+        "profit_factor": 0.72
+      },
+      {
+        "fold": 2,
+        "sample_count": 413,
+        "trades": 93,
+        "win_rate_pct": 53.76,
+        "net_return_pct": 0.05,
+        "profit_factor": 1.05
+      },
+      {
+        "fold": 3,
+        "sample_count": 413,
+        "trades": 86,
+        "win_rate_pct": 55.81,
+        "net_return_pct": -0.04,
+        "profit_factor": 0.97
+      }
+    ],
+    "AAPL": [
+      {
+        "fold": 1,
+        "sample_count": 167,
+        "trades": 43,
+        "win_rate_pct": 62.79,
+        "net_return_pct": 0.28,
+        "profit_factor": 1.24
+      },
+      {
+        "fold": 2,
+        "sample_count": 167,
+        "trades": 15,
+        "win_rate_pct": 46.67,
+        "net_return_pct": -0.47,
+        "profit_factor": 0.58
+      },
+      {
+        "fold": 3,
+        "sample_count": 167,
+        "trades": 7,
+        "win_rate_pct": 28.57,
+        "net_return_pct": -1.0,
+        "profit_factor": 0.54
+      }
+    ],
+    "NVDA": [
+      {
+        "fold": 1,
+        "sample_count": 167,
+        "trades": 28,
+        "win_rate_pct": 42.86,
+        "net_return_pct": -0.43,
+        "profit_factor": 0.88
+      },
+      {
+        "fold": 2,
+        "sample_count": 167,
+        "trades": 27,
+        "win_rate_pct": 66.67,
+        "net_return_pct": 1.36,
+        "profit_factor": 2.26
+      },
+      {
+        "fold": 3,
+        "sample_count": 167,
+        "trades": 23,
+        "win_rate_pct": 43.48,
+        "net_return_pct": -0.21,
+        "profit_factor": 0.9
+      }
+    ],
+    "BTC-USD": [
+      {
+        "fold": 1,
+        "sample_count": 243,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      {
+        "fold": 2,
+        "sample_count": 243,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      },
+      {
+        "fold": 3,
+        "sample_count": 243,
+        "trades": 0,
+        "win_rate_pct": 0.0,
+        "net_return_pct": 0.0,
+        "profit_factor": 0.0
+      }
+    ]
+  }
+}

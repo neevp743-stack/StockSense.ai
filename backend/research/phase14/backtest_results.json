@@ -1,0 +1,1165 @@
+{
+  "generated_at": "2026-08-23T07:13:43.691483Z",
+  "data": {
+    "RELIANCE": {
+      "number_of_setups": 1166,
+      "number_of_trades": 2,
+      "signal_distribution": {
+        "BUY": 2,
+        "SELL": 0,
+        "HOLD": 1164
+      },
+      "win_rate_pct": 50.0,
+      "loss_rate_pct": 50.0,
+      "target_1_hit_rate_pct": 50.0,
+      "target_2_hit_rate_pct": 0.0,
+      "stop_loss_rate_pct": 0.0,
+      "ambiguous_rate_pct": 0.0,
+      "ambiguous_count": 0,
+      "average_gross_return_pct": 0.78,
+      "estimated_costs_pct": 0.15,
+      "average_net_return_pct": 0.63,
+      "median_net_return_pct": 0.63,
+      "profit_factor": 2.06,
+      "maximum_drawdown_pct": 1.19,
+      "average_holding_period_days": 5.0,
+      "maximum_favorable_excursion_pct": 1.91,
+      "maximum_adverse_excursion_pct": 0.75,
+      "regime_performance": {
+        "BULL": {
+          "trades": 2,
+          "wins": 1,
+          "net_return": 1.2560981974753225
+        },
+        "BEAR": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "SIDEWAYS": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "HIGH_VOLATILITY": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "LOW_VOLATILITY": {
+          "trades": 2,
+          "wins": 1,
+          "net_return": 1.2560981974753225
+        }
+      },
+      "trade_log": [
+        {
+          "date": "2023-04-28",
+          "signal": "BUY",
+          "probability": 0.550756706627113,
+          "entry_price": 1099.86,
+          "stop_loss": 1069.01,
+          "target_1": 1128.4,
+          "target_2": 1168.89,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 5,
+          "gross_return_pct": 2.59,
+          "net_return_pct": 2.44
+        },
+        {
+          "date": "2023-05-09",
+          "signal": "BUY",
+          "probability": 0.5522321332499556,
+          "entry_price": 1126.7,
+          "stop_loss": 1098.96,
+          "target_1": 1152.36,
+          "target_2": 1188.77,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.04,
+          "net_return_pct": -1.19
+        }
+      ],
+      "ambiguous_candle_rule": "CONSERVATIVE: Intrabar candle ambiguity counts as stop loss",
+      "disclaimer": "Research backtest results simulate historical trade setups and do NOT guarantee future profitability.",
+      "symbol": "RELIANCE"
+    },
+    "INFY": {
+      "number_of_setups": 1166,
+      "number_of_trades": 1,
+      "signal_distribution": {
+        "BUY": 0,
+        "SELL": 1,
+        "HOLD": 1165
+      },
+      "win_rate_pct": 0.0,
+      "loss_rate_pct": 100.0,
+      "target_1_hit_rate_pct": 0.0,
+      "target_2_hit_rate_pct": 0.0,
+      "stop_loss_rate_pct": 100.0,
+      "ambiguous_rate_pct": 0.0,
+      "ambiguous_count": 0,
+      "average_gross_return_pct": -4.5,
+      "estimated_costs_pct": 0.15,
+      "average_net_return_pct": -4.65,
+      "median_net_return_pct": -4.65,
+      "profit_factor": 0.0,
+      "maximum_drawdown_pct": 0.0,
+      "average_holding_period_days": 5.0,
+      "maximum_favorable_excursion_pct": 2.34,
+      "maximum_adverse_excursion_pct": 5.63,
+      "regime_performance": {
+        "BULL": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "BEAR": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "SIDEWAYS": {
+          "trades": 1,
+          "wins": 0,
+          "net_return": -4.648429058136529
+        },
+        "HIGH_VOLATILITY": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "LOW_VOLATILITY": {
+          "trades": 1,
+          "wins": 0,
+          "net_return": -4.648429058136529
+        }
+      },
+      "trade_log": [
+        {
+          "date": "2022-07-13",
+          "signal": "SELL",
+          "probability": 0.4443542113497147,
+          "entry_price": 1282.67,
+          "stop_loss": 1340.37,
+          "target_1": 1214.03,
+          "target_2": 1138.29,
+          "outcome": "STOP_HIT",
+          "days_held": 5,
+          "gross_return_pct": -4.5,
+          "net_return_pct": -4.65
+        }
+      ],
+      "ambiguous_candle_rule": "CONSERVATIVE: Intrabar candle ambiguity counts as stop loss",
+      "disclaimer": "Research backtest results simulate historical trade setups and do NOT guarantee future profitability.",
+      "symbol": "INFY"
+    },
+    "TCS": {
+      "number_of_setups": 1166,
+      "number_of_trades": 272,
+      "signal_distribution": {
+        "BUY": 69,
+        "SELL": 203,
+        "HOLD": 894
+      },
+      "win_rate_pct": 49.63,
+      "loss_rate_pct": 50.37,
+      "target_1_hit_rate_pct": 15.44,
+      "target_2_hit_rate_pct": 0.0,
+      "stop_loss_rate_pct": 18.38,
+      "ambiguous_rate_pct": 0.0,
+      "ambiguous_count": 0,
+      "average_gross_return_pct": 0.0,
+      "estimated_costs_pct": 0.15,
+      "average_net_return_pct": -0.15,
+      "median_net_return_pct": -0.04,
+      "profit_factor": 0.88,
+      "maximum_drawdown_pct": 54.51,
+      "average_holding_period_days": 4.4,
+      "maximum_favorable_excursion_pct": 2.32,
+      "maximum_adverse_excursion_pct": 2.23,
+      "regime_performance": {
+        "BULL": {
+          "trades": 46,
+          "wins": 25,
+          "net_return": -4.318459498256565
+        },
+        "BEAR": {
+          "trades": 137,
+          "wins": 68,
+          "net_return": -47.54065309101047
+        },
+        "SIDEWAYS": {
+          "trades": 89,
+          "wins": 42,
+          "net_return": 11.495326545595223
+        },
+        "HIGH_VOLATILITY": {
+          "trades": 143,
+          "wins": 76,
+          "net_return": 8.956320217343471
+        },
+        "LOW_VOLATILITY": {
+          "trades": 129,
+          "wins": 59,
+          "net_return": -49.32010626101526
+        }
+      },
+      "trade_log": [
+        {
+          "date": "2026-04-29",
+          "signal": "SELL",
+          "probability": 0.3878275360687045,
+          "entry_price": 2428.28,
+          "stop_loss": 2555.77,
+          "target_1": 2302.19,
+          "target_2": 2134.86,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 1.59,
+          "net_return_pct": 1.44
+        },
+        {
+          "date": "2026-05-01",
+          "signal": "SELL",
+          "probability": 0.4073950377720272,
+          "entry_price": 2427.5,
+          "stop_loss": 2539.74,
+          "target_1": 2323.68,
+          "target_2": 2176.36,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 3.21,
+          "net_return_pct": 3.06
+        },
+        {
+          "date": "2026-05-04",
+          "signal": "SELL",
+          "probability": 0.3911775454567488,
+          "entry_price": 2385.69,
+          "stop_loss": 2500.6,
+          "target_1": 2279.4,
+          "target_2": 2128.59,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 1.58,
+          "net_return_pct": 1.43
+        },
+        {
+          "date": "2026-05-05",
+          "signal": "SELL",
+          "probability": 0.4467488323166868,
+          "entry_price": 2381.77,
+          "stop_loss": 2491.32,
+          "target_1": 2280.44,
+          "target_2": 2136.65,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 5,
+          "gross_return_pct": 4.25,
+          "net_return_pct": 4.1
+        },
+        {
+          "date": "2026-05-12",
+          "signal": "SELL",
+          "probability": 0.4134533598611794,
+          "entry_price": 2257.15,
+          "stop_loss": 2370.36,
+          "target_1": 2152.43,
+          "target_2": 2003.85,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.17,
+          "net_return_pct": -1.32
+        },
+        {
+          "date": "2026-05-13",
+          "signal": "SELL",
+          "probability": 0.40291790770292774,
+          "entry_price": 2230.17,
+          "stop_loss": 2342.95,
+          "target_1": 2125.84,
+          "target_2": 1977.82,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -2.4,
+          "net_return_pct": -2.55
+        },
+        {
+          "date": "2026-05-14",
+          "signal": "SELL",
+          "probability": 0.39606968890119276,
+          "entry_price": 2203.87,
+          "stop_loss": 2307.32,
+          "target_1": 2108.18,
+          "target_2": 1972.4,
+          "outcome": "STOP_HIT",
+          "days_held": 3,
+          "gross_return_pct": -4.69,
+          "net_return_pct": -4.84
+        },
+        {
+          "date": "2026-05-15",
+          "signal": "SELL",
+          "probability": 0.39914550281048244,
+          "entry_price": 2221.53,
+          "stop_loss": 2324.53,
+          "target_1": 2126.25,
+          "target_2": 1991.06,
+          "outcome": "STOP_HIT",
+          "days_held": 2,
+          "gross_return_pct": -4.64,
+          "net_return_pct": -4.79
+        },
+        {
+          "date": "2026-05-18",
+          "signal": "SELL",
+          "probability": 0.41270555971558515,
+          "entry_price": 2240.37,
+          "stop_loss": 2340.72,
+          "target_1": 2147.54,
+          "target_2": 2015.83,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -2.47,
+          "net_return_pct": -2.62
+        },
+        {
+          "date": "2026-05-19",
+          "signal": "SELL",
+          "probability": 0.4381581432675485,
+          "entry_price": 2283.45,
+          "stop_loss": 2390.98,
+          "target_1": 2165.01,
+          "target_2": 2023.88,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 0.86,
+          "net_return_pct": 0.71
+        },
+        {
+          "date": "2026-05-20",
+          "signal": "SELL",
+          "probability": 0.41788631353550304,
+          "entry_price": 2283.74,
+          "stop_loss": 2387.24,
+          "target_1": 2165.01,
+          "target_2": 2029.17,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 0.53,
+          "net_return_pct": 0.38
+        },
+        {
+          "date": "2026-05-25",
+          "signal": "SELL",
+          "probability": 0.4117665963856873,
+          "entry_price": 2295.61,
+          "stop_loss": 2395.27,
+          "target_1": 2165.01,
+          "target_2": 2034.21,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 0.47,
+          "net_return_pct": 0.32
+        },
+        {
+          "date": "2026-05-27",
+          "signal": "SELL",
+          "probability": 0.4357404530917511,
+          "entry_price": 2271.74,
+          "stop_loss": 2369.33,
+          "target_1": 2165.01,
+          "target_2": 2036.93,
+          "outcome": "STOP_HIT",
+          "days_held": 4,
+          "gross_return_pct": -4.3,
+          "net_return_pct": -4.45
+        },
+        {
+          "date": "2026-05-28",
+          "signal": "SELL",
+          "probability": 0.41011077392861056,
+          "entry_price": 2271.74,
+          "stop_loss": 2364.86,
+          "target_1": 2165.01,
+          "target_2": 2042.8,
+          "outcome": "STOP_HIT",
+          "days_held": 3,
+          "gross_return_pct": -4.1,
+          "net_return_pct": -4.25
+        },
+        {
+          "date": "2026-05-29",
+          "signal": "SELL",
+          "probability": 0.42793282112919745,
+          "entry_price": 2246.58,
+          "stop_loss": 2347.6,
+          "target_1": 2153.14,
+          "target_2": 2020.56,
+          "outcome": "STOP_HIT",
+          "days_held": 2,
+          "gross_return_pct": -4.5,
+          "net_return_pct": -4.65
+        },
+        {
+          "date": "2026-06-01",
+          "signal": "SELL",
+          "probability": 0.4074405272033597,
+          "entry_price": 2284.87,
+          "stop_loss": 2381.29,
+          "target_1": 2165.01,
+          "target_2": 2038.46,
+          "outcome": "STOP_HIT",
+          "days_held": 1,
+          "gross_return_pct": -4.22,
+          "net_return_pct": -4.37
+        },
+        {
+          "date": "2026-06-02",
+          "signal": "SELL",
+          "probability": 0.3986925013721483,
+          "entry_price": 2433.56,
+          "stop_loss": 2529.14,
+          "target_1": 2303.24,
+          "target_2": 2167.71,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 1,
+          "gross_return_pct": 5.36,
+          "net_return_pct": 5.21
+        },
+        {
+          "date": "2026-06-03",
+          "signal": "SELL",
+          "probability": 0.4042125682738031,
+          "entry_price": 2229.48,
+          "stop_loss": 2365.24,
+          "target_1": 2103.9,
+          "target_2": 1925.71,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 3.92,
+          "net_return_pct": 3.77
+        },
+        {
+          "date": "2026-06-04",
+          "signal": "SELL",
+          "probability": 0.44573366506411655,
+          "entry_price": 2228.78,
+          "stop_loss": 2361.47,
+          "target_1": 2106.04,
+          "target_2": 1931.88,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 5,
+          "gross_return_pct": 5.51,
+          "net_return_pct": 5.36
+        },
+        {
+          "date": "2026-06-05",
+          "signal": "SELL",
+          "probability": 0.42896307746635465,
+          "entry_price": 2186.91,
+          "stop_loss": 2325.23,
+          "target_1": 2058.96,
+          "target_2": 1877.41,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 1.71,
+          "net_return_pct": 1.56
+        }
+      ],
+      "ambiguous_candle_rule": "CONSERVATIVE: Intrabar candle ambiguity counts as stop loss",
+      "disclaimer": "Research backtest results simulate historical trade setups and do NOT guarantee future profitability.",
+      "symbol": "TCS"
+    },
+    "AAPL": {
+      "number_of_setups": 426,
+      "number_of_trades": 68,
+      "signal_distribution": {
+        "BUY": 62,
+        "SELL": 6,
+        "HOLD": 358
+      },
+      "win_rate_pct": 51.47,
+      "loss_rate_pct": 48.53,
+      "target_1_hit_rate_pct": 20.59,
+      "target_2_hit_rate_pct": 0.0,
+      "stop_loss_rate_pct": 23.53,
+      "ambiguous_rate_pct": 0.0,
+      "ambiguous_count": 0,
+      "average_gross_return_pct": -0.23,
+      "estimated_costs_pct": 0.15,
+      "average_net_return_pct": -0.38,
+      "median_net_return_pct": 0.06,
+      "profit_factor": 0.75,
+      "maximum_drawdown_pct": 59.29,
+      "average_holding_period_days": 4.2,
+      "maximum_favorable_excursion_pct": 2.19,
+      "maximum_adverse_excursion_pct": 2.34,
+      "regime_performance": {
+        "BULL": {
+          "trades": 21,
+          "wins": 15,
+          "net_return": 11.021262775324232
+        },
+        "BEAR": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "SIDEWAYS": {
+          "trades": 47,
+          "wins": 20,
+          "net_return": -37.003256672453
+        },
+        "HIGH_VOLATILITY": {
+          "trades": 16,
+          "wins": 1,
+          "net_return": -53.0019155528213
+        },
+        "LOW_VOLATILITY": {
+          "trades": 52,
+          "wins": 34,
+          "net_return": 27.01992165569253
+        }
+      },
+      "trade_log": [
+        {
+          "date": "2025-05-20",
+          "signal": "BUY",
+          "probability": 0.5540688254766554,
+          "entry_price": 205.87,
+          "stop_loss": 194.51,
+          "target_1": 216.37,
+          "target_2": 231.28,
+          "outcome": "STOP_HIT",
+          "days_held": 3,
+          "gross_return_pct": -5.52,
+          "net_return_pct": -5.67
+        },
+        {
+          "date": "2025-05-22",
+          "signal": "BUY",
+          "probability": 0.5897892007362922,
+          "entry_price": 200.39,
+          "stop_loss": 190.09,
+          "target_1": 213.25,
+          "target_2": 226.76,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -0.25,
+          "net_return_pct": -0.4
+        },
+        {
+          "date": "2025-05-23",
+          "signal": "BUY",
+          "probability": 0.5627242903644587,
+          "entry_price": 194.33,
+          "stop_loss": 184.26,
+          "target_1": 213.25,
+          "target_2": 226.66,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 3.29,
+          "net_return_pct": 3.14
+        },
+        {
+          "date": "2025-06-03",
+          "signal": "BUY",
+          "probability": 0.5519306810469039,
+          "entry_price": 202.29,
+          "stop_loss": 193.59,
+          "target_1": 212.91,
+          "target_2": 224.33,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -0.29,
+          "net_return_pct": -0.44
+        },
+        {
+          "date": "2025-06-06",
+          "signal": "BUY",
+          "probability": 0.5811967929687348,
+          "entry_price": 202.94,
+          "stop_loss": 193.63,
+          "target_1": 212.91,
+          "target_2": 225.13,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -3.66,
+          "net_return_pct": -3.81
+        },
+        {
+          "date": "2025-06-09",
+          "signal": "BUY",
+          "probability": 0.5760892747138524,
+          "entry_price": 200.48,
+          "stop_loss": 191.32,
+          "target_1": 212.91,
+          "target_2": 224.93,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.5,
+          "net_return_pct": -1.65
+        },
+        {
+          "date": "2025-06-10",
+          "signal": "BUY",
+          "probability": 0.5501193444052297,
+          "entry_price": 201.7,
+          "stop_loss": 192.53,
+          "target_1": 212.91,
+          "target_2": 224.94,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -3.47,
+          "net_return_pct": -3.62
+        },
+        {
+          "date": "2025-06-20",
+          "signal": "BUY",
+          "probability": 0.5589594972203309,
+          "entry_price": 200.03,
+          "stop_loss": 192.27,
+          "target_1": 207.2,
+          "target_2": 217.38,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 0.04,
+          "net_return_pct": -0.11
+        },
+        {
+          "date": "2025-07-14",
+          "signal": "BUY",
+          "probability": 0.550471379881689,
+          "entry_price": 207.62,
+          "stop_loss": 199.28,
+          "target_1": 215.33,
+          "target_2": 226.28,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 1.85,
+          "net_return_pct": 1.7
+        },
+        {
+          "date": "2025-11-03",
+          "signal": "BUY",
+          "probability": 0.5636833738787632,
+          "entry_price": 268.06,
+          "stop_loss": 257.25,
+          "target_1": 278.06,
+          "target_2": 292.25,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 0.24,
+          "net_return_pct": 0.09
+        },
+        {
+          "date": "2025-11-04",
+          "signal": "BUY",
+          "probability": 0.5630197937388285,
+          "entry_price": 269.05,
+          "stop_loss": 258.3,
+          "target_1": 278.99,
+          "target_2": 293.09,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 2.03,
+          "net_return_pct": 1.88
+        },
+        {
+          "date": "2025-11-05",
+          "signal": "BUY",
+          "probability": 0.5559320349039593,
+          "entry_price": 269.15,
+          "stop_loss": 258.32,
+          "target_1": 279.16,
+          "target_2": 293.37,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 1.33,
+          "net_return_pct": 1.18
+        },
+        {
+          "date": "2025-12-18",
+          "signal": "BUY",
+          "probability": 0.5557985393735044,
+          "entry_price": 271.45,
+          "stop_loss": 261.92,
+          "target_1": 287.84,
+          "target_2": 300.35,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 0.44,
+          "net_return_pct": 0.29
+        },
+        {
+          "date": "2026-02-05",
+          "signal": "BUY",
+          "probability": 0.5533249819446501,
+          "entry_price": 275.16,
+          "stop_loss": 261.45,
+          "target_1": 287.84,
+          "target_2": 305.83,
+          "outcome": "STOP_HIT",
+          "days_held": 5,
+          "gross_return_pct": -4.98,
+          "net_return_pct": -5.13
+        },
+        {
+          "date": "2026-02-24",
+          "signal": "BUY",
+          "probability": 0.5609906736218718,
+          "entry_price": 271.66,
+          "stop_loss": 257.48,
+          "target_1": 284.77,
+          "target_2": 303.37,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -3.08,
+          "net_return_pct": -3.23
+        },
+        {
+          "date": "2026-03-02",
+          "signal": "BUY",
+          "probability": 0.5603203269967275,
+          "entry_price": 264.25,
+          "stop_loss": 250.31,
+          "target_1": 280.15,
+          "target_2": 298.45,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.83,
+          "net_return_pct": -1.98
+        },
+        {
+          "date": "2026-03-05",
+          "signal": "BUY",
+          "probability": 0.5677038755059454,
+          "entry_price": 259.83,
+          "stop_loss": 247.17,
+          "target_1": 280.15,
+          "target_2": 296.75,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.74,
+          "net_return_pct": -1.89
+        },
+        {
+          "date": "2026-03-09",
+          "signal": "BUY",
+          "probability": 0.5643281142817146,
+          "entry_price": 259.42,
+          "stop_loss": 247.36,
+          "target_1": 279.68,
+          "target_2": 295.51,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -2.72,
+          "net_return_pct": -2.87
+        },
+        {
+          "date": "2026-04-29",
+          "signal": "BUY",
+          "probability": 0.5643212285985363,
+          "entry_price": 269.69,
+          "stop_loss": 258.56,
+          "target_1": 279.99,
+          "target_2": 294.59,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 2,
+          "gross_return_pct": 3.82,
+          "net_return_pct": 3.67
+        },
+        {
+          "date": "2026-05-04",
+          "signal": "BUY",
+          "probability": 0.6134734944248684,
+          "entry_price": 276.34,
+          "stop_loss": 262.67,
+          "target_1": 288.98,
+          "target_2": 306.92,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 3,
+          "gross_return_pct": 4.57,
+          "net_return_pct": 4.42
+        }
+      ],
+      "ambiguous_candle_rule": "CONSERVATIVE: Intrabar candle ambiguity counts as stop loss",
+      "disclaimer": "Research backtest results simulate historical trade setups and do NOT guarantee future profitability.",
+      "symbol": "AAPL"
+    },
+    "NVDA": {
+      "number_of_setups": 426,
+      "number_of_trades": 78,
+      "signal_distribution": {
+        "BUY": 71,
+        "SELL": 7,
+        "HOLD": 348
+      },
+      "win_rate_pct": 53.85,
+      "loss_rate_pct": 46.15,
+      "target_1_hit_rate_pct": 26.92,
+      "target_2_hit_rate_pct": 0.0,
+      "stop_loss_rate_pct": 16.67,
+      "ambiguous_rate_pct": 0.0,
+      "ambiguous_count": 0,
+      "average_gross_return_pct": 0.79,
+      "estimated_costs_pct": 0.15,
+      "average_net_return_pct": 0.64,
+      "median_net_return_pct": 1.58,
+      "profit_factor": 1.31,
+      "maximum_drawdown_pct": 44.67,
+      "average_holding_period_days": 4.2,
+      "maximum_favorable_excursion_pct": 4.64,
+      "maximum_adverse_excursion_pct": 3.75,
+      "regime_performance": {
+        "BULL": {
+          "trades": 39,
+          "wins": 25,
+          "net_return": 33.5160859748463
+        },
+        "BEAR": {
+          "trades": 5,
+          "wins": 0,
+          "net_return": -37.35899449006383
+        },
+        "SIDEWAYS": {
+          "trades": 34,
+          "wins": 17,
+          "net_return": 53.8036987396608
+        },
+        "HIGH_VOLATILITY": {
+          "trades": 37,
+          "wins": 16,
+          "net_return": -28.114541659308628
+        },
+        "LOW_VOLATILITY": {
+          "trades": 41,
+          "wins": 26,
+          "net_return": 78.07533188375194
+        }
+      },
+      "trade_log": [
+        {
+          "date": "2025-12-26",
+          "signal": "BUY",
+          "probability": 0.5562199521102973,
+          "entry_price": 190.3,
+          "stop_loss": 180.22,
+          "target_1": 199.62,
+          "target_2": 212.85,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.27,
+          "net_return_pct": -1.42
+        },
+        {
+          "date": "2026-01-29",
+          "signal": "BUY",
+          "probability": 0.5677306699715908,
+          "entry_price": 192.28,
+          "stop_loss": 182.34,
+          "target_1": 201.47,
+          "target_2": 214.51,
+          "outcome": "STOP_HIT",
+          "days_held": 3,
+          "gross_return_pct": -5.17,
+          "net_return_pct": -5.32
+        },
+        {
+          "date": "2026-02-05",
+          "signal": "BUY",
+          "probability": 0.5648141326696793,
+          "entry_price": 171.67,
+          "stop_loss": 162.03,
+          "target_1": 194.25,
+          "target_2": 208.07,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 8.76,
+          "net_return_pct": 8.61
+        },
+        {
+          "date": "2026-02-12",
+          "signal": "BUY",
+          "probability": 0.5691391379844072,
+          "entry_price": 186.71,
+          "stop_loss": 173.13,
+          "target_1": 199.28,
+          "target_2": 217.1,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 1.54,
+          "net_return_pct": 1.39
+        },
+        {
+          "date": "2026-02-23",
+          "signal": "BUY",
+          "probability": 0.5647328748683632,
+          "entry_price": 191.32,
+          "stop_loss": 177.61,
+          "target_1": 204.0,
+          "target_2": 222.0,
+          "outcome": "STOP_HIT",
+          "days_held": 4,
+          "gross_return_pct": -7.17,
+          "net_return_pct": -7.32
+        },
+        {
+          "date": "2026-02-25",
+          "signal": "BUY",
+          "probability": 0.5557044538901522,
+          "entry_price": 195.32,
+          "stop_loss": 182.66,
+          "target_1": 207.03,
+          "target_2": 223.65,
+          "outcome": "STOP_HIT",
+          "days_held": 2,
+          "gross_return_pct": -6.48,
+          "net_return_pct": -6.63
+        },
+        {
+          "date": "2026-02-26",
+          "signal": "BUY",
+          "probability": 0.5648810770534306,
+          "entry_price": 184.66,
+          "stop_loss": 171.22,
+          "target_1": 197.39,
+          "target_2": 215.03,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -0.84,
+          "net_return_pct": -0.99
+        },
+        {
+          "date": "2026-03-02",
+          "signal": "BUY",
+          "probability": 0.5666661339388636,
+          "entry_price": 182.26,
+          "stop_loss": 169.88,
+          "target_1": 197.39,
+          "target_2": 213.63,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 0.09,
+          "net_return_pct": -0.06
+        },
+        {
+          "date": "2026-03-10",
+          "signal": "BUY",
+          "probability": 0.5547377190842759,
+          "entry_price": 184.54,
+          "stop_loss": 172.28,
+          "target_1": 197.39,
+          "target_2": 213.48,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.53,
+          "net_return_pct": -1.68
+        },
+        {
+          "date": "2026-03-11",
+          "signal": "BUY",
+          "probability": 0.595192104650032,
+          "entry_price": 185.81,
+          "stop_loss": 173.49,
+          "target_1": 197.39,
+          "target_2": 213.56,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -3.02,
+          "net_return_pct": -3.17
+        },
+        {
+          "date": "2026-04-15",
+          "signal": "BUY",
+          "probability": 0.5518299858928101,
+          "entry_price": 198.64,
+          "stop_loss": 188.0,
+          "target_1": 208.48,
+          "target_2": 222.45,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 1.82,
+          "net_return_pct": 1.67
+        },
+        {
+          "date": "2026-04-17",
+          "signal": "BUY",
+          "probability": 0.572131748457548,
+          "entry_price": 201.45,
+          "stop_loss": 191.43,
+          "target_1": 210.72,
+          "target_2": 223.87,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 3.27,
+          "net_return_pct": 3.12
+        },
+        {
+          "date": "2026-04-27",
+          "signal": "BUY",
+          "probability": 0.5513109590575872,
+          "entry_price": 216.36,
+          "stop_loss": 205.11,
+          "target_1": 226.76,
+          "target_2": 241.53,
+          "outcome": "STOP_HIT",
+          "days_held": 3,
+          "gross_return_pct": -5.2,
+          "net_return_pct": -5.35
+        },
+        {
+          "date": "2026-05-05",
+          "signal": "BUY",
+          "probability": 0.554246238394865,
+          "entry_price": 196.27,
+          "stop_loss": 183.57,
+          "target_1": 216.58,
+          "target_2": 233.25,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 3,
+          "gross_return_pct": 10.35,
+          "net_return_pct": 10.2
+        },
+        {
+          "date": "2026-05-06",
+          "signal": "BUY",
+          "probability": 0.5519300628141169,
+          "entry_price": 207.59,
+          "stop_loss": 193.79,
+          "target_1": 220.36,
+          "target_2": 238.48,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 3,
+          "gross_return_pct": 6.15,
+          "net_return_pct": 6.0
+        },
+        {
+          "date": "2026-05-08",
+          "signal": "BUY",
+          "probability": 0.5760076831926638,
+          "entry_price": 214.95,
+          "stop_loss": 200.24,
+          "target_1": 228.55,
+          "target_2": 247.86,
+          "outcome": "TARGET_1_HIT",
+          "days_held": 4,
+          "gross_return_pct": 6.33,
+          "net_return_pct": 6.18
+        },
+        {
+          "date": "2026-05-13",
+          "signal": "BUY",
+          "probability": 0.5538602548309061,
+          "entry_price": 225.57,
+          "stop_loss": 209.37,
+          "target_1": 240.55,
+          "target_2": 261.81,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -1.05,
+          "net_return_pct": -1.2
+        },
+        {
+          "date": "2026-05-20",
+          "signal": "BUY",
+          "probability": 0.5514095540775369,
+          "entry_price": 223.21,
+          "stop_loss": 207.06,
+          "target_1": 238.15,
+          "target_2": 259.35,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -4.13,
+          "net_return_pct": -4.28
+        },
+        {
+          "date": "2026-05-21",
+          "signal": "BUY",
+          "probability": 0.5652992030572074,
+          "entry_price": 219.25,
+          "stop_loss": 202.59,
+          "target_1": 236.26,
+          "target_2": 258.13,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": -3.81,
+          "net_return_pct": -3.96
+        },
+        {
+          "date": "2026-05-26",
+          "signal": "BUY",
+          "probability": 0.5510994525229603,
+          "entry_price": 214.61,
+          "stop_loss": 197.78,
+          "target_1": 236.26,
+          "target_2": 258.36,
+          "outcome": "EXPIRED_HOLD",
+          "days_held": 5,
+          "gross_return_pct": 3.7,
+          "net_return_pct": 3.55
+        }
+      ],
+      "ambiguous_candle_rule": "CONSERVATIVE: Intrabar candle ambiguity counts as stop loss",
+      "disclaimer": "Research backtest results simulate historical trade setups and do NOT guarantee future profitability.",
+      "symbol": "NVDA"
+    },
+    "BTC-USD": {
+      "number_of_setups": 656,
+      "number_of_trades": 0,
+      "signal_distribution": {
+        "BUY": 0,
+        "SELL": 0,
+        "HOLD": 656
+      },
+      "win_rate_pct": 0.0,
+      "loss_rate_pct": 0.0,
+      "target_1_hit_rate_pct": 0.0,
+      "target_2_hit_rate_pct": 0.0,
+      "stop_loss_rate_pct": 0.0,
+      "ambiguous_rate_pct": 0.0,
+      "ambiguous_count": 0,
+      "average_gross_return_pct": 0.0,
+      "estimated_costs_pct": 0.15,
+      "average_net_return_pct": 0.0,
+      "median_net_return_pct": 0.0,
+      "profit_factor": 0.0,
+      "maximum_drawdown_pct": 0.0,
+      "average_holding_period_days": 0.0,
+      "maximum_favorable_excursion_pct": 0.0,
+      "maximum_adverse_excursion_pct": 0.0,
+      "regime_performance": {
+        "BULL": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "BEAR": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "SIDEWAYS": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "HIGH_VOLATILITY": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        },
+        "LOW_VOLATILITY": {
+          "trades": 0,
+          "wins": 0,
+          "net_return": 0.0
+        }
+      },
+      "trade_log": [],
+      "ambiguous_candle_rule": "CONSERVATIVE: Intrabar candle ambiguity counts as stop loss",
+      "disclaimer": "Research backtest results simulate historical trade setups and do NOT guarantee future profitability.",
+      "symbol": "BTC-USD"
+    }
+  }
+}

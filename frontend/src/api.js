@@ -72,9 +72,14 @@ export const api = {
   getLiveAnalytics: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/live-analytics/${symbol}`, options),
   getLivePredictionsCsvUrl: (symbol) => `${API_BASE_URL}/research/live-predictions/${symbol}/csv`,
   getTechnicalAnalysis: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/technical-analysis`, options),
+  getTradeSetup: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/trade-setup`, options),
+  getTradeSetupBacktest: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/trade-setup/backtest`, options),
+  getTradeSetupHistory: (symbol, limit = 50, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/trade-setup/history`, { params: { limit }, ...options }),
+  getPaperPerformance: (symbol, options = {}) => axios.get(`${API_BASE_URL}/assets/${symbol}/paper-performance`, options),
   getSystemStatus: (options = {}) => axios.get(`${API_BASE_URL}/system/status`, options),
   getHealth: (options = {}) => axios.get(`${BACKEND_ROOT_URL}/health`, options)
 };
+
 
 
 

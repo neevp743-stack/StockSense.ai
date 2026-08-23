@@ -58,5 +58,7 @@ prediction_cache = TTLCacheManager(default_ttl_seconds=TTL_PREDICTION)
 quote_cache = TTLCacheManager(default_ttl_seconds=TTL_QUOTE)
 model_cache = TTLCacheManager(default_ttl_seconds=TTL_MODEL)
 dashboard_cache = TTLCacheManager(default_ttl_seconds=60)
+trade_setup_cache = TTLCacheManager(default_ttl_seconds=45)
+
 
 
