@@ -1,0 +1,30 @@
+{
+  "total_features_evaluated": 3,
+  "stable_features_count": 0,
+  "unstable_features_count": 0,
+  "drifted_features_count": 3,
+  "selected_robust_features": [],
+  "feature_details": {
+    "rsi": {
+      "train_mean": 50.0,
+      "val_mean": 52.0,
+      "mean_shift_ratio": 0.04,
+      "std_ratio": 0.0,
+      "status": "FEATURE_DRIFTED"
+    },
+    "macd": {
+      "train_mean": 0.1,
+      "val_mean": 0.12,
+      "mean_shift_ratio": 0.2,
+      "std_ratio": 0.0,
+      "status": "FEATURE_DRIFTED"
+    },
+    "volatility": {
+      "train_mean": 0.02,
+      "val_mean": 0.021,
+      "mean_shift_ratio": 0.05,
+      "std_ratio": 0.0,
+      "status": "FEATURE_DRIFTED"
+    }
+  }
+}

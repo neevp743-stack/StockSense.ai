@@ -1,0 +1,54 @@
+{
+  "total_dataset_rows": 100,
+  "train_val_rows": 85,
+  "holdout_rows": 15,
+  "holdout_ratio": 0.15,
+  "n_folds": 5,
+  "folds": [
+    {
+      "fold": 1,
+      "train_rows": 14,
+      "val_rows": 14,
+      "train_start": "2024-01-01 00:00:00",
+      "train_end": "2024-01-14 00:00:00",
+      "val_start": "2024-01-15 00:00:00",
+      "val_end": "2024-01-28 00:00:00"
+    },
+    {
+      "fold": 2,
+      "train_rows": 28,
+      "val_rows": 14,
+      "train_start": "2024-01-01 00:00:00",
+      "train_end": "2024-01-28 00:00:00",
+      "val_start": "2024-01-29 00:00:00",
+      "val_end": "2024-02-11 00:00:00"
+    },
+    {
+      "fold": 3,
+      "train_rows": 42,
+      "val_rows": 14,
+      "train_start": "2024-01-01 00:00:00",
+      "train_end": "2024-02-11 00:00:00",
+      "val_start": "2024-02-12 00:00:00",
+      "val_end": "2024-02-25 00:00:00"
+    },
+    {
+      "fold": 4,
+      "train_rows": 56,
+      "val_rows": 14,
+      "train_start": "2024-01-01 00:00:00",
+      "train_end": "2024-02-25 00:00:00",
+      "val_start": "2024-02-26 00:00:00",
+      "val_end": "2024-03-10 00:00:00"
+    },
+    {
+      "fold": 5,
+      "train_rows": 70,
+      "val_rows": 15,
+      "train_start": "2024-01-01 00:00:00",
+      "train_end": "2024-03-10 00:00:00",
+      "val_start": "2024-03-11 00:00:00",
+      "val_end": "2024-03-25 00:00:00"
+    }
+  ]
+}

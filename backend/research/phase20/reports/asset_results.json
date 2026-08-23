@@ -1,0 +1,16 @@
+{
+  "asset_groups": {
+    "INDIA": {
+      "accuracy": 0.54,
+      "samples": 200
+    },
+    "USA": {
+      "accuracy": 0.55,
+      "samples": 200
+    },
+    "CRYPTO": {
+      "accuracy": 0.51,
+      "samples": 86
+    }
+  }
+}

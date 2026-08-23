@@ -1357,3 +1357,47 @@ def get_phase19a_symbol_endpoint(symbol: str):
     """GET /api/research/phase19a/{symbol} - Symbol-specific live data and shadow pipeline diagnostics."""
     return phase19a_service.get_symbol_diagnostics(symbol)
 
+
+from backend.services.phase20_service import phase20_service
+
+@app.get("/api/research/phase20/status")
+def get_phase20_status_endpoint():
+    """GET /api/research/phase20/status - Decision status & final verdict for Phase 20."""
+    return phase20_service.get_status()
+
+@app.get("/api/research/phase20/comparison")
+def get_phase20_comparison_endpoint():
+    """GET /api/research/phase20/comparison - Candidate vs Champion vs Challenger model comparison."""
+    return phase20_service.get_comparison()
+
+@app.get("/api/research/phase20/forward")
+def get_phase20_forward_endpoint():
+    """GET /api/research/phase20/forward - Genuine forward evaluation metrics."""
+    return phase20_service.get_forward()
+
+@app.get("/api/research/phase20/regimes")
+def get_phase20_regimes_endpoint():
+    """GET /api/research/phase20/regimes - Market regime performance breakdown."""
+    return phase20_service.get_regimes()
+
+@app.get("/api/research/phase20/calibration")
+def get_phase20_calibration_endpoint():
+    """GET /api/research/phase20/calibration - Calibration metrics (ECE, Brier, reliability curve)."""
+    return phase20_service.get_calibration()
+
+@app.get("/api/research/phase20/drift")
+def get_phase20_drift_endpoint():
+    """GET /api/research/phase20/drift - Concept drift analysis (PSI, KS statistic)."""
+    return phase20_service.get_drift()
+
+@app.get("/api/research/phase20/readiness")
+def get_phase20_readiness_endpoint():
+    """GET /api/research/phase20/readiness - 9-category Robustness Scorecard & promotion verdict."""
+    return phase20_service.get_readiness()
+
+@app.get("/api/research/phase20/{symbol}")
+def get_phase20_symbol_endpoint(symbol: str):
+    """GET /api/research/phase20/{symbol} - Symbol-specific Phase 20 research metrics."""
+    return phase20_service.get_symbol(symbol)
+
+

@@ -1,0 +1,16 @@
+{
+  "regimes": {
+    "BULL": {
+      "accuracy": 0.56,
+      "samples": 150
+    },
+    "BEAR": {
+      "accuracy": 0.52,
+      "samples": 150
+    },
+    "SIDEWAYS": {
+      "accuracy": 0.5,
+      "samples": 186
+    }
+  }
+}

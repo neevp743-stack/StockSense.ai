@@ -1,0 +1,14 @@
+{
+  "model_name": "Phase20 Candidate",
+  "total_trades": 23,
+  "win_rate": 0.5652,
+  "profit_factor": 2.0319,
+  "gross_profit": 0.2012,
+  "gross_loss": 0.099,
+  "net_return": 0.1022,
+  "max_drawdown": 0.0435,
+  "sharpe_ratio": 4.921,
+  "target1_hits": 12,
+  "target2_hits": 1,
+  "stop_hits": 10
+}

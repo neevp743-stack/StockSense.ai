@@ -100,7 +100,15 @@ export const api = {
   getPhase19PromotionReadiness: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/promotion-readiness`, options),
   getPhase19DataQuality: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/data-quality`, options),
   getPhase19AStatus: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19a/status`, options),
-  getPhase19ASymbolStatus: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase19a/${encodeURIComponent(symbol)}`, options)
+  getPhase19ASymbolStatus: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase19a/${encodeURIComponent(symbol)}`, options),
+  getPhase20Status: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/status`, options),
+  getPhase20Comparison: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/comparison`, options),
+  getPhase20Forward: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/forward`, options),
+  getPhase20Regimes: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/regimes`, options),
+  getPhase20Calibration: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/calibration`, options),
+  getPhase20Drift: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/drift`, options),
+  getPhase20Readiness: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/readiness`, options),
+  getPhase20Symbol: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase20/${encodeURIComponent(symbol)}`, options)
 };
 
 

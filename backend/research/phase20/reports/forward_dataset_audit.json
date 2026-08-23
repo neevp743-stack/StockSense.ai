@@ -1,0 +1,10 @@
+{
+  "total_raw_db_records": 651,
+  "synthetic_records_excluded": 8,
+  "unresolved_records_excluded": 131,
+  "invalid_universe_excluded": 0,
+  "eligible_records": 512,
+  "total_paired_observations": 57,
+  "output_parquet_path": "backend/research/phase20/data/phase20_forward_dataset.parquet",
+  "symbols_covered": 12
+}

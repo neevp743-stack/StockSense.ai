@@ -1,0 +1,16 @@
+{
+  "phase": "PHASE20",
+  "champion_model_name": "Phase 12 Calibrated XGBoost v1.0",
+  "challenger_model_name": "Phase 17 Large XGBoost",
+  "phase20_version": "phase20_candidate_final",
+  "models_dir": "saved_models/phase20",
+  "historical_dataset_path": "backend/research/phase17/data/compiled_training_dataset.parquet",
+  "forward_dataset_path": "backend/research/phase20/data/phase20_forward_dataset.parquet",
+  "walk_forward_folds": 5,
+  "holdout_ratio": 0.15,
+  "min_per_stock_observations": 1000,
+  "confidence_thresholds": [0.50, 0.55, 0.60, 0.65, 0.70, 0.75],
+  "target_horizons": ["T+1", "T+3", "T+5", "RETURN_CLASS", "RISK_ADJUSTED_RETURN_CLASS"],
+  "alpha": 0.05,
+  "promotion_policy": "HARD_DISABLED_AUTOMATIC_PROMOTION"
+}

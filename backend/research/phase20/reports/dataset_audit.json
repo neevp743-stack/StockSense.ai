@@ -1,0 +1,26 @@
+{
+  "audit_status": "PASSED",
+  "dataset_file": "backend/research/phase17/data/compiled_training_dataset.parquet",
+  "dataset_hash": "1b0630594b3077b605b35946ff5e2005c0a5768e228fd28b3855dcc1c5098021",
+  "total_rows": 118156,
+  "total_columns": 47,
+  "unique_symbols": 109,
+  "duplicate_rows": 0,
+  "total_null_values": 0,
+  "timestamps_ordered": true,
+  "synthetic_records_found": 0,
+  "target_columns": [
+    "daily_return",
+    "return_1d",
+    "return_3d",
+    "return_5d",
+    "return_10d",
+    "target",
+    "target_5d",
+    "target_10d",
+    "target_threshold"
+  ],
+  "feature_columns_count": 36,
+  "leakage_detected": false,
+  "leakage_reasons": []
+}

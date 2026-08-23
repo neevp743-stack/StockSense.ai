@@ -12,6 +12,7 @@ import { ProductionMonitor } from './components/ProductionMonitor';
 import { Phase18ShadowMonitor } from './components/Phase18ShadowMonitor';
 import { Phase19AMonitor } from './components/Phase19AMonitor';
 import Phase19DecisionDashboard from './components/Phase19DecisionDashboard';
+import Phase20ResearchDashboard from './components/Phase20ResearchDashboard';
 import { SystemStatusBanner } from './components/SystemStatusBanner';
 
 
@@ -267,6 +268,11 @@ export default function App() {
             {/* Phase 19 Forward Decision Support Dashboard */}
             <div style={{ marginTop: '24px' }}>
               <Phase19DecisionDashboard />
+            </div>
+
+            {/* Phase 20 Production-Grade Model Research Dashboard */}
+            <div style={{ marginTop: '24px' }}>
+              <Phase20ResearchDashboard />
             </div>
 
             {/* Phase 15 Research Pattern Analysis Card */}

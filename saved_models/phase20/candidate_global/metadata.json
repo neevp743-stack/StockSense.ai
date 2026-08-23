@@ -1,0 +1,29 @@
+{
+  "version": "phase20_candidate_v1",
+  "candidate_name": "candidate_global",
+  "training_date": "2026-08-23T16:32:28.785304+00:00",
+  "feature_list": [
+    "rsi",
+    "macd"
+  ],
+  "feature_count": 2,
+  "feature_hash": "a67b6b8ba50c2126f41bcfc3280c29589b0d4dc9813caa343d66aa15da35bd75",
+  "dataset_rows_train": 200,
+  "dataset_rows_val": 100,
+  "calibration_method": "Platt Scaling (Sigmoid)",
+  "hyperparameters": {
+    "n_estimators": 200,
+    "max_depth": 3,
+    "learning_rate": 0.03,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 5,
+    "gamma": 0.1,
+    "reg_alpha": 0.5,
+    "reg_lambda": 1.5,
+    "random_state": 42,
+    "eval_metric": "logloss"
+  },
+  "source_model_version": "Phase 12 XGBoost Baseline",
+  "sha256_hash": "94a15dc5431e16f94f3277e40966695b591f98ed57d78e5a0cd53b8fa2db4923"
+}

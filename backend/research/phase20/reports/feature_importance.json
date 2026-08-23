@@ -1,0 +1,20 @@
+{
+  "top_features": [
+    {
+      "feature": "rsi_14",
+      "importance": 0.1825
+    },
+    {
+      "feature": "macd_diff",
+      "importance": 0.145
+    },
+    {
+      "feature": "volatility_20",
+      "importance": 0.121
+    },
+    {
+      "feature": "volume_ratio",
+      "importance": 0.098
+    }
+  ]
+}

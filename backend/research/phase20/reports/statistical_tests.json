@@ -1,0 +1,11 @@
+{
+  "mcnemar_statistic": 0.25,
+  "p_value": 0.6171,
+  "statistically_significant": false,
+  "contingency_table": {
+    "n_both_correct": 36,
+    "n_model1_only": 2,
+    "n_model2_only": 2,
+    "n_both_incorrect": 0
+  }
+}

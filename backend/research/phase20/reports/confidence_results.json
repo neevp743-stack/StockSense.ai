@@ -1,0 +1,66 @@
+{
+  "total_evaluations": 50,
+  "threshold_sweep": {
+    "threshold_0.50": {
+      "threshold": 0.5,
+      "coverage_ratio": 1.0,
+      "active_samples": 50,
+      "abstained_samples": 0,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "brier_score": 0.1225
+    },
+    "threshold_0.55": {
+      "threshold": 0.55,
+      "coverage_ratio": 1.0,
+      "active_samples": 50,
+      "abstained_samples": 0,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "brier_score": 0.1225
+    },
+    "threshold_0.60": {
+      "threshold": 0.6,
+      "coverage_ratio": 1.0,
+      "active_samples": 50,
+      "abstained_samples": 0,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "brier_score": 0.1225
+    },
+    "threshold_0.65": {
+      "threshold": 0.65,
+      "coverage_ratio": 1.0,
+      "active_samples": 50,
+      "abstained_samples": 0,
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "brier_score": 0.1225
+    },
+    "threshold_0.70": {
+      "threshold": 0.7,
+      "coverage_ratio": 0.0,
+      "active_samples": 0,
+      "abstained_samples": 50,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "brier_score": null
+    },
+    "threshold_0.75": {
+      "threshold": 0.75,
+      "coverage_ratio": 0.0,
+      "active_samples": 0,
+      "abstained_samples": 50,
+      "accuracy": null,
+      "precision": null,
+      "recall": null,
+      "brier_score": null
+    }
+  },
+  "recommended_threshold": 0.6
+}

@@ -1,0 +1,6 @@
+{
+  "holdout_ratio": 0.15,
+  "holdout_samples": 100,
+  "candidate_accuracy": 0.5415,
+  "holdout_brier_score": 0.245
+}

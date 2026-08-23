@@ -1,0 +1,119 @@
+{
+  "brier_score": 0.1225,
+  "log_loss": 0.4308,
+  "ece": 0.35,
+  "reliability_bins": [
+    {
+      "bin": 1,
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "sample_count": 0,
+      "mean_confidence": 0.05,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    },
+    {
+      "bin": 2,
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "sample_count": 0,
+      "mean_confidence": 0.15,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    },
+    {
+      "bin": 3,
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "sample_count": 0,
+      "mean_confidence": 0.25,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    },
+    {
+      "bin": 4,
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "sample_count": 25,
+      "mean_confidence": 0.35,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.35
+    },
+    {
+      "bin": 5,
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "sample_count": 0,
+      "mean_confidence": 0.45,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    },
+    {
+      "bin": 6,
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "sample_count": 0,
+      "mean_confidence": 0.55,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    },
+    {
+      "bin": 7,
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "sample_count": 25,
+      "mean_confidence": 0.65,
+      "mean_accuracy": 1.0,
+      "calibration_gap": 0.35
+    },
+    {
+      "bin": 8,
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "sample_count": 0,
+      "mean_confidence": 0.75,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    },
+    {
+      "bin": 9,
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "sample_count": 0,
+      "mean_confidence": 0.85,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    },
+    {
+      "bin": 10,
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "sample_count": 0,
+      "mean_confidence": 0.95,
+      "mean_accuracy": 0.0,
+      "calibration_gap": 0.0
+    }
+  ],
+  "confidence_bands": {
+    "0.50-0.55": {
+      "sample_count": 0,
+      "accuracy": null
+    },
+    "0.55-0.60": {
+      "sample_count": 0,
+      "accuracy": null
+    },
+    "0.60-0.70": {
+      "sample_count": 50,
+      "accuracy": 1.0
+    },
+    "0.70-0.80": {
+      "sample_count": 0,
+      "accuracy": null
+    },
+    "0.80+": {
+      "sample_count": 0,
+      "accuracy": null
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "total_forward_observations": 57,
+  "champion": {
+    "name": "Phase 12 Calibrated XGBoost v1.0",
+    "accuracy": 0.5306,
+    "ece": 0.0499
+  },
+  "challenger": {
+    "name": "Phase 17 Large XGBoost",
+    "accuracy": 0.4286,
+    "ece": 0.2442
+  },
+  "candidate": {
+    "name": "Phase 20 Robust XGBoost Candidate",
+    "accuracy": 0.5415,
+    "ece": 0.052
+  }
+}

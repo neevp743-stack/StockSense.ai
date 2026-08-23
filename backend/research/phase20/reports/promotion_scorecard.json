@@ -1,0 +1,63 @@
+{
+  "total_criteria": 9,
+  "score": 7,
+  "promotion_policy": "HARD_DISABLED_AUTOMATIC_PROMOTION",
+  "final_verdict": "PHASE20_INSUFFICIENT_DATA",
+  "explanation": "Insufficient forward observations (N = 57 < 100). Phase 12 remains production.",
+  "criteria": [
+    {
+      "category": "GENERALIZATION",
+      "name": "Sufficient Forward Sample Size (N >= 100)",
+      "passed": false,
+      "value": "N = 57"
+    },
+    {
+      "category": "CALIBRATION",
+      "name": "Low Calibration Error (ECE <= 0.10)",
+      "passed": true,
+      "value": "ECE = 0.052"
+    },
+    {
+      "category": "FORWARD PERFORMANCE",
+      "name": "Candidate Outperforms Champion Accuracy",
+      "passed": true,
+      "value": "Candidate 0.5415 vs Champ 0.5306"
+    },
+    {
+      "category": "STATISTICAL SIGNIFICANCE",
+      "name": "McNemar Test Statistically Significant (p < 0.05)",
+      "passed": false,
+      "value": "p = 0.6171"
+    },
+    {
+      "category": "DRIFT RESILIENCE",
+      "name": "Low Feature Drift Count (< 3 features)",
+      "passed": true,
+      "value": "High Drift Features = 1"
+    },
+    {
+      "category": "REGIME STABILITY",
+      "name": "Stable Across Market Regimes",
+      "passed": true,
+      "value": "Passed regime stability check"
+    },
+    {
+      "category": "ASSET STABILITY",
+      "name": "Stable Across India, USA, Crypto",
+      "passed": true,
+      "value": "Passed asset class stability check"
+    },
+    {
+      "category": "CONFIDENCE RELIABILITY",
+      "name": "Abstention System Operational",
+      "passed": true,
+      "value": "Confidence gating threshold 0.60 active"
+    },
+    {
+      "category": "TRADING PERFORMANCE",
+      "name": "Positive Phase 14 Net Trading Return",
+      "passed": true,
+      "value": "Passed trade setup simulation"
+    }
+  ]
+}
