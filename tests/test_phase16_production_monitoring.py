@@ -28,6 +28,9 @@ client = TestClient(app)
 def reset_provider_state():
     from backend.data.realtime_provider import realtime_provider_manager
     realtime_provider_manager.connection_status = "CONNECTED"
+    realtime_provider_manager.ws_url = "wss://ws.finnhub.io"
+    if not realtime_provider_manager.api_key:
+        realtime_provider_manager.api_key = "mock_token"
     try:
         realtime_provider_manager.tick_cache.clear()
     except Exception:

@@ -98,7 +98,9 @@ export const api = {
   getPhase19Trades: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/trades`, options),
   getPhase19Statistics: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/statistics`, options),
   getPhase19PromotionReadiness: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/promotion-readiness`, options),
-  getPhase19DataQuality: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/data-quality`, options)
+  getPhase19DataQuality: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19/data-quality`, options),
+  getPhase19AStatus: (options = {}) => axios.get(`${API_BASE_URL}/research/phase19a/status`, options),
+  getPhase19ASymbolStatus: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase19a/${encodeURIComponent(symbol)}`, options)
 };
 
 

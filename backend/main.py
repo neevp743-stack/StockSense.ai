@@ -1343,3 +1343,17 @@ def get_phase19_promotion_readiness_endpoint():
 def get_phase19_data_quality_endpoint():
     """GET /api/research/phase19/data-quality - 17-point data eligibility audit report."""
     return phase19_service.get_data_quality()
+
+
+from backend.services.phase19a_service import phase19a_service
+
+@app.get("/api/research/phase19a/status")
+def get_phase19a_status_endpoint():
+    """GET /api/research/phase19a/status - Telemetry & overall diagnostics for Phase 19A Live Data Pipeline."""
+    return phase19a_service.get_overall_status()
+
+@app.get("/api/research/phase19a/{symbol}")
+def get_phase19a_symbol_endpoint(symbol: str):
+    """GET /api/research/phase19a/{symbol} - Symbol-specific live data and shadow pipeline diagnostics."""
+    return phase19a_service.get_symbol_diagnostics(symbol)
+

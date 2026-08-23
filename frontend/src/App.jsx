@@ -10,6 +10,7 @@ import { TradeSetupPanel } from './components/TradeSetupPanel';
 import { PatternAnalysisCard } from './components/PatternAnalysisCard';
 import { ProductionMonitor } from './components/ProductionMonitor';
 import { Phase18ShadowMonitor } from './components/Phase18ShadowMonitor';
+import { Phase19AMonitor } from './components/Phase19AMonitor';
 import Phase19DecisionDashboard from './components/Phase19DecisionDashboard';
 import { SystemStatusBanner } from './components/SystemStatusBanner';
 
@@ -256,6 +257,11 @@ export default function App() {
             {/* Phase 18 Shadow Forward Validation Monitor */}
             <div style={{ marginTop: '24px' }}>
               <Phase18ShadowMonitor symbol={selectedAsset} />
+            </div>
+
+            {/* Phase 19A Live Data Pipeline & Diagnostic Monitor */}
+            <div style={{ marginTop: '24px' }}>
+              <Phase19AMonitor symbol={selectedAsset} />
             </div>
 
             {/* Phase 19 Forward Decision Support Dashboard */}
