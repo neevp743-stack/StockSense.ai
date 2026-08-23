@@ -1,0 +1,65 @@
+{
+  "audit_title": "StockSense AI Phase 16 Forensic Investigation",
+  "timestamp": "2026-08-23T11:40:12.582427+00:00",
+  "investigation_summary": {
+    "aapl_100_percent_cause": "DATA_PIPELINE_BUG_FOUND: ModelMonitor incorporated legacy synthetic test seed records (where resolved=False, current_price=None, but is_correct=True was set during early test setup). All 56 AAPL records had is_correct=True, producing fake 100% accuracy.",
+    "nvda_0_percent_cause": "DATA_PIPELINE_BUG_FOUND: ModelMonitor incorporated legacy synthetic test seed records (where resolved=False, current_price=None, but is_correct=False was set during early test setup). All 57 NVDA records had is_correct=False, producing fake 0% accuracy.",
+    "reliance_26_percent_cause": "Legacy synthetic test seed records with 15 True / 42 False labels.",
+    "tcs_53_percent_cause": "Legacy synthetic test seed records with 35 True / 31 False labels."
+  },
+  "prob_stats": {
+    "RELIANCE": {
+      "count": 60,
+      "min": 0.5091,
+      "max": 0.5251,
+      "mean": 0.5158,
+      "median": 0.5106,
+      "std": 0.0077
+    },
+    "INFY": {
+      "count": 12,
+      "min": 0.62,
+      "max": 0.62,
+      "mean": 0.62,
+      "median": 0.62,
+      "std": 0.0
+    },
+    "TCS": {
+      "count": 75,
+      "min": 0.4308,
+      "max": 0.65,
+      "mean": 0.4977,
+      "median": 0.4643,
+      "std": 0.0826
+    },
+    "AAPL": {
+      "count": 59,
+      "min": 0.5278,
+      "max": 0.5574,
+      "mean": 0.5454,
+      "median": 0.5574,
+      "std": 0.0147
+    },
+    "NVDA": {
+      "count": 60,
+      "min": 0.5523,
+      "max": 0.5667,
+      "mean": 0.5609,
+      "median": 0.5667,
+      "std": 0.0071
+    },
+    "BTC-USD": {
+      "count": 3,
+      "min": 0.4842,
+      "max": 0.4842,
+      "mean": 0.4842,
+      "median": 0.4842,
+      "std": 0.0
+    }
+  },
+  "brier_score_verification": {
+    "formula": "Brier = (probability_up - actual_binary_label)^2",
+    "verified": true,
+    "note": "Independently verified formula on resolved records."
+  }
+}

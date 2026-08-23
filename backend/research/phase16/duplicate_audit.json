@@ -1,0 +1,8 @@
+{
+  "total_records": 442,
+  "unique_records": 442,
+  "duplicate_records": 0,
+  "duplicate_percentage": 0.0,
+  "methodology": "Exact match on (symbol, market_timestamp, model_version, prediction_horizon, feature_timestamp)",
+  "recommendation": "No automatic record deletion required. Unique constraint index actively enforced."
+}

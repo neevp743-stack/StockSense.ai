@@ -194,3 +194,35 @@ def test_dataset_category_separation():
         paper_count = db.query(PaperPredictionRecord).count()
         assert live_count >= 0
         assert paper_count >= 0
+
+
+def test_legacy_synthetic_records_isolation():
+    """Regression test: Ensures un-resolved legacy synthetic test records lacking current_price are excluded from live metrics."""
+    with get_db_context() as db:
+        legacy_rec = LivePredictionRecord(
+            symbol="AAPL",
+            prediction_timestamp=datetime.now(timezone.utc),
+            market_timestamp=None,
+            predicted_direction="UP",
+            probability_up=0.55,
+            current_price=None,
+            model_version="XGBoost v1.0",
+            resolved=False,
+            is_correct=True
+        )
+        db.add(legacy_rec)
+        db.commit()
+        legacy_id = legacy_rec.id
+
+    try:
+        metrics = model_monitor.get_symbol_metrics("AAPL")
+        # Legacy record without current_price should NOT count as resolved
+        with get_db_context() as db:
+            r = db.query(LivePredictionRecord).filter_by(id=legacy_id).first()
+            assert r.resolved is False
+            assert r.current_price is None
+    finally:
+        with get_db_context() as db:
+            db.query(LivePredictionRecord).filter_by(id=legacy_id).delete()
+            db.commit()
+

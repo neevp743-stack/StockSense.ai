@@ -1,0 +1,21 @@
+{
+  "audit_findings": {
+    "same_candle_leakage": false,
+    "future_feature_leakage": false,
+    "alignment_status": "VALID",
+    "description": "Prediction timestamp T, market price P(T), and target price P(T+horizon) are strictly ordered in live predictions with current_price."
+  },
+  "trading_calendar_resolution": {
+    "RELIANCE": "NSE India Calendar (T+1 Session)",
+    "INFY": "NSE India Calendar (T+1 Session)",
+    "TCS": "NSE India Calendar (T+1 Session)",
+    "AAPL": "NASDAQ US Calendar (T+1 Session)",
+    "NVDA": "NASDAQ US Calendar (T+1 Session)",
+    "BTC-USD": "24/7 Crypto Horizon (T+1 Calendar Day)"
+  },
+  "legacy_records_alignment_issue": {
+    "affected_count": 380,
+    "issue": "Legacy test seed records created without current_price or market_timestamp",
+    "impact": "Legacy records could not be resolved against market prices and retained synthetic test values."
+  }
+}

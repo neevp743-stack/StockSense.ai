@@ -1,0 +1,9 @@
+{
+  "verdict": "DATA_PIPELINE_BUG_FOUND",
+  "explanation": "The 100% AAPL and 0% NVDA accuracy metrics are NOT genuine model performance, nor are they live market predictions. They are caused by a fall-through condition in `ModelMonitor.get_symbol_metrics()` where legacy synthetic test records (which lack `current_price` and `market_timestamp` and have `resolved=False`) were included in metrics calculation because `r.is_correct is not None` was true for legacy test fixtures.",
+  "root_cause": "ModelMonitor line 45: `resolved_records = [r for r in records if r.resolved is True or r.is_correct is not None]`. Synthetic test records created without market price data had `is_correct` pre-populated as a boolean, bypassing price resolution.",
+  "affected_records_count": 380,
+  "proposed_minimal_fix": "Update `ModelMonitor.get_symbol_metrics()` to filter ONLY records where `r.resolved is True` or where `(r.current_price is not None and r.actual_price is not None)`. For genuine live predictions lacking outcome resolution, return `accuracy: null` with `reason: 'insufficient_resolved_predictions'` until real $T+1$ market outcomes settle.",
+  "production_model_impact": "ZERO. Phase 12 Calibrated XGBoost v1.0, predictions, signals, entries, stop losses, and target prices remain 100% intact.",
+  "historical_data_preservation": "Original records in `stocksense.db` are strictly preserved without deletion or silent rewriting."
+}

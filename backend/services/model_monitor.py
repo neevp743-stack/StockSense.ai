@@ -42,8 +42,13 @@ class ModelMonitor:
             records = query.all()
 
         total_predictions = len(records)
-        resolved_records = [r for r in records if r.resolved is True or r.is_correct is not None]
+        resolved_records = [
+            r for r in records
+            if (r.resolved is True or (r.is_correct is not None and r.current_price is not None))
+        ]
         resolved_count = len(resolved_records)
+
+
 
         if resolved_count < MINIMUM_SAMPLE_SIZE:
             return {

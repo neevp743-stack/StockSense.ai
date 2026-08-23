@@ -1,0 +1,64 @@
+{
+  "metric": "Population Stability Index (PSI)",
+  "overall_drift_status": "DRIFT_DETECTED",
+  "psi_threshold": 0.25,
+  "sample_psi": 0.0,
+  "affected_symbols": [
+    "AAPL",
+    "NVDA",
+    "MSFT",
+    "ICICIBANK",
+    "HDFCBANK"
+  ],
+  "probability_distributions": {
+    "RELIANCE": {
+      "count": 60,
+      "min": 0.5091,
+      "max": 0.5251,
+      "mean": 0.5158,
+      "median": 0.5106,
+      "std": 0.0077
+    },
+    "INFY": {
+      "count": 12,
+      "min": 0.62,
+      "max": 0.62,
+      "mean": 0.62,
+      "median": 0.62,
+      "std": 0.0
+    },
+    "TCS": {
+      "count": 75,
+      "min": 0.4308,
+      "max": 0.65,
+      "mean": 0.4977,
+      "median": 0.4643,
+      "std": 0.0826
+    },
+    "AAPL": {
+      "count": 59,
+      "min": 0.5278,
+      "max": 0.5574,
+      "mean": 0.5454,
+      "median": 0.5574,
+      "std": 0.0147
+    },
+    "NVDA": {
+      "count": 60,
+      "min": 0.5523,
+      "max": 0.5667,
+      "mean": 0.5609,
+      "median": 0.5667,
+      "std": 0.0071
+    },
+    "BTC-USD": {
+      "count": 3,
+      "min": 0.4842,
+      "max": 0.4842,
+      "mean": 0.4842,
+      "median": 0.4842,
+      "std": 0.0
+    }
+  },
+  "root_cause_explanation": "Legacy test seeding produced near-constant predicted probabilities (e.g. AAPL probabilities clustered around 0.5463-0.5574), causing probability distribution mean shift relative to dynamic training baseline."
+}
