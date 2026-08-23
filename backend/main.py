@@ -1008,6 +1008,8 @@ from backend.services.model_monitor import model_monitor
 from backend.services.drift_monitor import drift_monitor
 from backend.services.production_health_service import production_health_service
 from backend.tracking.paper_tracker import log_paper_setup, get_paper_performance, resolve_pending_paper_setups
+from backend.db.models import LivePredictionRecord
+
 
 @app.get("/api/assets/{symbol}/trade-setup")
 def get_trade_setup_endpoint(symbol: str, db: Session = Depends(get_db)):
