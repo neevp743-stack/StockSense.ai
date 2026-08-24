@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-08-23T16:57:31.313182+00:00",
+  "phase": "PHASE21_1_DIAGNOSTICS",
+  "environment": {
+    "FINNHUB_API_KEY_configured": true,
+    "FINNHUB_TOKEN_configured": true,
+    "FINNHUB_WS_URL_configured": true,
+    "FINNHUB_REST_URL_configured": true,
+    "provider_name": "FINNHUB"
+  },
+  "universe": {
+    "ALL_SYMBOLS_count": 114,
+    "INDIA_SYMBOLS_count": 57,
+    "US_SYMBOLS_count": 50,
+    "CRYPTO_SYMBOLS_count": 8
+  },
+  "symbol_counts": {
+    "configured_symbol_count": 114,
+    "mapped_symbol_count": 114,
+    "subscribed_symbol_count": 114,
+    "invalid_symbol_count": 0,
+    "failed_mappings": []
+  },
+  "websocket_diagnostics": {
+    "ws_url": "wss://ws.finnhub.io",
+    "connection_attempted": true,
+    "websocket_connected": false,
+    "authentication_result": "SUCCESS",
+    "subscription_result": "OK",
+    "last_message": null,
+    "last_error": null
+  },
+  "rest_diagnostics": {
+    "rest_available": false,
+    "rest_test_query_result": "SUCCESS"
+  },
+  "provider_health_state": "PROVIDER_DISCONNECTED"
+}

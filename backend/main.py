@@ -1409,4 +1409,12 @@ def get_provider_health_endpoint():
     return realtime_provider_manager.get_provider_health()
 
 
+@app.get("/api/research/phase21/provider-health/{symbol}")
+def get_symbol_provider_health_endpoint(symbol: str):
+    """GET /api/research/phase21/provider-health/{symbol} - Detailed per-symbol provider health payload."""
+    from backend.data.realtime_provider import realtime_provider_manager
+    return realtime_provider_manager.get_symbol_health(symbol)
+
+
+
 

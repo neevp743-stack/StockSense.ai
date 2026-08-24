@@ -83,3 +83,13 @@ def get_internal_symbol_from_provider(provider_symbol: str) -> str:
     if provider_symbol.endswith(".NS"):
         return provider_symbol.replace(".NS", "")
     return provider_symbol
+
+
+def get_active_universe() -> Dict[str, Dict[str, Any]]:
+    """
+    Authoritative Phase 21.1 runtime function returning all active configured symbols with metadata:
+    internal_symbol, provider_symbol, region, exchange, asset_type, currency, timezone.
+    """
+    from backend.assets.provider_symbol_mapper import get_all_universe_symbol_mappings
+    return get_all_universe_symbol_mappings()
+

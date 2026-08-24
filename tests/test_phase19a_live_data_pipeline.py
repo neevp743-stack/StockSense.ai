@@ -22,6 +22,7 @@ def reset_provider_state():
     except Exception:
         pass
     yield
+    realtime_provider_manager._connection_status_override = None
 
 
 def test_phase19a_overall_status_endpoint():

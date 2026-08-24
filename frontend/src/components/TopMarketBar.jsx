@@ -18,7 +18,12 @@ export function TopMarketBar({ onSelectTicker }) {
     const fetchStatus = async () => {
       try {
         const res = await api.getPhase19AStatus();
-        if (res?.data?.data_status) {
+        const healthRes = await api.getProviderHealth?.().catch(() => null);
+        
+        const provState = healthRes?.data?.state || healthRes?.data?.status;
+        if (provState) {
+          setProviderStatus(provState.toUpperCase());
+        } else if (res?.data?.data_status) {
           setProviderStatus(res.data.data_status.toUpperCase());
         }
       } catch (err) {
@@ -56,15 +61,15 @@ export function TopMarketBar({ onSelectTicker }) {
   let statusColor = "var(--down-red)";
   let statusText = "UNAVAILABLE ● NO FEED";
 
-  if (providerStatus === "LIVE") {
+  if (providerStatus === "PROVIDER_CONNECTED" || providerStatus === "LIVE") {
     statusColor = "var(--up-green)";
     statusText = "REALTIME ● LIVE";
-  } else if (providerStatus === "DELAYED") {
+  } else if (providerStatus === "PROVIDER_REST_ONLY") {
+    statusColor = "#38bdf8";
+    statusText = "LIVE DATA ● REST";
+  } else if (providerStatus === "PROVIDER_DEGRADED" || providerStatus === "DELAYED" || providerStatus === "STALE") {
     statusColor = "#f59e0b";
-    statusText = "DELAYED ● FEED";
-  } else if (providerStatus === "STALE") {
-    statusColor = "#f59e0b";
-    statusText = "STALE ● FEED";
+    statusText = "DEGRADED ● FEED";
   }
 
   return (

@@ -108,7 +108,9 @@ export const api = {
   getPhase20Calibration: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/calibration`, options),
   getPhase20Drift: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/drift`, options),
   getPhase20Readiness: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/readiness`, options),
-  getPhase20Symbol: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase20/${encodeURIComponent(symbol)}`, options)
+  getPhase20Symbol: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase20/${encodeURIComponent(symbol)}`, options),
+  getProviderHealth: (options = {}) => axios.get(`${API_BASE_URL}/research/phase21/provider-health`, options),
+  getSymbolProviderHealth: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase21/provider-health/${encodeURIComponent(symbol)}`, options)
 };
 
 

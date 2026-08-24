@@ -1,0 +1,23 @@
+{
+  "saved_models\\AAPL_XGBoost.joblib": "e9dba6ebff496be426412568a5fc8b0ed95b9b8a1d70c650d49345b653912e07",
+  "saved_models\\AMZN_XGBoost.joblib": "665f52045e35e4fa0873737eb34e41cc83a89524f92c9d10188ac599b6bf8018",
+  "saved_models\\BTC-USD_XGBoost.joblib": "2e4ef4ec82a090a78c29066a6200bdaff1557764afbc94d63d59f48ab8e4dec0",
+  "saved_models\\ETH-USD_XGBoost.joblib": "3e8cccbcc2d88112eb2787a77c06ac40972380e2753b892a62f4cc566b901425",
+  "saved_models\\EURUSD=X_XGBoost.joblib": "90ce8dc066135cdc535b7eb29c078aa8ecca3cc0cc78436e838cb3b350135cd7",
+  "saved_models\\GBPUSD=X_XGBoost.joblib": "b12ff939974c9e7b50da22b9dfd1af7d6f730c5157ad677c5d0fd413504df8ba",
+  "saved_models\\GOOGL_XGBoost.joblib": "4d7f7036d525153bbc4c10331a947fa7a4248ee1b041365dca4e891474ec303f",
+  "saved_models\\HDFCBANK_XGBoost.joblib": "ff76c99c953c19fd5e37164695511ca569240ebde2eb366e198840bc46ed90e7",
+  "saved_models\\ICICIBANK_XGBoost.joblib": "683d95b9ec59497f977013d62709b005954da14a2da0e69a7fe684c4a418fdd3",
+  "saved_models\\INFY_XGBoost.joblib": "e001500f62eeeec584149dcf42007e5dbac7ea19fe0a4767e6473f2ccf574c8e",
+  "saved_models\\MSFT_XGBoost.joblib": "77782962bfc43594c327a74e64a862c3bbcabde6d7096a2717ccee02e82335e6",
+  "saved_models\\NVDA_XGBoost.joblib": "dc0883fd7cd120492ad07e765e28170c06604a26690351371b5c5339ff1e70b0",
+  "saved_models\\RELIANCE_XGBoost.joblib": "ad96fb33a1487f4ece1b153933a1bac05a3e9d048376af66f62461b20deab0c9",
+  "saved_models\\TCS_XGBoost.joblib": "eb1eed84f259ad1a42e9a4f35198e286c1331b158f4bbe42ee927a6d76bad445",
+  "saved_models\\USDINR=X_XGBoost.joblib": "ce184e75dc9182ef3607e497d33b364369894a5ed68aae1889ee80839b9f0127",
+  "saved_models\\USDJPY=X_XGBoost.joblib": "0da258c91efaa8f5ca5831786198e20e1104ae163b0b51cace95ee3043da7831",
+  "saved_models\\^DJI_XGBoost.joblib": "6a99121cdbe500cfd18e438cd7fcd4d8f1aa1ce8ea09b0106876454b782b0529",
+  "saved_models\\^GSPC_XGBoost.joblib": "2eb90076af4c6dd6db8b190e2dfedabab29009c76a0cde997eedb0f1d1d09b8f",
+  "saved_models\\^IXIC_XGBoost.joblib": "2d3785f036836f5cb665771ee34d21e5ae100f21699d70b4607809c8db71a796",
+  "saved_models\\^NSEBANK_XGBoost.joblib": "0fbb48ecc96d227aee65be2fe6d954aa60c1ffae24317d16677e0d32076f2ace",
+  "saved_models\\^NSEI_XGBoost.joblib": "64e7f7b47823e3d986dd99813b57432beb00222fdedb606cb8e85171d3a91ac4"
+}
