@@ -63,6 +63,9 @@ def test_cache_pattern_invalidation():
 
     assert history_cache.get("hist_RELIANCE_all") is None
     assert history_cache.get("hist_INFY_all") == "dummy_infy"
+    
+    # Cleanup to prevent global cache pollution affecting other tests
+    history_cache.invalidate("INFY")
 
 @patch("backend.main.train_all_models_for_symbol")
 @patch("backend.main.train_entire_universe")

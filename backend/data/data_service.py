@@ -128,7 +128,7 @@ def get_historical_data_from_db(symbol: str, db: Optional[Session] = None, limit
     symbol_clean = get_internal_symbol(symbol)
     cache_key = f"hist_{symbol_clean}_{limit or 'all'}"
     cached_df = history_cache.get(cache_key)
-    if cached_df is not None and not cached_df.empty:
+    if cached_df is not None and isinstance(cached_df, pd.DataFrame) and not cached_df.empty:
         return cached_df
 
     close_db = False
