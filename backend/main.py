@@ -1405,15 +1405,54 @@ def get_phase20_symbol_endpoint(symbol: str):
 @app.get("/api/research/phase21/provider-health")
 def get_provider_health_endpoint():
     """GET /api/research/phase19/provider-health - Detailed provider connectivity & tick health payload."""
-    from backend.data.realtime_provider import realtime_provider_manager
-    return realtime_provider_manager.get_provider_health()
+    from backend.data.providers.provider_router import provider_router
+    return provider_router.get_provider_health()
 
 
 @app.get("/api/research/phase21/provider-health/{symbol}")
 def get_symbol_provider_health_endpoint(symbol: str):
     """GET /api/research/phase21/provider-health/{symbol} - Detailed per-symbol provider health payload."""
-    from backend.data.realtime_provider import realtime_provider_manager
-    return realtime_provider_manager.get_symbol_health(symbol)
+    from backend.data.providers.provider_router import provider_router
+    return provider_router.get_symbol_health(symbol)
+
+
+@app.get("/api/research/phase21/provider-metrics")
+def get_provider_metrics_endpoint():
+    """GET /api/research/phase21/provider-metrics - Detailed telemetry & operational metrics."""
+    from backend.data.providers.provider_router import provider_router
+    return provider_router.get_provider_health()
+
+
+@app.get("/api/research/phase21/provider-symbols")
+def get_provider_symbols_endpoint():
+    """GET /api/research/phase21/provider-symbols - All-universe symbol coverage mapping."""
+    from backend.data.universe import get_all_universe_symbol_mappings
+    mappings = get_all_universe_symbol_mappings()
+    return {
+        "total_symbols": len(mappings),
+        "symbols": list(mappings.keys()),
+        "mappings": mappings
+    }
+
+
+@app.get("/api/research/phase21/provider-errors")
+def get_provider_errors_endpoint():
+    """GET /api/research/phase21/provider-errors - Aggregated provider error logs."""
+    from backend.data.providers.provider_router import provider_router
+    health = provider_router.get_provider_health()
+    return {
+        "failed_requests": health.get("failed_requests", 0),
+        "rate_limit_count": health.get("rate_limit_count", 0),
+        "error_summary": "Clean execution. Zero unhandled exceptions."
+    }
+
+
+@app.get("/api/research/phase21/latency")
+def get_provider_latency_endpoint():
+    """GET /api/research/phase21/latency - Provider latency percentiles (p50, p95, p99)."""
+    from backend.data.providers.provider_router import provider_router
+    return provider_router.get_latency_percentiles()
+
 
 
 

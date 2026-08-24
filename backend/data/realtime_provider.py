@@ -158,7 +158,7 @@ class RealTimeWebSocketProvider:
 
     def fetch_rest_fallback_quote(self, symbol: str) -> Dict[str, Any]:
         """
-        Fetches latest quote via Finnhub REST API with YFinance fallback.
+        Fetches latest quote via ProviderRouter (Primary -> Secondary -> Fallback -> UNAVAILABLE).
         Strictly rejects zero/negative prices, missing timestamps, or malformed responses.
         Never fabricates prices or returns fake substitute data.
         """
@@ -166,54 +166,30 @@ class RealTimeWebSocketProvider:
         mapping = self.symbol_mappings.get(sym_clean, {})
         prov_sym = mapping.get("provider_symbol", sym_clean)
 
-        now_utc = datetime.now(timezone.utc)
+        from backend.data.providers.provider_router import provider_router
+        q = provider_router.get_quote(sym_clean)
 
-        # 1. Finnhub REST query if configured
-        if self.is_configured():
-            try:
-                url = f"https://finnhub.io/api/v1/quote?symbol={prov_sym}&token={self.api_key.strip()}"
-                req = urllib.request.Request(url, headers={"User-Agent": "StockSenseAI/1.0"})
-                with urllib.request.urlopen(req, timeout=5) as response:
-                    if response.status == 200:
-                        data = json.loads(response.read().decode())
-                        current_price = data.get("c")
-                        if current_price is not None and isinstance(current_price, (int, float)) and float(current_price) > 0:
-                            self.rest_available = True
-                            self.provider_last_success_timestamp = now_utc.isoformat()
-                            self.process_incoming_tick(symbol=sym_clean, price=float(current_price), provider="FINNHUB_REST")
-                            return {
-                                "symbol": sym_clean,
-                                "provider_symbol": prov_sym,
-                                "price": round(float(current_price), 4),
-                                "timestamp": now_utc.isoformat(),
-                                "provider": "FINNHUB",
-                                "status": "LIVE",
-                                "data_status": "LIVE"
-                            }
-            except Exception as e:
-                self.provider_last_error_timestamp = now_utc.isoformat()
-                self.provider_last_error_reason = f"Finnhub REST Error for {sym_clean}: {e}"
-
-        # 2. YFinance Provider Fallback
-        from backend.data.provider import YFinanceProvider
-        yf_provider = YFinanceProvider()
-        yf_quote = yf_provider.get_latest_quote(sym_clean)
-
-        price = yf_quote.get("price")
-        if price is not None and isinstance(price, (int, float)) and float(price) > 0:
+        if q.get("price") is not None and float(q.get("price", 0)) > 0:
             self.rest_available = True
-            self.process_incoming_tick(symbol=sym_clean, price=float(price), provider="YFINANCE_REST")
+            now_iso = datetime.now(timezone.utc).isoformat()
+            self.provider_last_success_timestamp = now_iso
+            self.process_incoming_tick(symbol=sym_clean, price=float(q["price"]), provider=q.get("provider", "REST"))
             return {
                 "symbol": sym_clean,
                 "provider_symbol": prov_sym,
-                "price": round(float(price), 4),
-                "timestamp": yf_quote.get("timestamp", now_utc.isoformat()),
-                "provider": "YFINANCE",
+                "price": round(float(q["price"]), 4),
+                "timestamp": q.get("timestamp", now_iso),
+                "provider": q.get("provider", "FINNHUB"),
                 "status": "LIVE",
-                "data_status": "LIVE"
+                "data_status": "LIVE",
+                "latency_ms": q.get("latency_ms", 0.0),
+                "error": None
             }
 
         # 3. Invalid / Missing Data Result
+        now_iso = datetime.now(timezone.utc).isoformat()
+        self.provider_last_error_timestamp = now_iso
+        self.provider_last_error_reason = q.get("error", "UNAVAILABLE")
         return {
             "symbol": sym_clean,
             "provider_symbol": prov_sym,
@@ -221,7 +197,9 @@ class RealTimeWebSocketProvider:
             "timestamp": None,
             "provider": self.provider_name,
             "status": "UNAVAILABLE",
-            "data_status": "UNAVAILABLE"
+            "data_status": "UNAVAILABLE",
+            "latency_ms": q.get("latency_ms", 0.0),
+            "error": q.get("error", "UNAVAILABLE")
         }
 
     async def start(self):
