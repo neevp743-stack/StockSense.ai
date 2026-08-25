@@ -115,7 +115,8 @@ FOREX_SYMBOLS = {
     "GBPUSD=X": "British Pound / US Dollar",
     "USDJPY=X": "US Dollar / Japanese Yen",
     "AUDUSD=X": "Australian Dollar / US Dollar",
-    "USDCAD=X": "US Dollar / Canadian Dollar"
+    "USDCAD=X": "US Dollar / Canadian Dollar",
+    "XAU/USD": "Gold / US Dollar",
 }
 
 # Known Index mapping
@@ -135,8 +136,8 @@ def get_provider_symbol(symbol: str) -> str:
     """
     clean_sym = symbol.upper().strip()
 
-    # If it ends with .NS, .BO, =X, -USD, or starts with ^, it's already a provider symbol
-    if clean_sym.endswith(".NS") or clean_sym.endswith(".BO") or clean_sym.endswith("=X") or clean_sym.startswith("^"):
+    # If it ends with .NS, .BO, =X, -USD, or starts with ^, or contains '/', it's already a provider symbol
+    if clean_sym.endswith(".NS") or clean_sym.endswith(".BO") or clean_sym.endswith("=X") or clean_sym.startswith("^") or "/" in clean_sym:
         return clean_sym
 
     # If it's a known Indian equity, append .NS for YFinance

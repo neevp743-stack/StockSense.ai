@@ -31,6 +31,15 @@ REALTIME_API_KEY = os.getenv("REALTIME_API_KEY", "").strip()
 REALTIME_WS_URL = os.getenv("REALTIME_WS_URL", "wss://ws.finnhub.io").strip()
 STALE_TICK_THRESHOLD_SECONDS = int(os.getenv("STALE_TICK_THRESHOLD_SECONDS", "30"))
 
+# Coinbase Public WebSocket Configuration (no API key required for public channels)
+COINBASE_WS_URL = os.getenv("COINBASE_WS_URL", "wss://advanced-trade-ws.coinbase.com").strip()
+_coinbase_products_raw = os.getenv("COINBASE_PRODUCTS", "BTC-USD,SOL-USD").strip()
+COINBASE_PRODUCTS = [p.strip() for p in _coinbase_products_raw.split(",") if p.strip()]
+
+# Twelve Data API Configuration (XAU/USD)
+# API key is read ONLY from environment — never hard-coded, logged, or exposed.
+TWELVE_DATA_API_KEY = os.getenv("TWELVE_DATA_API_KEY", "").strip()
+
 # Production Environment & Security
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").strip()
 CORS_ORIGINS_RAW = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000,http://localhost:8000,http://127.0.0.1:5173,http://127.0.0.1:8000,https://stock-sense-ai-lilac.vercel.app,https://stocksense-ai.vercel.app")
@@ -56,6 +65,18 @@ if os.path.exists(ROOT_ENV_PATH):
                     val = line_str.split("=", 1)[1].strip()
                     if val:
                         REALTIME_WS_URL = val
+                elif line_str.startswith("COINBASE_WS_URL="):
+                    val = line_str.split("=", 1)[1].strip()
+                    if val:
+                        COINBASE_WS_URL = val
+                elif line_str.startswith("COINBASE_PRODUCTS="):
+                    val = line_str.split("=", 1)[1].strip()
+                    if val:
+                        COINBASE_PRODUCTS = [p.strip() for p in val.split(",") if p.strip()]
+                elif line_str.startswith("TWELVE_DATA_API_KEY="):
+                    val = line_str.split("=", 1)[1].strip()
+                    if val:
+                        TWELVE_DATA_API_KEY = val
     except Exception:
         pass
 

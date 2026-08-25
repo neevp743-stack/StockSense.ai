@@ -96,6 +96,14 @@ class RealTimeWebSocketProvider:
         self._running: bool = False
         self._ws = None
 
+        # Coinbase WebSocket Provider (BTC-USD, SOL-USD)
+        from backend.data.providers.coinbase_ws_provider import CoinbaseWSProvider
+        self._coinbase_provider = CoinbaseWSProvider()
+
+        # Twelve Data Provider (XAU/USD)
+        from backend.data.providers.twelve_data_provider import TwelveDataProvider
+        self._twelve_data_provider = TwelveDataProvider()
+
         # Telemetry & Health Tracking
         self.websocket_connected: bool = False
         self.websocket_last_connected: Optional[str] = None
@@ -209,7 +217,9 @@ class RealTimeWebSocketProvider:
         self._running = True
         self._task = asyncio.create_task(self._listen_loop())
         self._rest_fallback_task = asyncio.create_task(self._rest_fallback_loop())
-        logger.info("Finnhub RealTime WebSocket and REST fallback background tasks started.")
+        # Start Coinbase WS provider
+        await self._coinbase_provider.start()
+        logger.info("Finnhub RealTime WebSocket, Coinbase WS, and REST fallback background tasks started.")
 
     async def stop(self):
         """Gracefully stops background tasks."""
@@ -224,7 +234,9 @@ class RealTimeWebSocketProvider:
             self._task.cancel()
         if self._rest_fallback_task:
             self._rest_fallback_task.cancel()
-        logger.info("Finnhub RealTime WebSocket and REST fallback tasks stopped.")
+        # Stop Coinbase WS provider
+        await self._coinbase_provider.stop()
+        logger.info("Finnhub RealTime WebSocket, Coinbase WS, and REST fallback tasks stopped.")
 
     async def _listen_loop(self):
         """Async background WebSocket loop with exponential backoff reconnects."""
@@ -282,6 +294,7 @@ class RealTimeWebSocketProvider:
     async def _rest_fallback_loop(self):
         """Background REST fallback loop querying active symbols when WS is disconnected or stale."""
         sample_symbols = ["RELIANCE", "TCS", "INFY", "AAPL", "NVDA", "BTC-USD"]
+        xau_poll_interval = 0
         while self._running:
             try:
                 if not self.websocket_connected:
@@ -290,6 +303,16 @@ class RealTimeWebSocketProvider:
                             break
                         self.fetch_rest_fallback_quote(sym)
                         await asyncio.sleep(1)
+
+                # Poll XAU/USD via Twelve Data every ~60s (bounded)
+                xau_poll_interval += 1
+                if xau_poll_interval >= 2:  # Every 2 cycles of 30s = ~60s
+                    xau_poll_interval = 0
+                    try:
+                        if self._twelve_data_provider.is_configured():
+                            self._twelve_data_provider.get_quote("XAU/USD")
+                    except Exception as xau_err:
+                        logger.debug(f"XAU/USD REST poll error (non-fatal): {xau_err}")
             except asyncio.CancelledError:
                 break
             except Exception as err:
@@ -377,7 +400,9 @@ class RealTimeWebSocketProvider:
             "last_tick_timestamp": self.last_tick_timestamp,
             "last_success_timestamp": self.provider_last_success_timestamp,
             "last_error_timestamp": self.provider_last_error_timestamp,
-            "last_error_reason": self.provider_last_error_reason
+            "last_error_reason": self.provider_last_error_reason,
+            "coinbase_health": self._coinbase_provider.get_health(),
+            "twelve_data_health": self._twelve_data_provider.health(),
         }
 
     def get_symbol_health(self, symbol: str) -> Dict[str, Any]:

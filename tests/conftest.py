@@ -15,6 +15,19 @@ def reset_manager():
         realtime_provider_manager.tick_cache.clear()
     except Exception:
         pass
+    # Reset Coinbase provider state
+    try:
+        cb = realtime_provider_manager._coinbase_provider
+        cb.connected = False
+        cb.tick_count = 0
+        cb.candle_count = 0
+        cb.heartbeat_count = 0
+        cb.error_count = 0
+        cb.reconnect_count = 0
+        cb._started = False
+        cb._running = False
+    except Exception:
+        pass
 
 @pytest.fixture(autouse=True)
 def global_reset_provider_state():

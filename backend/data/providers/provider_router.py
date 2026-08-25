@@ -16,6 +16,7 @@ from backend.data.providers.base_provider import MarketDataProvider
 from backend.data.providers.finnhub_provider import FinnhubProvider
 from backend.data.providers.yfinance_provider import YFinanceProvider
 from backend.data.providers.secondary_provider import SecondaryProvider
+from backend.data.providers.twelve_data_provider import TwelveDataProvider
 from backend.data.universe import get_active_universe, ALL_SYMBOLS
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ class ProviderRouter:
         self.primary_provider = FinnhubProvider()
         self.secondary_provider = YFinanceProvider()
         self.backup_provider = SecondaryProvider()
+        self.twelve_data_provider = TwelveDataProvider()
 
         # TTL Quote Cache: symbol -> {quote_dict, cached_at_timestamp}
         self.quote_cache: Dict[str, Dict[str, Any]] = {}
@@ -78,6 +80,14 @@ class ProviderRouter:
                 return cache_entry["quote"]
 
         self.total_requests += 1
+
+        # 2a. Route XAU/USD to Twelve Data first
+        if sym_clean in ("XAU/USD", "XAUUSD") and self.twelve_data_provider.is_configured():
+            q_td = self.twelve_data_provider.get_quote(sym_clean)
+            if q_td.get("price") is not None and float(q_td.get("price", 0)) > 0:
+                self._record_latency(q_td.get("latency_ms", 0.0))
+                self.quote_cache[sym_clean] = {"quote": q_td, "cached_at": now_ts}
+                return q_td
 
         # 2. Primary Provider (Finnhub REST)
         if self.primary_provider.is_configured():
@@ -234,7 +244,8 @@ class ProviderRouter:
             "p50_latency_ms": lat_stats["p50"],
             "p95_latency_ms": lat_stats["p95"],
             "p99_latency_ms": lat_stats["p99"],
-            "cached_symbol_count": len(self.quote_cache)
+            "cached_symbol_count": len(self.quote_cache),
+            "twelve_data_health": self.twelve_data_provider.health(),
         }
 
     def get_symbol_health(self, symbol: str) -> Dict[str, Any]:

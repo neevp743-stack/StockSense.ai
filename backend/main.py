@@ -783,6 +783,16 @@ def run_ablation_study_endpoint(background_tasks: BackgroundTasks):
 from fastapi import WebSocket, WebSocketDisconnect
 from backend.data.realtime_provider import realtime_provider_manager
 
+def normalize_endpoint_symbol(symbol: str) -> str:
+    sym_clean = symbol.upper().strip()
+    if sym_clean == "XAUUSD":
+        return "XAU/USD"
+    if sym_clean == "BTCUSD":
+        return "BTC-USD"
+    if sym_clean == "SOLUSD":
+        return "SOL-USD"
+    return sym_clean
+
 @app.get("/api/realtime/status")
 def get_realtime_status():
     """GET /api/realtime/status - Returns real-time provider connection status."""
@@ -791,7 +801,7 @@ def get_realtime_status():
 @app.get("/api/realtime/quote/{symbol}")
 def get_realtime_quote(symbol: str):
     """GET /api/realtime/quote/{symbol} - Returns latest normalized tick for symbol."""
-    symbol_clean = symbol.upper().strip()
+    symbol_clean = normalize_endpoint_symbol(symbol)
     tick = realtime_provider_manager.cache.get_latest_tick(symbol_clean)
     if tick:
         return tick
@@ -814,14 +824,16 @@ class SymbolSubscribeRequest(BaseModel):
 @app.post("/api/realtime/subscribe")
 def subscribe_symbol(req: SymbolSubscribeRequest):
     """POST /api/realtime/subscribe - Subscribes symbol to real-time stream."""
-    realtime_provider_manager.subscribe(req.symbol)
-    return {"status": "subscribed", "symbol": req.symbol.upper()}
+    norm_sym = normalize_endpoint_symbol(req.symbol)
+    realtime_provider_manager.subscribe(norm_sym)
+    return {"status": "subscribed", "symbol": norm_sym}
 
 @app.post("/api/realtime/unsubscribe")
 def unsubscribe_symbol(req: SymbolSubscribeRequest):
     """POST /api/realtime/unsubscribe - Unsubscribes symbol from real-time stream."""
-    realtime_provider_manager.unsubscribe(req.symbol)
-    return {"status": "unsubscribed", "symbol": req.symbol.upper()}
+    norm_sym = normalize_endpoint_symbol(req.symbol)
+    realtime_provider_manager.unsubscribe(norm_sym)
+    return {"status": "unsubscribed", "symbol": norm_sym}
 
 @app.get("/api/realtime/stream-status")
 def get_stream_status():
@@ -835,7 +847,7 @@ async def websocket_market_endpoint(websocket: WebSocket, symbol: str):
     Does NOT expose provider credentials to frontend JavaScript.
     """
     await websocket.accept()
-    symbol_clean = symbol.upper().strip()
+    symbol_clean = normalize_endpoint_symbol(symbol)
     realtime_provider_manager.subscribe(symbol_clean)
 
     async def send_tick_callback(tick: dict):
@@ -844,6 +856,8 @@ async def websocket_market_endpoint(websocket: WebSocket, symbol: str):
                 await websocket.send_text(json.dumps(tick))
             except Exception:
                 pass
+
+    realtime_provider_manager.listeners.add(send_tick_callback)
 
     # Send initial cached or latest quote
     initial_tick = realtime_provider_manager.cache.get_latest_tick(symbol_clean)
@@ -865,6 +879,9 @@ async def websocket_market_endpoint(websocket: WebSocket, symbol: str):
             data = await websocket.receive_text()
             await asyncio.sleep(0.5)
     except WebSocketDisconnect:
+        pass
+    finally:
+        realtime_provider_manager.listeners.discard(send_tick_callback)
         realtime_provider_manager.unsubscribe(symbol_clean)
 
 # ==============================================================================
