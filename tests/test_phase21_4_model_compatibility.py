@@ -151,30 +151,39 @@ def test_model_files_exist():
 
 def test_model_file_hashes_stable():
     """
-    Verifies all 127+ model files have stable hashes.
+    Verifies all 128 active production model files have stable hashes.
     If any hash changes, the test reports which file changed.
-    This test counts all .joblib and .pt files and reports results.
+    This test counts all .joblib and .pt files (including TEST/RandomForest.joblib)
+    and reports results.
     """
     model_files = []
+    # Flat top-level files
     for fname in os.listdir(MODELS_DIR):
         fpath = os.path.join(MODELS_DIR, fname)
         if os.path.isfile(fpath) and (fname.endswith(".joblib") or fname.endswith(".pt")):
             model_files.append(fpath)
+            
+    # Include the active nested TEST model
+    nested_test_model = os.path.join(MODELS_DIR, "TEST", "RandomForest.joblib")
+    if os.path.exists(nested_test_model):
+        model_files.append(nested_test_model)
     
-    assert len(model_files) >= 100, f"Expected 100+ model files, found {len(model_files)}"
+    assert len(model_files) == 128, f"Expected exactly 128 active production model files, found {len(model_files)}"
     
     # Compute all hashes (this is a stability check, not a regression check)
     hashes = {}
     for fpath in model_files:
         h = _compute_file_hash(fpath)
-        hashes[os.path.basename(fpath)] = h
+        # Use relative path from saved_models to distinguish nested files
+        rel_key = os.path.relpath(fpath, MODELS_DIR).replace("\\", "/")
+        hashes[rel_key] = h
     
     # All hashes should be non-empty and 64 chars (SHA-256)
-    for fname, h in hashes.items():
-        assert len(h) == 64, f"Invalid hash for {fname}: {h}"
+    for name_key, h in hashes.items():
+        assert len(h) == 64, f"Invalid hash for {name_key}: {h}"
     
     # Report total count
-    print(f"Model integrity: {len(hashes)}/{len(model_files)} hashes computed successfully.")
+    print(f"Model integrity: {len(hashes)}/128 active production hashes computed successfully.")
 
 
 # ─── BTC/SOL/XAU NOT in Production Feature Schema ────────────────
