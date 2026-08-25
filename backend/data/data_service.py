@@ -68,10 +68,15 @@ def fetch_historical_data(symbol: str, period: str = "5y", start: Optional[str] 
     internal_symbol = get_internal_symbol(symbol)
     provider_symbol = get_provider_symbol(symbol)
 
-    df = provider_instance.get_historical_data(provider_symbol, period=period)
-    if df.empty and provider_symbol != internal_symbol:
-        # Fallback retry with internal symbol if provider suffix returned empty
-        df = provider_instance.get_historical_data(internal_symbol, period=period)
+    if internal_symbol == "XAU/USD":
+        from backend.data.providers.twelve_data_provider import TwelveDataProvider
+        twelve_prov = TwelveDataProvider()
+        df = twelve_prov.get_historical(internal_symbol, period=period)
+    else:
+        df = provider_instance.get_historical_data(provider_symbol, period=period)
+        if df.empty and provider_symbol != internal_symbol:
+            # Fallback retry with internal symbol if provider suffix returned empty
+            df = provider_instance.get_historical_data(internal_symbol, period=period)
 
     if df.empty:
         raise DataProviderUnavailableException(

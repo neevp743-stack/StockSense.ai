@@ -152,6 +152,8 @@ def get_internal_symbol(provider_symbol: str) -> str:
     Example: RELIANCE.NS -> RELIANCE.
     """
     clean_sym = provider_symbol.upper().strip()
+    if clean_sym == "XAUUSD":
+        return "XAU/USD"
     if clean_sym.endswith(".NS"):
         return clean_sym[:-3]
     if clean_sym.endswith(".BO"):
