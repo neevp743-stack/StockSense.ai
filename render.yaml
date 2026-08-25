@@ -15,3 +15,5 @@ services:
         value: "30"
       - key: REALTIME_API_KEY
         sync: false
+      - key: TWELVE_DATA_API_KEY
+        sync: false
