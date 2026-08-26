@@ -156,19 +156,41 @@ async def background_cache_warmup():
         except Exception as e:
             print(f"Background thread warmup error for {symbol}: {e}")
 
+# Server Lifecycle State Tracking
+APP_STATE = "STARTING"
+APP_STATE_DETAILS = {"started_at": datetime.utcnow().isoformat() + "Z", "errors": []}
+
+async def initialize_application_async():
+    global APP_STATE
+    APP_STATE = "INITIALIZING"
+    try:
+        await asyncio.to_thread(init_db)
+    except Exception as e:
+        logger.error(f"Async DB init error: {e}")
+        APP_STATE_DETAILS["errors"].append(f"DB init: {str(e)}")
+
+    try:
+        await asyncio.to_thread(seed_asset_registry_db)
+    except Exception as e:
+        logger.warning(f"Startup asset seed warning: {e}")
+
+    try:
+        from backend.data.realtime_provider import realtime_provider_manager
+        await realtime_provider_manager.start()
+    except Exception as e:
+        logger.error(f"Realtime provider start error: {e}")
+        APP_STATE_DETAILS["errors"].append(f"Realtime provider: {str(e)}")
+
+    if APP_STATE_DETAILS["errors"]:
+        APP_STATE = "DEGRADED"
+    else:
+        APP_STATE = "READY"
+
+    asyncio.create_task(background_cache_warmup())
+
 @app.on_event("startup")
 async def startup_event():
-    init_db()
-    try:
-        seed_asset_registry_db()
-    except Exception as e:
-        print(f"Startup asset seed warning: {e}")
-
-    from backend.data.realtime_provider import realtime_provider_manager
-    await realtime_provider_manager.start()
-
-    # Launch non-blocking background cache pre-warming AFTER startup
-    asyncio.create_task(background_cache_warmup())
+    asyncio.create_task(initialize_application_async())
 
 
 @app.on_event("shutdown")
@@ -210,6 +232,9 @@ def health_check():
     """GET /health - Standard production health monitoring endpoint."""
     return {
         "status": "ok",
+        "app_state": APP_STATE,
+        "readiness": APP_STATE in ["READY", "DEGRADED"],
+        "details": APP_STATE_DETAILS,
         "environment": ENVIRONMENT,
         "timestamp": datetime.utcnow().isoformat()
     }
@@ -525,9 +550,26 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
         db=db
     )
 
-    # Fetch latest available quote for dynamic data freshness status
-    quote_info = provider.get_latest_quote(symbol_clean)
-    latest_price_val = quote_info.get("price") or (float(df_raw["close"].iloc[-1]) if "close" in df_raw.columns and not df_raw.empty else None)
+    # Fetch price from realtime cache or provider_router before falling back to yfinance
+    from backend.data.realtime_provider import realtime_provider_manager
+    from backend.data.providers.provider_router import provider_router
+    live_tick = realtime_provider_manager.cache.get_latest_tick(symbol_clean)
+    if live_tick and live_tick.get("price") is not None:
+        latest_price_val = live_tick["price"]
+        quote_info = {
+            "symbol": symbol_clean,
+            "price": latest_price_val,
+            "timestamp": live_tick.get("timestamp"),
+            "provider": live_tick.get("provider", "realtime"),
+            "data_status": "LIVE"
+        }
+    else:
+        quote_info = provider_router.get_quote(symbol_clean)
+        if quote_info and quote_info.get("price") is not None:
+            latest_price_val = quote_info["price"]
+        else:
+            quote_info = provider.get_latest_quote(symbol_clean)
+            latest_price_val = quote_info.get("price") or (float(df_raw["close"].iloc[-1]) if "close" in df_raw.columns and not df_raw.empty else None)
 
     # Phase 12 Selective Signal Coverage
     signal_label = risk_info.get("signal", "NEUTRAL")
@@ -2096,7 +2138,7 @@ def get_v1_stocks_prediction(symbol: str, request: Request, model_name: str = "X
     try:
         db = SessionLocal()
         try:
-            res = get_prediction_endpoint(symbol=symbol.upper(), model_name=model_name, db=db)
+            res = get_stock_prediction(symbol=symbol.upper(), model_name=model_name, db=db)
             return {
                 "success": True,
                 "data": res,

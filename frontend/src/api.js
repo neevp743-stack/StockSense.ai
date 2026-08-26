@@ -55,21 +55,45 @@ axios.interceptors.response.use(
 );
 
 const clientCache = {};
+const inFlightPromises = {};
+
+function serializeConfig(url, config = {}) {
+  const params = config.params || {};
+  const sortedParams = {};
+  Object.keys(params).sort().forEach(k => {
+    sortedParams[k] = params[k];
+  });
+  return JSON.stringify({ url, params: sortedParams });
+}
 
 function cachedGet(url, config = {}, ttlMs = 15000) {
-  const key = JSON.stringify({ url, params: config.params || {} });
+  const key = serializeConfig(url, config);
   const now = Date.now();
-  const cached = clientCache[key];
   
+  // 1. Return in-flight promise if duplicate request is currently executing
+  if (inFlightPromises[key]) {
+    return inFlightPromises[key];
+  }
+
+  // 2. Return cached response promise if within TTL
+  const cached = clientCache[key];
   if (cached && (now - cached.timestamp < ttlMs)) {
     return cached.promise;
   }
   
-  const promise = axios.get(url, config).catch(err => {
-    delete clientCache[key];
-    throw err;
-  });
-  
+  // 3. Initiate request and track in-flight promise
+  const promise = axios.get(url, config)
+    .then(res => {
+      delete inFlightPromises[key];
+      return res;
+    })
+    .catch(err => {
+      delete inFlightPromises[key];
+      delete clientCache[key];
+      throw err;
+    });
+
+  inFlightPromises[key] = promise;
   clientCache[key] = {
     promise,
     timestamp: now

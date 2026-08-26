@@ -96,6 +96,11 @@ class CoinbaseWSProvider:
             self._task = None
         logger.info("CoinbaseWSProvider stopped.")
 
+    async def restart(self):
+        """Idempotently restarts the Coinbase WS provider."""
+        await self.stop()
+        await self.start()
+
     async def _listen_loop(self):
         """Async WebSocket loop with exponential backoff reconnection."""
         backoff_sequence = [1, 2, 5, 10, 30, 60]

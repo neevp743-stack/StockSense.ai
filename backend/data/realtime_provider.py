@@ -234,7 +234,9 @@ class RealTimeWebSocketProvider:
         logger.info("Finnhub RealTime WebSocket, Coinbase WS, and REST fallback background tasks started.")
 
     async def stop(self):
-        """Gracefully stops background tasks."""
+        """Gracefully stops background tasks idempotently."""
+        if not self._running:
+            return
         self._running = False
         self.websocket_connected = False
         if self._ws:
@@ -242,13 +244,32 @@ class RealTimeWebSocketProvider:
                 await self._ws.close()
             except Exception:
                 pass
+            self._ws = None
+
         if self._task:
             self._task.cancel()
+            try:
+                await self._task
+            except (asyncio.CancelledError, Exception):
+                pass
+            self._task = None
+
         if self._rest_fallback_task:
             self._rest_fallback_task.cancel()
+            try:
+                await self._rest_fallback_task
+            except (asyncio.CancelledError, Exception):
+                pass
+            self._rest_fallback_task = None
+
         # Stop Coinbase WS provider
         await self._coinbase_provider.stop()
         logger.info("Finnhub RealTime WebSocket, Coinbase WS, and REST fallback tasks stopped.")
+
+    async def restart(self):
+        """Idempotently restarts the provider services."""
+        await self.stop()
+        await self.start()
 
     async def _listen_loop(self):
         """Async background WebSocket loop with exponential backoff reconnects."""

@@ -154,13 +154,20 @@ class LSTMPipeline:
 
     @classmethod
     def load_model(cls, symbol: str) -> Optional["LSTMPipeline"]:
-        filepath = os.path.join(MODELS_DIR, f"{symbol}_LSTM.pt")
-        meta_path = os.path.join(MODELS_DIR, f"{symbol}_LSTM.joblib")
+        clean_symbol = symbol.upper().strip()
+        cache_key = f"model_{clean_symbol}_LSTM"
+        from backend.cache import model_cache
+        cached_model = model_cache.get(cache_key)
+        if cached_model is not None:
+            return cached_model
+
+        filepath = os.path.join(MODELS_DIR, f"{clean_symbol}_LSTM.pt")
+        meta_path = os.path.join(MODELS_DIR, f"{clean_symbol}_LSTM.joblib")
         if not os.path.exists(filepath) or not os.path.exists(meta_path):
             return None
 
         meta = joblib.load(meta_path)
-        pipe = cls(symbol=symbol, seq_len=meta["seq_len"])
+        pipe = cls(symbol=clean_symbol, seq_len=meta["seq_len"])
         pipe.scaler = meta["scaler"]
         pipe.metrics = meta["metrics"]
         pipe.is_trained = meta["is_trained"]
@@ -169,4 +176,6 @@ class LSTMPipeline:
         pipe.model = PyTorchLSTM(input_dim=input_dim)
         pipe.model.load_state_dict(torch.load(filepath))
         pipe.model.eval()
+
+        model_cache.set(cache_key, pipe)
         return pipe

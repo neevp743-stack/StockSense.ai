@@ -9,10 +9,11 @@ import threading
 from typing import Dict, Any, Optional, Tuple
 
 class TTLCacheManager:
-    def __init__(self, default_ttl_seconds: int = 300):
+    def __init__(self, default_ttl_seconds: int = 300, max_items: int = 200):
         self._cache: Dict[str, Tuple[float, Any]] = {}
         self._lock = threading.Lock()
         self.default_ttl = default_ttl_seconds
+        self.max_items = max_items
 
     def get(self, key: str) -> Optional[Any]:
         with self._lock:
@@ -28,6 +29,10 @@ class TTLCacheManager:
         ttl = ttl_seconds if ttl_seconds is not None else self.default_ttl
         expiry = time.time() + ttl
         with self._lock:
+            if len(self._cache) >= self.max_items and key not in self._cache:
+                # Evict oldest entry
+                oldest_key = min(self._cache.keys(), key=lambda k: self._cache[k][0])
+                del self._cache[oldest_key]
             self._cache[key] = (expiry, value)
 
     def invalidate(self, key_pattern: Optional[str] = None) -> None:
