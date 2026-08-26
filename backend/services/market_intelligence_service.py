@@ -12,6 +12,11 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+def clean_float(val, precision=4):
+    if val is None or pd.isna(val) or np.isnan(val) or np.isinf(val):
+        return None
+    return round(float(val), precision)
+
 def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
     """
     Computes trend, momentum, volatility, and volume indicators causally.
@@ -421,36 +426,36 @@ def analyze_market_structure_and_features(df_indicators: pd.DataFrame) -> Dict[s
         })
 
     return {
-        "price": latest_price,
+        "price": clean_float(latest_price, 2),
         "indicators": {
-            "ema_9": round(latest_row["ema_9"], 4),
-            "ema_21": round(latest_row["ema_21"], 4),
-            "ema_50": round(latest_row["ema_50"], 4),
-            "ema_200": round(latest_row["ema_200"], 4),
-            "sma_20": round(latest_row["sma_20"], 4),
-            "sma_50": round(latest_row["sma_50"], 4),
-            "sma_200": round(latest_row["sma_200"], 4),
-            "rsi_14": round(rsi_val, 2),
-            "macd_line": round(macd_val, 4),
-            "macd_signal": round(macd_sig, 4),
-            "macd_hist": round(latest_row["macd_hist"], 4),
-            "atr_14": round(atr, 4),
-            "bb_upper": round(latest_row["bb_upper"], 4),
-            "bb_lower": round(latest_row["bb_lower"], 4),
-            "vwap": round(latest_row["vwap"], 4),
-            "relative_volume": round(latest_row["relative_volume"], 2)
+            "ema_9": clean_float(latest_row["ema_9"], 4),
+            "ema_21": clean_float(latest_row["ema_21"], 4),
+            "ema_50": clean_float(latest_row["ema_50"], 4),
+            "ema_200": clean_float(latest_row["ema_200"], 4),
+            "sma_20": clean_float(latest_row["sma_20"], 4),
+            "sma_50": clean_float(latest_row["sma_50"], 4),
+            "sma_200": clean_float(latest_row["sma_200"], 4),
+            "rsi_14": clean_float(rsi_val, 2),
+            "macd_line": clean_float(macd_val, 4),
+            "macd_signal": clean_float(macd_sig, 4),
+            "macd_hist": clean_float(latest_row["macd_hist"], 4),
+            "atr_14": clean_float(atr, 4),
+            "bb_upper": clean_float(latest_row["bb_upper"], 4),
+            "bb_lower": clean_float(latest_row["bb_lower"], 4),
+            "vwap": clean_float(latest_row["vwap"], 4),
+            "relative_volume": clean_float(latest_row["relative_volume"], 2)
         },
         "structure": {
             "trend": trend,
-            "confidence": round(confidence, 1),
-            "swing_high": round(active_sh["price"], 2),
+            "confidence": clean_float(confidence, 1),
+            "swing_high": clean_float(active_sh["price"], 2),
             "swing_high_type": active_sh["type"],
-            "swing_low": round(active_sl["price"], 2),
+            "swing_low": clean_float(active_sl["price"], 2),
             "swing_low_type": active_sl["type"]
         },
         "liquidity": {
             "last_sweep_direction": latest_sweep["direction"] if latest_sweep else "NONE",
-            "last_sweep_price": round(latest_sweep["price"], 2) if latest_sweep else 0.0,
+            "last_sweep_price": clean_float(latest_sweep["price"], 2) if latest_sweep else 0.0,
             "unmitigated_bullish_fvgs": len(unmit_bull_fvg),
             "unmitigated_bearish_fvgs": len(unmit_bear_fvg),
             "unmitigated_bullish_obs": len(unmit_bull_ob),

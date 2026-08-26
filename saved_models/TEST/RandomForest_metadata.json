@@ -2,7 +2,7 @@
   "symbol": "TEST",
   "model_name": "RandomForest",
   "version": "1.0.0",
-  "trained_at": "2026-08-24T14:37:38.497269Z",
+  "trained_at": "2026-08-26T04:57:35.322769Z",
   "features_used": [
     "sma_10",
     "sma_20",
