@@ -83,35 +83,47 @@ class ProviderRouter:
 
         # 2a. Route XAU/USD to Twelve Data first
         if sym_clean in ("XAU/USD", "XAUUSD") and self.twelve_data_provider.is_configured():
-            q_td = self.twelve_data_provider.get_quote(sym_clean)
-            if q_td.get("price") is not None and float(q_td.get("price", 0)) > 0:
-                self._record_latency(q_td.get("latency_ms", 0.0))
-                self.quote_cache[sym_clean] = {"quote": q_td, "cached_at": now_ts}
-                return q_td
+            try:
+                q_td = self.twelve_data_provider.get_quote(sym_clean)
+                if q_td.get("price") is not None and float(q_td.get("price", 0)) > 0:
+                    self._record_latency(q_td.get("latency_ms", 0.0))
+                    self.quote_cache[sym_clean] = {"quote": q_td, "cached_at": now_ts}
+                    return q_td
+            except Exception as e:
+                logger.error(f"Twelve Data provider error for {sym_clean}: {e}")
 
         # 2. Primary Provider (Finnhub REST)
         if self.primary_provider.is_configured():
-            q_primary = self.primary_provider.get_quote(sym_clean)
-            if q_primary.get("price") is not None and float(q_primary.get("price", 0)) > 0:
-                self._record_latency(q_primary.get("latency_ms", 0.0))
-                self.quote_cache[sym_clean] = {"quote": q_primary, "cached_at": now_ts}
-                return q_primary
-            elif q_primary.get("error") == "RATE_LIMIT_429":
-                self.rate_limit_count += 1
+            try:
+                q_primary = self.primary_provider.get_quote(sym_clean)
+                if q_primary.get("price") is not None and float(q_primary.get("price", 0)) > 0:
+                    self._record_latency(q_primary.get("latency_ms", 0.0))
+                    self.quote_cache[sym_clean] = {"quote": q_primary, "cached_at": now_ts}
+                    return q_primary
+                elif q_primary.get("error") == "RATE_LIMIT_429":
+                    self.rate_limit_count += 1
+            except Exception as e:
+                logger.error(f"Primary provider Finnhub error for {sym_clean}: {e}")
 
         # 3. Secondary Provider (YFinance REST)
-        q_secondary = self.secondary_provider.get_quote(sym_clean)
-        if q_secondary.get("price") is not None and float(q_secondary.get("price", 0)) > 0:
-            self._record_latency(q_secondary.get("latency_ms", 0.0))
-            self.quote_cache[sym_clean] = {"quote": q_secondary, "cached_at": now_ts}
-            return q_secondary
+        try:
+            q_secondary = self.secondary_provider.get_quote(sym_clean)
+            if q_secondary.get("price") is not None and float(q_secondary.get("price", 0)) > 0:
+                self._record_latency(q_secondary.get("latency_ms", 0.0))
+                self.quote_cache[sym_clean] = {"quote": q_secondary, "cached_at": now_ts}
+                return q_secondary
+        except Exception as e:
+            logger.error(f"Secondary provider YFinance error for {sym_clean}: {e}")
 
         # 4. Backup Provider (Secondary REST)
-        q_backup = self.backup_provider.get_quote(sym_clean)
-        if q_backup.get("price") is not None and float(q_backup.get("price", 0)) > 0:
-            self._record_latency(q_backup.get("latency_ms", 0.0))
-            self.quote_cache[sym_clean] = {"quote": q_backup, "cached_at": now_ts}
-            return q_backup
+        try:
+            q_backup = self.backup_provider.get_quote(sym_clean)
+            if q_backup.get("price") is not None and float(q_backup.get("price", 0)) > 0:
+                self._record_latency(q_backup.get("latency_ms", 0.0))
+                self.quote_cache[sym_clean] = {"quote": q_backup, "cached_at": now_ts}
+                return q_backup
+        except Exception as e:
+            logger.error(f"Backup provider error for {sym_clean}: {e}")
 
         # 5. Full Provider Failure / Unavailable Result
         self.failed_requests += 1

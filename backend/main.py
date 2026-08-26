@@ -898,13 +898,32 @@ def get_market_intelligence_candles(symbol: str, interval: str = "1d", limit: in
 @app.get("/api/market/{symbol}/quote")
 def get_market_intelligence_quote(symbol: str):
     """GET /api/market/{symbol}/quote - Latest normalized quote for market intelligence tab."""
-    from backend.services.market_intelligence_service import get_market_analysis
     symbol_clean = normalize_endpoint_symbol(symbol)
     try:
-        res = get_market_analysis(symbol_clean, "1d", 15)
-        if "error" in res:
-            raise HTTPException(status_code=400, detail=res["error"])
-        return res["quote"]
+        from backend.data.realtime_provider import realtime_provider_manager
+        live_tick = realtime_provider_manager.cache.get_latest_tick(symbol_clean)
+        if live_tick:
+            return {
+                "symbol": symbol_clean,
+                "price": live_tick.get("price"),
+                "timestamp": live_tick.get("timestamp"),
+                "provider": live_tick.get("provider", "realtime"),
+                "data_status": "LIVE"
+            }
+        
+        from backend.data.providers.provider_router import provider_router
+        quote = provider_router.get_quote(symbol_clean)
+        if quote and quote.get("price") is not None:
+            return quote
+        
+        quote_yf = provider.get_latest_quote(symbol_clean)
+        return {
+            "symbol": symbol_clean,
+            "price": quote_yf.get("price"),
+            "timestamp": quote_yf.get("timestamp"),
+            "provider": quote_yf.get("provider", "yfinance"),
+            "data_status": quote_yf.get("data_status", "RECENT")
+        }
     except Exception as e:
         logger.error(f"Error in /quote endpoint for {symbol_clean}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -1941,23 +1960,45 @@ def test_webhook_v1(webhook_id: str, request: Request, current_user: UserRecord 
 @app.get("/api/v1/market/{symbol}/quote", tags=["Market"])
 def get_v1_market_quote(symbol: str, request: Request):
     public_api_limiter.check(request, f"mkt_quote_{symbol}")
+    symbol_clean = normalize_endpoint_symbol(symbol)
     try:
-        from backend.data.providers.provider_router import provider_router
-        quote = provider_router.get_latest_quote(symbol)
-        if quote and hasattr(quote, 'to_dict'):
+        from backend.data.realtime_provider import realtime_provider_manager
+        live_tick = realtime_provider_manager.cache.get_latest_tick(symbol_clean)
+        if live_tick:
             return {
                 "success": True,
-                "data": quote.to_dict(),
+                "data": {
+                    "symbol": symbol_clean,
+                    "price": live_tick.get("price"),
+                    "timestamp": live_tick.get("timestamp"),
+                    "provider": live_tick.get("provider", "realtime"),
+                    "data_status": "LIVE"
+                },
                 "meta": build_response_meta(request)
             }
     except Exception:
         pass
 
     try:
-        analysis = get_market_analysis(symbol=symbol, interval="1d", limit=300)
+        from backend.data.providers.provider_router import provider_router
+        quote = provider_router.get_quote(symbol_clean)
+        if quote and quote.get("price") is not None:
+            return {
+                "success": True,
+                "data": quote,
+                "meta": build_response_meta(request)
+            }
+        
+        quote_yf = provider.get_latest_quote(symbol_clean)
         return {
             "success": True,
-            "data": analysis.get("quote", {"symbol": symbol, "data_status": "RECENT"}),
+            "data": {
+                "symbol": symbol_clean,
+                "price": quote_yf.get("price"),
+                "timestamp": quote_yf.get("timestamp"),
+                "provider": quote_yf.get("provider", "yfinance"),
+                "data_status": quote_yf.get("data_status", "RECENT")
+            },
             "meta": build_response_meta(request)
         }
     except Exception as e:

@@ -95,6 +95,7 @@ class RealTimeWebSocketProvider:
         self._rest_fallback_task: Optional[asyncio.Task] = None
         self._running: bool = False
         self._ws = None
+        self.loop = None
 
         # Coinbase WebSocket Provider (BTC-USD, SOL-USD)
         from backend.data.providers.coinbase_ws_provider import CoinbaseWSProvider
@@ -158,7 +159,17 @@ class RealTimeWebSocketProvider:
         # Notify active listeners
         for callback in list(self.listeners):
             try:
-                callback(tick)
+                res = callback(tick)
+                if asyncio.iscoroutine(res):
+                    if self.loop and self.loop.is_running():
+                        self.loop.create_task(res)
+                    else:
+                        try:
+                            loop = asyncio.get_running_loop()
+                            if loop.is_running():
+                                loop.create_task(res)
+                        except RuntimeError:
+                            pass
             except Exception as e:
                 logger.error(f"Error in realtime listener callback: {e}")
 
@@ -214,6 +225,7 @@ class RealTimeWebSocketProvider:
         """Starts background WebSocket and REST fallback connection tasks."""
         if self._running:
             return
+        self.loop = asyncio.get_running_loop()
         self._running = True
         self._task = asyncio.create_task(self._listen_loop())
         self._rest_fallback_task = asyncio.create_task(self._rest_fallback_loop())
@@ -301,7 +313,7 @@ class RealTimeWebSocketProvider:
                     for sym in sample_symbols:
                         if not self._running:
                             break
-                        self.fetch_rest_fallback_quote(sym)
+                        await asyncio.to_thread(self.fetch_rest_fallback_quote, sym)
                         await asyncio.sleep(1)
 
                 # Poll XAU/USD via Twelve Data every ~60s (bounded)
@@ -310,7 +322,7 @@ class RealTimeWebSocketProvider:
                     xau_poll_interval = 0
                     try:
                         if self._twelve_data_provider.is_configured():
-                            self._twelve_data_provider.get_quote("XAU/USD")
+                            await asyncio.to_thread(self._twelve_data_provider.get_quote, "XAU/USD")
                     except Exception as xau_err:
                         logger.debug(f"XAU/USD REST poll error (non-fatal): {xau_err}")
             except asyncio.CancelledError:

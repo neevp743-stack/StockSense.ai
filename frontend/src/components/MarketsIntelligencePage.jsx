@@ -30,11 +30,14 @@ function addLineSeries(chart, options) {
 export function MarketsIntelligencePage() {
   const [selectedAsset, setSelectedAsset] = useState('BTC-USD');
   const [interval, setInterval] = useState('1h');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Represents candles loading
   const [error, setError] = useState(null);
   
   // Backend data
   const [analysisData, setAnalysisData] = useState(null);
+  const [candles, setCandles] = useState([]);
+  const [quote, setQuote] = useState(null);
+  const [analysisLoading, setAnalysisLoading] = useState(true);
   const [livePrice, setLivePrice] = useState(null);
   const [priceFlashClass, setPriceFlashClass] = useState('');
   
@@ -73,21 +76,58 @@ export function MarketsIntelligencePage() {
   // Load backend intelligence aggregates
   const loadIntelligence = async () => {
     setLoading(true);
+    setAnalysisLoading(true);
     setError(null);
     try {
-      const res = await api.getMarketAnalysis(selectedAsset, interval, 300);
-      if (res.data && !res.data.error) {
-        setAnalysisData(res.data);
-        setLivePrice(res.data.quote?.price || null);
-        prevPriceRef.current = res.data.quote?.price || null;
-      } else {
-        setError(res.data?.error || "Failed to load market intelligence analytics.");
+      // 1. Fetch candles & quote in parallel for maximum speed
+      const [candlesRes, quoteRes] = await Promise.all([
+        api.getMarketCandles(selectedAsset, interval, 300),
+        api.getMarketQuote(selectedAsset)
+      ]);
+      
+      let initialCandles = [];
+      if (candlesRes.data && !candlesRes.data.error) {
+        initialCandles = candlesRes.data.candles || [];
+        setCandles(initialCandles);
       }
+      
+      if (quoteRes.data && !quoteRes.data.error) {
+        const qData = quoteRes.data;
+        setQuote(qData);
+        setLivePrice(qData.price || null);
+        prevPriceRef.current = qData.price || null;
+      } else if (initialCandles.length > 0) {
+        const lastCandle = initialCandles[initialCandles.length - 1];
+        const fallbackQuote = {
+          price: lastCandle.close,
+          timestamp: lastCandle.timestamp || new Date().toISOString(),
+          provider: candlesRes.data?.provider || 'yfinance',
+          data_status: 'RECENT'
+        };
+        setQuote(fallbackQuote);
+        setLivePrice(fallbackQuote.price);
+        prevPriceRef.current = fallbackQuote.price;
+      }
+      
+      setLoading(false); // Candles are ready, draw chart immediately!
+      
+      // 2. Fetch advanced technical analysis asynchronously in the background
+      try {
+        const res = await api.getMarketAnalysis(selectedAsset, interval, 300);
+        if (res.data && !res.data.error) {
+          setAnalysisData(res.data);
+        }
+      } catch (err) {
+        console.error("Error loading background analysis:", err);
+      } finally {
+        setAnalysisLoading(false);
+      }
+      
     } catch (err) {
       console.error("Error loading intelligence:", err);
       setError("Market data provider is currently offline or rate-limited. Please retry shortly.");
-    } finally {
       setLoading(false);
+      setAnalysisLoading(false);
     }
   };
 
@@ -144,7 +184,7 @@ export function MarketsIntelligencePage() {
 
   // Initializing TradingView Lightweight Chart canvas
   useEffect(() => {
-    if (loading || error || !analysisData || !chartContainerRef.current) return;
+    if (loading || error || !candles || candles.length === 0 || !chartContainerRef.current) return;
 
     const width = chartContainerRef.current.clientWidth || 800;
     const height = 450;
@@ -189,7 +229,7 @@ export function MarketsIntelligencePage() {
     volumeSeriesRef.current = volumeSeries;
 
     // Format and Set Candle Data
-    const formattedCandles = analysisData.candles || [];
+    const formattedCandles = candles || [];
     if (formattedCandles.length > 0) {
       candleSeries.setData(formattedCandles.map(c => ({
         time: c.time,
@@ -258,7 +298,7 @@ export function MarketsIntelligencePage() {
         chartRef.current = null;
       }
     };
-  }, [loading, error, analysisData, overlays]);
+  }, [loading, error, candles, overlays]);
 
   // Technical calculations client-side helpers
   function calculateEMA(candles, period) {
@@ -360,7 +400,7 @@ export function MarketsIntelligencePage() {
       </div>
 
       {/* 2. Metadata Banner */}
-      {!loading && !error && analysisData && (
+      {!loading && !error && quote && (
         <div className="glass-card" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px', padding: '16px 24px' }}>
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Asset / Price</div>
@@ -368,28 +408,28 @@ export function MarketsIntelligencePage() {
               <span className={`heading-font ${priceFlashClass}`} style={{ fontSize: '1.8rem', fontWeight: 800 }}>
                 ${livePrice ? Number(livePrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : '---'}
               </span>
-              {getFreshnessBadge(analysisData.quote?.data_status)}
+              {getFreshnessBadge(quote?.data_status)}
             </div>
           </div>
 
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Market Regime</div>
-            <div style={{ color: getRegimeColor(analysisData.regime), fontWeight: 800, fontSize: '1.1rem', marginTop: '6px', letterSpacing: '0.04em' }}>
-              {analysisData.regime?.replace('_', ' ')}
+            <div style={{ color: analysisLoading || !analysisData ? 'var(--text-muted)' : getRegimeColor(analysisData.regime), fontWeight: 800, fontSize: '1.1rem', marginTop: '6px', letterSpacing: '0.04em' }}>
+              {analysisLoading || !analysisData ? 'Analyzing...' : analysisData.regime?.replace('_', ' ')}
             </div>
           </div>
 
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Data Feed</div>
             <div style={{ marginTop: '6px', fontSize: '0.9rem', fontWeight: 600 }}>
-              {analysisData.provider} REST
+              {analysisLoading || !analysisData ? 'Loading...' : `${analysisData.provider} REST`}
             </div>
           </div>
 
           <div>
             <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Last Update</div>
             <div className="mono-font" style={{ marginTop: '6px', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-              {analysisData.quote?.timestamp ? new Date(analysisData.quote.timestamp).toLocaleTimeString() : '---'}
+              {quote?.timestamp ? new Date(quote.timestamp).toLocaleTimeString() : '---'}
             </div>
           </div>
         </div>
@@ -459,28 +499,35 @@ export function MarketsIntelligencePage() {
                   <Zap size={15} color="var(--accent-cyan)" />
                   <span>Technical Indicators & Oscillators</span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>RSI (14)</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.rsi_14}</span>
+                {analysisLoading || !analysisData ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '120px', gap: '8px' }}>
+                    <Loader2 className="spin" size={24} color="var(--accent-cyan)" />
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Calculating indicators...</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>MACD Line</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.macd_line}</span>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>RSI (14)</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.rsi_14}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>MACD Line</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.macd_line}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>MACD Signal</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.macd_signal}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>ATR (14)</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.atr_14}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Relative Vol</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.relative_volume}x</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>MACD Signal</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.macd_signal}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>ATR (14)</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.atr_14}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Relative Vol</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.indicators?.relative_volume}x</span>
-                  </div>
-                </div>
+                )}
               </div>
 
               <div className="glass-card">
@@ -488,30 +535,37 @@ export function MarketsIntelligencePage() {
                   <Eye size={15} color="var(--accent-purple)" />
                   <span>Liquidity & Gaps Engine</span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Last Sweep</span>
-                    <span className="mono-font" style={{ color: analysisData.liquidity?.last_sweep_direction === 'BULLISH' ? '#10b981' : (analysisData.liquidity?.last_sweep_direction === 'BEARISH' ? '#ef4444' : 'var(--text-muted)'), fontWeight: 700 }}>
-                      {analysisData.liquidity?.last_sweep_direction}
-                    </span>
+                {analysisLoading || !analysisData ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '120px', gap: '8px' }}>
+                    <Loader2 className="spin" size={24} color="var(--accent-purple)" />
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Scanning gaps & blocks...</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Unmitigated Gaps (FVG)</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.liquidity?.unmitigated_bullish_fvgs + analysisData.liquidity?.unmitigated_bearish_fvgs}</span>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Last Sweep</span>
+                      <span className="mono-font" style={{ color: analysisData.liquidity?.last_sweep_direction === 'BULLISH' ? '#10b981' : (analysisData.liquidity?.last_sweep_direction === 'BEARISH' ? '#ef4444' : 'var(--text-muted)'), fontWeight: 700 }}>
+                        {analysisData.liquidity?.last_sweep_direction}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Unmitigated Gaps (FVG)</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.liquidity?.unmitigated_bullish_fvgs + analysisData.liquidity?.unmitigated_bearish_fvgs}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Active Order Blocks</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.liquidity?.unmitigated_bullish_obs + analysisData.liquidity?.unmitigated_bearish_obs}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Confirmed High Swing</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>${analysisData.structure?.swing_high}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Confirmed Low Swing</span>
+                      <span className="mono-font" style={{ fontWeight: 700 }}>${analysisData.structure?.swing_low}</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Active Order Blocks</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.liquidity?.unmitigated_bullish_obs + analysisData.liquidity?.unmitigated_bearish_obs}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Confirmed High Swing</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>${analysisData.structure?.swing_high}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Confirmed Low Swing</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>${analysisData.structure?.swing_low}</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -527,99 +581,117 @@ export function MarketsIntelligencePage() {
                   Confluence Analysis
                 </span>
                 <span className="mono-font" style={{ background: 'var(--bg-primary)', padding: '4px 10px', borderRadius: '6px', fontWeight: 800, color: 'var(--accent-cyan)' }}>
-                  {analysisData.confluence?.score}/100
+                  {analysisLoading || !analysisData ? '---' : `${analysisData.confluence?.score}/100`}
                 </span>
               </div>
 
-              {/* Progress gauge */}
-              <div style={{ background: 'rgba(255,255,255,0.03)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ background: 'var(--accent-cyan)', width: `${analysisData.confluence?.score}%`, height: '100%', boxShadow: '0 0 10px var(--accent-cyan)' }} />
-              </div>
+              {analysisLoading || !analysisData ? (
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '140px', gap: '8px' }}>
+                  <Loader2 className="spin" size={24} color="var(--accent-cyan)" />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Evaluating confluences...</span>
+                </div>
+              ) : (
+                <>
+                  {/* Progress gauge */}
+                  <div style={{ background: 'rgba(255,255,255,0.03)', height: '8px', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ background: 'var(--accent-cyan)', width: `${analysisData.confluence?.score}%`, height: '100%', boxShadow: '0 0 10px var(--accent-cyan)' }} />
+                  </div>
 
-              {/* Confluence explanations list */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Confluence Arguments</div>
-                
-                {/* Positive signals */}
-                {analysisData.confluence?.reasons?.map((reason, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: '8px', fontSize: '0.78rem', color: '#fff', alignItems: 'flex-start' }}>
-                    <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
-                    <span>{reason.replace(/^\+\s*/, '')}</span>
+                  {/* Confluence explanations list */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Confluence Arguments</div>
+                    
+                    {/* Positive signals */}
+                    {analysisData.confluence?.reasons?.map((reason, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '8px', fontSize: '0.78rem', color: '#fff', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
+                        <span>{reason.replace(/^\+\s*/, '')}</span>
+                      </div>
+                    ))}
+                    
+                    {/* Negative signals */}
+                    {analysisData.confluence?.penalties?.map((penalty, idx) => (
+                      <div key={idx} style={{ display: 'flex', gap: '8px', fontSize: '0.78rem', color: '#text-secondary', alignItems: 'flex-start' }}>
+                        <span style={{ color: '#ef4444', fontWeight: 700 }}>⚠</span>
+                        <span>{penalty.replace(/^-\s*/, '')}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-                
-                {/* Negative signals */}
-                {analysisData.confluence?.penalties?.map((penalty, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)', alignItems: 'flex-start' }}>
-                    <span style={{ color: '#ef4444', fontWeight: 700 }}>⚠</span>
-                    <span>{penalty.replace(/^-\s*/, '')}</span>
-                  </div>
-                ))}
-              </div>
+                </>
+              )}
             </div>
 
             {/* Setup card */}
-            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '14px', border: analysisData.setup?.bias !== 'NO QUALIFIED SETUP' ? '1px solid rgba(0, 242, 254, 0.25)' : '1px solid var(--border-color)' }}>
+            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '14px', border: (!analysisLoading && analysisData && analysisData.setup?.bias !== 'NO QUALIFIED SETUP') ? '1px solid rgba(0, 242, 254, 0.25)' : '1px solid var(--border-color)' }}>
               <div className="heading-font" style={{ fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
                 <CheckCircle size={16} color="var(--accent-cyan)" />
                 Market Setup Signal
               </div>
               
-              <div style={{
-                textAlign: 'center',
-                padding: '12px',
-                borderRadius: '8px',
-                background: 'var(--bg-primary)',
-                fontWeight: 800,
-                fontSize: '1rem',
-                color: analysisData.setup?.bias.includes('LONG') ? '#10b981' : (analysisData.setup?.bias.includes('SHORT') ? '#ef4444' : 'var(--text-muted)'),
-                boxShadow: analysisData.setup?.bias.includes('LONG') ? '0 0 15px rgba(16, 185, 129, 0.1)' : (analysisData.setup?.bias.includes('SHORT') ? '0 0 15px rgba(239, 68, 68, 0.1)' : 'none')
-              }}>
-                {analysisData.setup?.bias}
-              </div>
-
-              {analysisData.setup?.bias !== 'NO QUALIFIED SETUP' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.84rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Entry Zone</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.setup?.entry_zone}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Stop Loss / Invalidation</span>
-                    <span className="mono-font" style={{ fontWeight: 700, color: '#ef4444' }}>${analysisData.setup?.stop_loss}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Take Profit 1</span>
-                    <span className="mono-font" style={{ fontWeight: 700, color: '#10b981' }}>${analysisData.setup?.tp1}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Take Profit 2</span>
-                    <span className="mono-font" style={{ fontWeight: 700, color: '#10b981' }}>${analysisData.setup?.tp2}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Risk / Reward Ratio</span>
-                    <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.setup?.rr}:1</span>
-                  </div>
+              {analysisLoading || !analysisData ? (
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '160px', gap: '8px' }}>
+                  <Loader2 className="spin" size={24} color="var(--accent-purple)" />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Detecting market setups...</span>
                 </div>
-              )}
+              ) : (
+                <>
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    background: 'var(--bg-primary)',
+                    fontWeight: 800,
+                    fontSize: '1rem',
+                    color: analysisData.setup?.bias.includes('LONG') ? '#10b981' : (analysisData.setup?.bias.includes('SHORT') ? '#ef4444' : 'var(--text-muted)'),
+                    boxShadow: analysisData.setup?.bias.includes('LONG') ? '0 0 15px rgba(16, 185, 129, 0.1)' : (analysisData.setup?.bias.includes('SHORT') ? '0 0 15px rgba(239, 68, 68, 0.1)' : 'none')
+                  }}>
+                    {analysisData.setup?.bias}
+                  </div>
 
-              {/* Research warning */}
-              <div style={{
-                background: 'rgba(245, 158, 11, 0.05)',
-                border: '1px solid rgba(245, 158, 11, 0.15)',
-                borderRadius: '8px',
-                padding: '10px',
-                fontSize: '0.72rem',
-                color: '#f59e0b',
-                display: 'flex',
-                gap: '8px',
-                lineHeight: '1.4'
-              }}>
-                <Info size={16} style={{ flexShrink: 0 }} />
-                <span>
-                  <strong>RESEARCH BIAS ONLY:</strong> This is a deterministic structural confluence signal calculated for quantitative academic evaluation. It does NOT guarantee future price outcomes and is NOT financial advice.
-                </span>
-              </div>
+                  {analysisData.setup?.bias !== 'NO QUALIFIED SETUP' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.84rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Entry Zone</span>
+                        <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.setup?.entry_zone}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Stop Loss / Invalidation</span>
+                        <span className="mono-font" style={{ fontWeight: 700, color: '#ef4444' }}>${analysisData.setup?.stop_loss}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Take Profit 1</span>
+                        <span className="mono-font" style={{ fontWeight: 700, color: '#10b981' }}>${analysisData.setup?.tp1}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Take Profit 2</span>
+                        <span className="mono-font" style={{ fontWeight: 700, color: '#10b981' }}>${analysisData.setup?.tp2}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: 'var(--text-secondary)' }}>Risk / Reward Ratio</span>
+                        <span className="mono-font" style={{ fontWeight: 700 }}>{analysisData.setup?.rr}:1</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Research warning */}
+                  <div style={{
+                    background: 'rgba(245, 158, 11, 0.05)',
+                    border: '1px solid rgba(245, 158, 11, 0.15)',
+                    borderRadius: '8px',
+                    padding: '10px',
+                    fontSize: '0.72rem',
+                    color: '#f59e0b',
+                    display: 'flex',
+                    gap: '8px',
+                    lineHeight: '1.4'
+                  }}>
+                    <Info size={16} style={{ flexShrink: 0 }} />
+                    <span>
+                      <strong>RESEARCH BIAS ONLY:</strong> This is a deterministic structural confluence signal calculated for quantitative academic evaluation. It does NOT guarantee future price outcomes and is NOT financial advice.
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
 
           </div>

@@ -702,6 +702,34 @@ def get_market_analysis(symbol: str, interval: str = "1d", limit: int = 300) -> 
     return result
 
 def get_historical_candles(symbol: str, interval: str = "1d", limit: int = 300) -> list:
-    res = get_market_analysis(symbol=symbol, interval=interval, limit=limit)
-    return res.get("candles", [])
+    sym_clean = symbol.upper().strip()
+    if sym_clean == "BTCUSD":
+        sym_clean = "BTC-USD"
+    elif sym_clean == "SOLUSD":
+        sym_clean = "SOL-USD"
+    elif sym_clean == "XAUUSD":
+        sym_clean = "XAU/USD"
+
+    df, provider_name = fetch_candles_dataframe(sym_clean, interval, limit)
+    if df.empty:
+        return []
+
+    candles_list = []
+    for r in df.to_dict(orient="records"):
+        if interval in ["1m", "5m", "15m", "30m", "1h", "4h"]:
+            time_val = int(r["date"].timestamp())
+        else:
+            time_val = r["date"].strftime("%Y-%m-%d")
+            
+        candles_list.append({
+            "time": time_val,
+            "timestamp": r["date"].isoformat(),
+            "open": r["open"],
+            "high": r["high"],
+            "low": r["low"],
+            "close": r["close"],
+            "volume": r["volume"]
+        })
+    return candles_list
+
 
