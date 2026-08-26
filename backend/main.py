@@ -818,6 +818,55 @@ def get_realtime_quote(symbol: str):
         "last_tick_age_seconds": 0.0
     }
 
+@app.get("/api/market/{symbol}/analysis")
+def get_market_intelligence_analysis(symbol: str, interval: str = "1d", limit: int = 300):
+    """GET /api/market/{symbol}/analysis - Aggregated market analysis."""
+    from backend.services.market_intelligence_service import get_market_analysis
+    symbol_clean = normalize_endpoint_symbol(symbol)
+    try:
+        res = get_market_analysis(symbol_clean, interval, limit)
+        if "error" in res:
+            raise HTTPException(status_code=400, detail=res["error"])
+        return res
+    except Exception as e:
+        logger.error(f"Error in /analysis endpoint for {symbol_clean}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/market/{symbol}/candles")
+def get_market_intelligence_candles(symbol: str, interval: str = "1d", limit: int = 300):
+    """GET /api/market/{symbol}/candles - Historical candles optimized for TradingView charts."""
+    from backend.services.market_intelligence_service import get_market_analysis
+    symbol_clean = normalize_endpoint_symbol(symbol)
+    try:
+        res = get_market_analysis(symbol_clean, interval, limit)
+        if "error" in res:
+            raise HTTPException(status_code=400, detail=res["error"])
+        return {
+            "symbol": res["symbol"],
+            "interval": res["interval"],
+            "provider": res["provider"],
+            "data_status": res["quote"]["data_status"],
+            "candles": res["candles"]
+        }
+    except Exception as e:
+        logger.error(f"Error in /candles endpoint for {symbol_clean}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/market/{symbol}/quote")
+def get_market_intelligence_quote(symbol: str):
+    """GET /api/market/{symbol}/quote - Latest normalized quote for market intelligence tab."""
+    from backend.services.market_intelligence_service import get_market_analysis
+    symbol_clean = normalize_endpoint_symbol(symbol)
+    try:
+        res = get_market_analysis(symbol_clean, "1d", 15)
+        if "error" in res:
+            raise HTTPException(status_code=400, detail=res["error"])
+        return res["quote"]
+    except Exception as e:
+        logger.error(f"Error in /quote endpoint for {symbol_clean}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 class SymbolSubscribeRequest(BaseModel):
     symbol: str
 

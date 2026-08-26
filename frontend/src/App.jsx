@@ -31,6 +31,7 @@ const BacktesterUI = lazy(() => import('./components/BacktesterUI').then(m => ({
 const ResearchStudy = lazy(() => import('./components/ResearchStudy'));
 const ModelLeaderboard = lazy(() => import('./components/ModelLeaderboard').then(m => ({ default: m.ModelLeaderboard })));
 const PredictionHistory = lazy(() => import('./components/PredictionHistory').then(m => ({ default: m.PredictionHistory })));
+const MarketsIntelligencePage = lazy(() => import('./components/MarketsIntelligencePage').then(m => ({ default: m.MarketsIntelligencePage })));
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -309,6 +310,10 @@ export default function App() {
 
           {activeTab === 'backtest' && (
             <BacktesterUI symbol={selectedAsset} />
+          )}
+
+          {activeTab === 'intelligence' && (
+            <MarketsIntelligencePage />
           )}
         </Suspense>
 

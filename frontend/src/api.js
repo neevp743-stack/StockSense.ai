@@ -110,7 +110,10 @@ export const api = {
   getPhase20Readiness: (options = {}) => axios.get(`${API_BASE_URL}/research/phase20/readiness`, options),
   getPhase20Symbol: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase20/${encodeURIComponent(symbol)}`, options),
   getProviderHealth: (options = {}) => axios.get(`${API_BASE_URL}/research/phase21/provider-health`, options),
-  getSymbolProviderHealth: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase21/provider-health/${encodeURIComponent(symbol)}`, options)
+  getSymbolProviderHealth: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase21/provider-health/${encodeURIComponent(symbol)}`, options),
+  getMarketAnalysis: (symbol, interval = '1d', limit = 300, options = {}) => axios.get(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/analysis`, { params: { interval, limit }, ...options }),
+  getMarketCandles: (symbol, interval = '1d', limit = 300, options = {}) => axios.get(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/candles`, { params: { interval, limit }, ...options }),
+  getMarketQuote: (symbol, options = {}) => axios.get(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/quote`, options)
 };
 
 

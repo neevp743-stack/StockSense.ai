@@ -139,6 +139,7 @@ export function Header({
       >
         {[
           { id: 'dashboard', label: '📊 Stock Intelligence' },
+          { id: 'intelligence', label: '🔥 Market Intel' },
           { id: 'markets', label: '🌐 Market Universe' },
           { id: 'live-research', label: '⚡ Live AI Research' },
           { id: 'ablation', label: '🧪 Feature Study' },
