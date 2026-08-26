@@ -1,14 +1,14 @@
 import React from 'react';
-import { LayoutDashboard, Activity, TestTube, Award, History, Flame } from 'lucide-react';
+import { LayoutDashboard, Activity, TestTube, Award, History, Flame, User } from 'lucide-react';
 
 export function MobileNav({ activeTab, onSelectTab }) {
   const tabs = [
     { id: 'dashboard', label: 'Markets', icon: LayoutDashboard },
     { id: 'intelligence', label: 'Intel', icon: Flame },
     { id: 'live-research', label: 'Live AI', icon: Activity },
-    { id: 'ablation', label: 'Ablation', icon: TestTube },
     { id: 'leaderboard', label: 'Models', icon: Award },
     { id: 'backtest', label: 'Backtest', icon: History },
+    { id: 'account', label: 'Profile', icon: User },
   ];
 
   return (

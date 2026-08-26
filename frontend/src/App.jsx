@@ -32,6 +32,7 @@ const ResearchStudy = lazy(() => import('./components/ResearchStudy'));
 const ModelLeaderboard = lazy(() => import('./components/ModelLeaderboard').then(m => ({ default: m.ModelLeaderboard })));
 const PredictionHistory = lazy(() => import('./components/PredictionHistory').then(m => ({ default: m.PredictionHistory })));
 const MarketsIntelligencePage = lazy(() => import('./components/MarketsIntelligencePage').then(m => ({ default: m.MarketsIntelligencePage })));
+const UserInformationPage = lazy(() => import('./components/UserInformationPage').then(m => ({ default: m.UserInformationPage })));
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -314,6 +315,10 @@ export default function App() {
 
           {activeTab === 'intelligence' && (
             <MarketsIntelligencePage />
+          )}
+
+          {(activeTab === 'account' || activeTab === 'profile') && (
+            <UserInformationPage />
           )}
         </Suspense>
 

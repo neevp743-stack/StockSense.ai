@@ -33,5 +33,8 @@ class RateLimiter:
         self.history[key] = timestamps
 
 # Pre-configured rate limiters
+public_api_limiter = RateLimiter(requests_per_minute=60)
+auth_api_limiter = RateLimiter(requests_per_minute=10)
+whatsapp_verif_limiter = RateLimiter(requests_per_minute=5)
 heavy_endpoint_limiter = RateLimiter(requests_per_minute=10)
 training_endpoint_limiter = RateLimiter(requests_per_minute=5)

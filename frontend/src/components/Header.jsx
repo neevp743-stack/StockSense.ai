@@ -104,11 +104,11 @@ export function Header({
           </button>
 
           <div 
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: 'var(--bg-primary)',
+            style={{ 
+              width: '36px', 
+              height: '36px', 
+              borderRadius: '50%', 
+              background: 'var(--bg-card)', 
               border: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
@@ -116,7 +116,8 @@ export function Header({
               color: 'var(--accent-cyan)',
               cursor: 'pointer'
             }}
-            title="Neev — Quant Analyst Profile"
+            title="User Account & Settings Profile"
+            onClick={() => onSelectTab && onSelectTab('account')}
           >
             <User size={18} />
           </div>
@@ -146,6 +147,7 @@ export function Header({
           { id: 'leaderboard', label: '🏆 Model Evaluation' },
           { id: 'tracking', label: '📜 Resolution Tracking' },
           { id: 'backtest', label: '⚡ Backtester' },
+          { id: 'account', label: '👤 Account' },
         ].map(tab => (
           <button 
             key={tab.id}

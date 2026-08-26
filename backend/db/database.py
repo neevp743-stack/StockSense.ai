@@ -32,6 +32,7 @@ from sqlalchemy import text
 
 def init_db():
     from backend.models.phase18_shadow_prediction_record import Phase18ShadowPredictionRecord  # noqa: F401
+    import backend.db.models  # noqa: F401
     Base.metadata.create_all(bind=engine)
     # Ensure SQLite column migrations for existing databases
     with engine.connect() as conn:
@@ -54,7 +55,8 @@ def init_db():
             "ALTER TABLE live_prediction_records ADD COLUMN actual_return FLOAT",
             "ALTER TABLE live_prediction_records ADD COLUMN correct BOOLEAN",
             "ALTER TABLE live_prediction_records ADD COLUMN brier_score FLOAT",
-            "ALTER TABLE live_prediction_records ADD COLUMN error_reason VARCHAR(255)"
+            "ALTER TABLE live_prediction_records ADD COLUMN error_reason VARCHAR(255)",
+            "ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'USER'"
         ]:
             try:
                 conn.execute(text(stmt))

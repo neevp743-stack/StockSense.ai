@@ -117,6 +117,7 @@ class UserRecord(Base):
     username = Column(String(50), unique=True, index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
+    role = Column(String(20), default="USER", nullable=False)  # USER, ADMIN
     created_at = Column(DateTime, default=datetime.utcnow)
 
 class FundamentalObservation(Base):
@@ -248,6 +249,70 @@ class PaperPredictionRecord(Base):
         Index("idx_paper_pred_symbol_resolved", "symbol", "resolved_at"),
         Index("idx_paper_pred_symbol_model", "symbol", "model_version"),
     )
+
+
+class UserPreferencesRecord(Base):
+    __tablename__ = "user_preferences"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, unique=True, index=True, nullable=False)
+    theme = Column(String(20), default="dark", nullable=False)
+    default_market = Column(String(50), default="BTC-USD", nullable=False)
+    default_timeframe = Column(String(20), default="1d", nullable=False)
+    default_currency = Column(String(10), default="USD", nullable=False)
+    notifications_enabled = Column(Boolean, default=True, nullable=False)
+    alerts_json = Column(Text, nullable=True)  # JSON string for alert toggles
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class UserWhatsAppVerificationRecord(Base):
+    __tablename__ = "user_whatsapp_verifications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, unique=True, index=True, nullable=False)
+    phone_number_e164 = Column(String(30), nullable=True)
+    phone_number_masked = Column(String(30), nullable=True)
+    verification_status = Column(String(30), default="UNVERIFIED", nullable=False)  # UNVERIFIED, VERIFICATION_SENT, VERIFIED, EXPIRED
+    verification_code_hash = Column(String(255), nullable=True)
+    verification_id = Column(String(100), nullable=True, index=True)
+    code_expires_at = Column(DateTime, nullable=True)
+    attempts_count = Column(Integer, default=0, nullable=False)
+    last_sent_at = Column(DateTime, nullable=True)
+    verified_at = Column(DateTime, nullable=True)
+    verification_provider = Column(String(50), default="OFFICIAL_WHATSAPP_BUSINESS", nullable=False)
+    alerts_enabled = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class WebhookSubscriptionRecord(Base):
+    __tablename__ = "webhook_subscriptions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True, nullable=False)
+    webhook_id = Column(String(100), unique=True, index=True, nullable=False)
+    target_url = Column(String(255), nullable=False)
+    secret_key = Column(String(100), nullable=False)
+    events_json = Column(Text, nullable=False)  # JSON list of event names
+    active = Column(Boolean, default=True, nullable=False)
+    delivery_failures_count = Column(Integer, default=0, nullable=False)
+    last_delivery_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class IdempotencyRecord(Base):
+    __tablename__ = "idempotency_records"
+
+    id = Column(Integer, primary_key=True, index=True)
+    idempotency_key = Column(String(100), unique=True, index=True, nullable=False)
+    user_id = Column(String(50), nullable=True, index=True)
+    request_path = Column(String(255), nullable=False)
+    response_code = Column(Integer, nullable=False)
+    response_json = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 
 
 

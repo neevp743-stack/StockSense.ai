@@ -30,6 +30,17 @@ export function getWebSocketUrl(symbol) {
   return `${wsProtocol}//${host}/ws/market/${cleanSymbol}`;
 }
 
+// Automatic Auth Token & X-Request-ID Header Interceptor
+axios.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('stocksense_token');
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+}, (error) => Promise.reject(error));
+
 export const api = {
   getDashboardData: (symbol, modelName = 'XGBoost', options = {}) =>
     axios.get(`${API_BASE_URL}/stocks/${symbol}/dashboard-data`, { params: { model_name: modelName }, ...options }),
@@ -113,7 +124,23 @@ export const api = {
   getSymbolProviderHealth: (symbol, options = {}) => axios.get(`${API_BASE_URL}/research/phase21/provider-health/${encodeURIComponent(symbol)}`, options),
   getMarketAnalysis: (symbol, interval = '1d', limit = 300, options = {}) => axios.get(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/analysis`, { params: { interval, limit }, ...options }),
   getMarketCandles: (symbol, interval = '1d', limit = 300, options = {}) => axios.get(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/candles`, { params: { interval, limit }, ...options }),
-  getMarketQuote: (symbol, options = {}) => axios.get(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/quote`, options)
+  getMarketQuote: (symbol, options = {}) => axios.get(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/quote`, options),
+
+  // Phase 21.6 v1 API Methods
+  registerUser: (username, email, password, options = {}) => axios.post(`${API_BASE_URL}/v1/auth/register`, { username, email, password }, options),
+  loginUser: (username_or_email, password, options = {}) => axios.post(`${API_BASE_URL}/v1/auth/login`, { username_or_email, password }, options),
+  getAuthMe: (options = {}) => axios.get(`${API_BASE_URL}/v1/auth/me`, options),
+  getUserProfile: (options = {}) => axios.get(`${API_BASE_URL}/v1/user/profile`, options),
+  getUserPreferences: (options = {}) => axios.get(`${API_BASE_URL}/v1/user/preferences`, options),
+  updateUserPreferences: (updates, options = {}) => axios.patch(`${API_BASE_URL}/v1/user/preferences`, updates, options),
+  requestWhatsAppVerify: (phoneNumber, options = {}) => axios.post(`${API_BASE_URL}/v1/user/whatsapp/verify/request`, { phone_number: phoneNumber }, options),
+  confirmWhatsAppVerify: (verificationId, code, options = {}) => axios.post(`${API_BASE_URL}/v1/user/whatsapp/verify/confirm`, { verification_id: verificationId, code }, options),
+  getWhatsAppStatus: (options = {}) => axios.get(`${API_BASE_URL}/v1/user/whatsapp/status`, options),
+  sendTestWhatsApp: (options = {}) => axios.post(`${API_BASE_URL}/v1/user/whatsapp/test`, {}, options),
+  disableWhatsApp: (options = {}) => axios.delete(`${API_BASE_URL}/v1/user/whatsapp/disable`, options),
+  createWebhook: (targetUrl, events, options = {}) => axios.post(`${API_BASE_URL}/v1/webhooks`, { target_url: targetUrl, events }, options),
+  listWebhooks: (options = {}) => axios.get(`${API_BASE_URL}/v1/webhooks`, options),
+  deleteWebhook: (webhookId, options = {}) => axios.delete(`${API_BASE_URL}/v1/webhooks/${webhookId}`, options)
 };
 
 

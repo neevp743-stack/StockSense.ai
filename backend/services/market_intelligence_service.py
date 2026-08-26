@@ -700,3 +700,8 @@ def get_market_analysis(symbol: str, interval: str = "1d", limit: int = 300) -> 
 
     ANALYSIS_CACHE[cache_key] = {"data": result, "cached_at": time.time()}
     return result
+
+def get_historical_candles(symbol: str, interval: str = "1d", limit: int = 300) -> list:
+    res = get_market_analysis(symbol=symbol, interval=interval, limit=limit)
+    return res.get("candles", [])
+

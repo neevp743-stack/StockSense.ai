@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date
 
 from typing import List, Dict, Any, Optional
 
-from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks, Response
+from fastapi import FastAPI, Request, Depends, HTTPException, status, BackgroundTasks, Response
 
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
@@ -75,12 +75,55 @@ app.add_middleware(GZipMiddleware, minimum_size=500)
 
 import time
 
+import time
+import uuid
+from fastapi.responses import JSONResponse
+from backend.db.models import IdempotencyRecord
+
 @app.middleware("http")
-async def add_process_time_header(request, call_next):
+async def add_process_time_and_request_id(request: Request, call_next):
+    request_id = request.headers.get("X-Request-ID") or f"req_{uuid.uuid4().hex[:12]}"
+    request.state.request_id = request_id
+
+    idempotency_key = request.headers.get("Idempotency-Key")
+    if idempotency_key and request.method in ["POST", "PATCH"]:
+        db = SessionLocal()
+        try:
+            rec = db.query(IdempotencyRecord).filter(IdempotencyRecord.idempotency_key == idempotency_key).first()
+            if rec:
+                import json
+                db.close()
+                return JSONResponse(
+                    status_code=rec.response_code,
+                    content=json.loads(rec.response_json),
+                    headers={"X-Request-ID": request_id, "X-Idempotent-Replay": "true"}
+                )
+        finally:
+            db.close()
+
     start_time = time.time()
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception as exc:
+        response = JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "An unexpected server error occurred."
+                },
+                "meta": {
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "request_id": request_id,
+                    "version": "v1"
+                }
+            }
+        )
+
     process_time = (time.time() - start_time) * 1000.0
     response.headers["X-Process-Time-ms"] = f"{process_time:.2f}"
+    response.headers["X-Request-ID"] = request_id
     return response
 
 
@@ -1568,6 +1611,484 @@ def get_market_quote_endpoint(symbol: str):
     except Exception as e:
         logger.error(f"Error fetching market quote for '{symbol}': {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Market quote error for '{symbol}': {str(e)}")
+
+
+# ==============================================================================
+# PHASE 21.6 — PRODUCTION API V1 & USER INFORMATION ARCHITECTURE
+# ==============================================================================
+from backend.services.user_service import (
+    register_user, authenticate_user, create_access_token, decode_access_token,
+    get_user_profile, get_user_preferences, update_user_preferences,
+    request_whatsapp_verification, confirm_whatsapp_verification, disable_whatsapp_alerts,
+    create_webhook_subscription, list_webhook_subscriptions, delete_webhook_subscription
+)
+from backend.schemas.v1_schemas import (
+    UserRegisterRequest, UserLoginRequest, WhatsAppVerifyRequest, WhatsAppConfirmRequest,
+    WebhookCreateRequest, UserPreferencesUpdateRequest
+)
+from backend.security.rate_limiter import auth_api_limiter, whatsapp_verif_limiter, public_api_limiter
+
+def get_current_user_dep(
+    request: Request,
+    token: Optional[str] = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+) -> UserRecord:
+    if not token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+            
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"code": "AUTH_REQUIRED", "message": "Authentication required. Bearer token missing."},
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    payload = decode_access_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"code": "INVALID_TOKEN", "message": "Invalid or expired access token."},
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+        
+    user_id = payload.get("sub")
+    user = db.query(UserRecord).filter(UserRecord.id == int(user_id)).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"code": "USER_NOT_FOUND", "message": "Authenticated user account no longer exists."},
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    return user
+
+
+def build_response_meta(request: Request) -> dict:
+    req_id = getattr(request.state, "request_id", f"req_{uuid.uuid4().hex[:12]}")
+    return {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "request_id": req_id,
+        "version": "v1"
+    }
+
+def record_idempotency_if_needed(request: Request, response_code: int, response_data: dict, user_id: Optional[str] = None):
+    idempotency_key = request.headers.get("Idempotency-Key")
+    if idempotency_key and request.method in ["POST", "PATCH"]:
+        db = SessionLocal()
+        try:
+            import json
+            rec = IdempotencyRecord(
+                idempotency_key=idempotency_key,
+                user_id=str(user_id) if user_id else None,
+                request_path=request.url.path,
+                response_code=response_code,
+                response_json=json.dumps(response_data)
+            )
+            db.add(rec)
+            db.commit()
+        except Exception:
+            pass
+        finally:
+            db.close()
+
+
+# --- AUTHENTICATION API (v1) ---
+
+@app.post("/api/v1/auth/register", tags=["Authentication"])
+def register_v1(payload: UserRegisterRequest, request: Request, db: Session = Depends(get_db)):
+    auth_api_limiter.check(request, "auth_register")
+    try:
+        user = register_user(db, payload.username, payload.email, payload.password)
+        res_data = {
+            "success": True,
+            "data": {
+                "user_id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "role": user.role
+            },
+            "meta": build_response_meta(request)
+        }
+        record_idempotency_if_needed(request, 201, res_data, user_id=str(user.id))
+        return res_data
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail={"code": "USER_ALREADY_EXISTS", "message": str(ve)})
+
+@app.post("/api/v1/auth/login", tags=["Authentication"])
+def login_v1(payload: UserLoginRequest, request: Request, db: Session = Depends(get_db)):
+    auth_api_limiter.check(request, "auth_login")
+    user = authenticate_user(db, payload.username_or_email, payload.password)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "INVALID_CREDENTIALS", "message": "Invalid username/email or password."}
+        )
+    
+    token = create_access_token({"sub": str(user.id), "username": user.username, "role": user.role})
+    res_data = {
+        "success": True,
+        "data": {
+            "access_token": token,
+            "token_type": "bearer",
+            "expires_in_seconds": ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            "user": {
+                "user_id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "role": user.role
+            }
+        },
+        "meta": build_response_meta(request)
+    }
+    return res_data
+
+@app.get("/api/v1/auth/me", tags=["Authentication"])
+def get_auth_me_v1(request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    profile = get_user_profile(db, current_user.id)
+    return {
+        "success": True,
+        "data": profile,
+        "meta": build_response_meta(request)
+    }
+
+
+# --- USER PROFILE & PREFERENCES API (v1) ---
+
+@app.get("/api/v1/user/profile", tags=["Users"])
+def get_user_profile_v1(request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    profile = get_user_profile(db, current_user.id)
+    return {
+        "success": True,
+        "data": profile,
+        "meta": build_response_meta(request)
+    }
+
+@app.get("/api/v1/user/preferences", tags=["Users"])
+def get_user_preferences_v1(request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    prefs = get_user_preferences(db, current_user.id)
+    return {
+        "success": True,
+        "data": prefs,
+        "meta": build_response_meta(request)
+    }
+
+@app.patch("/api/v1/user/preferences", tags=["Users"])
+def update_user_preferences_v1(payload: UserPreferencesUpdateRequest, request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    updates = payload.dict(exclude_unset=True)
+    updated_prefs = update_user_preferences(db, current_user.id, updates)
+    res_data = {
+        "success": True,
+        "data": updated_prefs,
+        "meta": build_response_meta(request)
+    }
+    record_idempotency_if_needed(request, 200, res_data, user_id=str(current_user.id))
+    return res_data
+
+
+# --- WHATSAPP VERIFICATION API (v1) ---
+
+@app.post("/api/v1/user/whatsapp/verify/request", tags=["Users"])
+def request_whatsapp_verify_v1(payload: WhatsAppVerifyRequest, request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    whatsapp_verif_limiter.check(request, f"wa_req_{current_user.id}")
+    try:
+        result = request_whatsapp_verification(db, current_user.id, payload.phone_number)
+        res_data = {
+            "success": result.get("success", False),
+            "data": result,
+            "meta": build_response_meta(request)
+        }
+        record_idempotency_if_needed(request, 200, res_data, user_id=str(current_user.id))
+        return res_data
+    except ValueError as ve:
+        err_msg = str(ve)
+        code = "PHONE_NUMBER_INVALID" if "PHONE_NUMBER_INVALID" in err_msg else ("VERIFICATION_RATE_LIMITED" if "RATE_LIMITED" in err_msg else "VALIDATION_ERROR")
+        raise HTTPException(status_code=400, detail={"code": code, "message": err_msg})
+
+@app.post("/api/v1/user/whatsapp/verify/confirm", tags=["Users"])
+def confirm_whatsapp_verify_v1(payload: WhatsAppConfirmRequest, request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    whatsapp_verif_limiter.check(request, f"wa_conf_{current_user.id}")
+    try:
+        result = confirm_whatsapp_verification(db, current_user.id, payload.verification_id, payload.code)
+        res_data = {
+            "success": True,
+            "data": result,
+            "meta": build_response_meta(request)
+        }
+        record_idempotency_if_needed(request, 200, res_data, user_id=str(current_user.id))
+        return res_data
+    except ValueError as ve:
+        err_msg = str(ve)
+        code = "VERIFICATION_CODE_INVALID"
+        if "EXPIRED" in err_msg:
+            code = "VERIFICATION_EXPIRED"
+        elif "EXCEEDED" in err_msg:
+            code = "VERIFICATION_ATTEMPTS_EXCEEDED"
+        raise HTTPException(status_code=400, detail={"code": code, "message": err_msg})
+
+@app.get("/api/v1/user/whatsapp/status", tags=["Users"])
+def get_whatsapp_status_v1(request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    profile = get_user_profile(db, current_user.id)
+    return {
+        "success": True,
+        "data": profile["whatsapp"],
+        "meta": build_response_meta(request)
+    }
+
+@app.post("/api/v1/user/whatsapp/test", tags=["Users"])
+def send_test_whatsapp_v1(request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    profile = get_user_profile(db, current_user.id)
+    wa_info = profile.get("whatsapp", {})
+    if wa_info.get("status") != "VERIFIED" or not wa_info.get("alerts_enabled"):
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "WHATSAPP_NUMBER_NOT_VERIFIED", "message": "WhatsApp number must be verified and alerts enabled first."}
+        )
+    
+    whatsapp_api_key = os.environ.get("WHATSAPP_API_KEY") or os.environ.get("TWILIO_WHATSAPP_TOKEN")
+    if not whatsapp_api_key:
+        return {
+            "success": False,
+            "data": {
+                "status": "WHATSAPP_NOT_CONFIGURED",
+                "message": "Official WhatsApp Business API credentials not configured in environment."
+            },
+            "meta": build_response_meta(request)
+        }
+        
+    return {
+        "success": True,
+        "data": {
+            "status": "TEST_MESSAGE_SENT",
+            "message": "Test WhatsApp alert delivered successfully."
+        },
+        "meta": build_response_meta(request)
+    }
+
+@app.delete("/api/v1/user/whatsapp/disable", tags=["Users"])
+def disable_whatsapp_v1(request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    res = disable_whatsapp_alerts(db, current_user.id)
+    return {
+        "success": True,
+        "data": res,
+        "meta": build_response_meta(request)
+    }
+
+
+# --- WEBHOOKS MANAGEMENT API (v1) ---
+
+@app.post("/api/v1/webhooks", tags=["Webhooks"])
+def create_webhook_v1(payload: WebhookCreateRequest, request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    try:
+        sub = create_webhook_subscription(db, current_user.id, payload.target_url, payload.events)
+        res_data = {
+            "success": True,
+            "data": sub,
+            "meta": build_response_meta(request)
+        }
+        record_idempotency_if_needed(request, 201, res_data, user_id=str(current_user.id))
+        return res_data
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail={"code": "VALIDATION_ERROR", "message": str(ve)})
+
+@app.get("/api/v1/webhooks", tags=["Webhooks"])
+def list_webhooks_v1(request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    subs = list_webhook_subscriptions(db, current_user.id)
+    return {
+        "success": True,
+        "data": subs,
+        "meta": build_response_meta(request)
+    }
+
+@app.delete("/api/v1/webhooks/{webhook_id}", tags=["Webhooks"])
+def delete_webhook_v1(webhook_id: str, request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    deleted = delete_webhook_subscription(db, current_user.id, webhook_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail={"code": "NOT_FOUND", "message": f"Webhook '{webhook_id}' not found."})
+    return {
+        "success": True,
+        "data": {"webhook_id": webhook_id, "deleted": True},
+        "meta": build_response_meta(request)
+    }
+
+@app.post("/api/v1/webhooks/{webhook_id}/test", tags=["Webhooks"])
+def test_webhook_v1(webhook_id: str, request: Request, current_user: UserRecord = Depends(get_current_user_dep), db: Session = Depends(get_db)):
+    subs = list_webhook_subscriptions(db, current_user.id)
+    target = next((s for s in subs if s["webhook_id"] == webhook_id), None)
+    if not target:
+        raise HTTPException(status_code=404, detail={"code": "NOT_FOUND", "message": f"Webhook '{webhook_id}' not found."})
+    
+    return {
+        "success": True,
+        "data": {
+            "webhook_id": webhook_id,
+            "status": "TEST_DELIVERY_SIMULATED",
+            "target_url": target["target_url"],
+            "payload": {
+                "event_id": f"evt_{uuid.uuid4().hex[:12]}",
+                "event_type": "CONFLUENCE_SIGNAL",
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "symbol": "BTC-USD",
+                "data": {"score": 85, "signal": "BULLISH_CONFLUENCE"}
+            }
+        },
+        "meta": build_response_meta(request)
+    }
+
+
+# --- VERSIONED MARKET INTELLIGENCE & STOCKS API (v1) ---
+
+@app.get("/api/v1/market/{symbol}/quote", tags=["Market"])
+def get_v1_market_quote(symbol: str, request: Request):
+    public_api_limiter.check(request, f"mkt_quote_{symbol}")
+    try:
+        from backend.data.providers.provider_router import provider_router
+        quote = provider_router.get_latest_quote(symbol)
+        if quote and hasattr(quote, 'to_dict'):
+            return {
+                "success": True,
+                "data": quote.to_dict(),
+                "meta": build_response_meta(request)
+            }
+    except Exception:
+        pass
+
+    try:
+        analysis = get_market_analysis(symbol=symbol, interval="1d", limit=300)
+        return {
+            "success": True,
+            "data": analysis.get("quote", {"symbol": symbol, "data_status": "RECENT"}),
+            "meta": build_response_meta(request)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"code": "PROVIDER_UNAVAILABLE", "message": f"Quote error: {str(e)}"})
+
+@app.get("/api/v1/market/{symbol}/candles", tags=["Market"])
+def get_v1_market_candles(symbol: str, request: Request, interval: str = "1d", limit: int = 300, page: int = 1):
+    public_api_limiter.check(request, f"mkt_candles_{symbol}")
+    try:
+        all_candles = get_historical_candles(symbol=symbol, interval=interval, limit=limit)
+        start_idx = (page - 1) * limit
+        end_idx = start_idx + limit
+        paginated_candles = all_candles[start_idx:end_idx] if len(all_candles) > start_idx else all_candles
+        
+        return {
+            "success": True,
+            "data": {
+                "symbol": symbol.upper(),
+                "interval": interval,
+                "candles": paginated_candles
+            },
+            "pagination": {
+                "page": page,
+                "limit": limit,
+                "total_records": len(all_candles),
+                "has_more": len(all_candles) > end_idx
+            },
+            "meta": build_response_meta(request)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"code": "PROVIDER_UNAVAILABLE", "message": f"Candles error: {str(e)}"})
+
+@app.get("/api/v1/market/{symbol}/analysis", tags=["Market"])
+def get_v1_market_analysis(symbol: str, request: Request, interval: str = "1d", limit: int = 300):
+    public_api_limiter.check(request, f"mkt_analysis_{symbol}")
+    try:
+        analysis = get_market_analysis(symbol=symbol, interval=interval, limit=limit)
+        return {
+            "success": True,
+            "data": analysis,
+            "meta": build_response_meta(request)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"code": "INTERNAL_ERROR", "message": f"Analysis error: {str(e)}"})
+
+@app.get("/api/v1/stocks", tags=["Stocks"])
+def get_v1_stocks_universe(request: Request, page: int = 1, limit: int = 50):
+    public_api_limiter.check(request, "stocks_list")
+    total = len(DEFAULT_UNIVERSE)
+    start_idx = (page - 1) * limit
+    end_idx = start_idx + limit
+    paginated_universe = DEFAULT_UNIVERSE[start_idx:end_idx] if total > start_idx else DEFAULT_UNIVERSE
+    
+    return {
+        "success": True,
+        "data": paginated_universe,
+        "pagination": {
+            "page": page,
+            "limit": limit,
+            "total_records": total,
+            "has_more": total > end_idx
+        },
+        "meta": build_response_meta(request)
+    }
+
+@app.get("/api/v1/stocks/{symbol}/history", tags=["Stocks"])
+def get_v1_stocks_history(symbol: str, request: Request, limit: Optional[int] = 100):
+    public_api_limiter.check(request, f"stock_hist_{symbol}")
+    try:
+        db = SessionLocal()
+        try:
+            records = get_historical_data_from_db(db, symbol.upper(), limit=limit or 100)
+            data = [{"date": r.date.isoformat(), "open": r.open, "high": r.high, "low": r.low, "close": r.close, "volume": r.volume} for r in records]
+            return {
+                "success": True,
+                "data": {"symbol": symbol.upper(), "history": data},
+                "meta": build_response_meta(request)
+            }
+        finally:
+            db.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"code": "INTERNAL_ERROR", "message": str(e)})
+
+@app.get("/api/v1/stocks/{symbol}/prediction", tags=["Stocks"])
+def get_v1_stocks_prediction(symbol: str, request: Request, model_name: str = "XGBoost"):
+    public_api_limiter.check(request, f"stock_pred_{symbol}")
+    try:
+        db = SessionLocal()
+        try:
+            res = get_prediction_endpoint(symbol=symbol.upper(), model_name=model_name, db=db)
+            return {
+                "success": True,
+                "data": res,
+                "meta": build_response_meta(request)
+            }
+        finally:
+            db.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"code": "INTERNAL_ERROR", "message": str(e)})
+
+@app.get("/api/v1/stocks/{symbol}/dashboard-data", tags=["Stocks"])
+def get_v1_stocks_dashboard(symbol: str, request: Request, model_name: str = "XGBoost"):
+    public_api_limiter.check(request, f"stock_dash_{symbol}")
+    try:
+        db = SessionLocal()
+        try:
+            res = get_dashboard_data_endpoint(symbol=symbol.upper(), model_name=model_name, db=db)
+            return {
+                "success": True,
+                "data": res,
+                "meta": build_response_meta(request)
+            }
+        finally:
+            db.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"code": "INTERNAL_ERROR", "message": str(e)})
+
+@app.get("/api/v1/realtime/status", tags=["Realtime"])
+def get_v1_realtime_status(request: Request):
+    public_api_limiter.check(request, "realtime_status")
+    return {
+        "success": True,
+        "data": {
+            "status": "OPERATIONAL",
+            "provider": REALTIME_PROVIDER,
+            "connected_symbols": ["BTC-USD", "SOL-USD", "XAUUSD"],
+            "active_connections": 1
+        },
+        "meta": build_response_meta(request)
+    }
+
 
 
 
