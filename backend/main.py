@@ -1520,6 +1520,57 @@ def get_provider_latency_endpoint():
     return provider_router.get_latency_percentiles()
 
 
+# ==============================================================================
+# PHASE 21.5 — ADVANCED MARKET INTELLIGENCE ENDPOINTS (BTC/USD, SOL/USD, XAU/USD)
+# ==============================================================================
+from backend.services.market_intelligence_service import get_market_analysis, get_historical_candles
+
+@app.get("/api/market/{symbol}/analysis")
+def get_market_analysis_endpoint(symbol: str, interval: str = "1h", limit: int = 300):
+    """
+    GET /api/market/{symbol}/analysis
+    Returns market structure, indicators, FVG, OBs, liquidity sweeps, regimes, confluence score, and setups.
+    """
+    try:
+        return get_market_analysis(symbol=symbol, interval=interval, limit=limit)
+    except Exception as e:
+        logger.error(f"Error generating market analysis for '{symbol}': {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Market analysis error for '{symbol}': {str(e)}")
+
+@app.get("/api/market/{symbol}/candles")
+def get_market_candles_endpoint(symbol: str, interval: str = "1h", limit: int = 300):
+    """
+    GET /api/market/{symbol}/candles
+    Returns historical OHLCV candlestick candles array for TradingView lightweight-charts.
+    """
+    try:
+        candles = get_historical_candles(symbol=symbol, interval=interval, limit=limit)
+        return {
+            "symbol": symbol.upper(),
+            "interval": interval,
+            "candles": candles,
+            "count": len(candles)
+        }
+    except Exception as e:
+        logger.error(f"Error fetching market candles for '{symbol}': {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Market candles error for '{symbol}': {str(e)}")
+
+@app.get("/api/market/{symbol}/quote")
+def get_market_quote_endpoint(symbol: str):
+    """
+    GET /api/market/{symbol}/quote
+    Returns latest price quote, provider, and data status.
+    """
+    try:
+        from backend.data.providers.provider_router import provider_router
+        quote = provider_router.get_latest_quote(symbol)
+        return quote.to_dict()
+    except Exception as e:
+        logger.error(f"Error fetching market quote for '{symbol}': {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Market quote error for '{symbol}': {str(e)}")
+
+
+
 
 
 
