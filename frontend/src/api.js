@@ -41,6 +41,19 @@ axios.interceptors.request.use((config) => {
   return config;
 }, (error) => Promise.reject(error));
 
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      localStorage.removeItem('stocksense_token');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('auth_error'));
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 const clientCache = {};
 
 function cachedGet(url, config = {}, ttlMs = 15000) {
@@ -151,7 +164,7 @@ export const api = {
   getMarketQuote: (symbol, options = {}) => cachedGet(`${API_BASE_URL}/market/${encodeURIComponent(symbol)}/quote`, options, 5000),
 
   // Phase 21.6 v1 API Methods
-  registerUser: (username, email, password, options = {}) => axios.post(`${API_BASE_URL}/v1/auth/register`, { username, email, password }, options),
+  registerUser: (username, email, password, extra = {}, options = {}) => axios.post(`${API_BASE_URL}/v1/auth/register`, { username, email, password, ...extra }, options),
   loginUser: (username_or_email, password, options = {}) => axios.post(`${API_BASE_URL}/v1/auth/login`, { username_or_email, password }, options),
   getAuthMe: (options = {}) => axios.get(`${API_BASE_URL}/v1/auth/me`, options), // Me call can be uncached or short cache
   getUserProfile: (options = {}) => cachedGet(`${API_BASE_URL}/v1/user/profile`, options, 15000),
@@ -164,7 +177,10 @@ export const api = {
   disableWhatsApp: (options = {}) => axios.delete(`${API_BASE_URL}/v1/user/whatsapp/disable`, options),
   createWebhook: (targetUrl, events, options = {}) => axios.post(`${API_BASE_URL}/v1/webhooks`, { target_url: targetUrl, events }, options),
   listWebhooks: (options = {}) => cachedGet(`${API_BASE_URL}/v1/webhooks`, options, 10000),
-  deleteWebhook: (webhookId, options = {}) => axios.delete(`${API_BASE_URL}/v1/webhooks/${webhookId}`, options)
+  deleteWebhook: (webhookId, options = {}) => axios.delete(`${API_BASE_URL}/v1/webhooks/${webhookId}`, options),
+  
+  // Phase 21.8 Admin Diagnostics Method
+  getAdminDiagnostics: (options = {}) => axios.get(`${API_BASE_URL}/admin/diagnostics`, options)
 };
 
 

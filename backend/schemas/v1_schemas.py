@@ -25,9 +25,11 @@ class ErrorResponse(BaseModel):
 
 # Auth Schemas
 class UserRegisterRequest(BaseModel):
-    username: str
     email: str
     password: str
+    full_name: Optional[str] = None
+    username: Optional[str] = None
+    phone_number: Optional[str] = None
 
 class UserLoginRequest(BaseModel):
     username_or_email: str
@@ -58,6 +60,8 @@ class UserPreferencesUpdateRequest(BaseModel):
     default_timeframe: Optional[str] = None
     default_currency: Optional[str] = None
     notifications_enabled: Optional[bool] = None
+    alerts: Optional[Dict[str, Any]] = None
+    ai_settings: Optional[Dict[str, Any]] = None
 
 # Pagination Schemas
 class PaginationMeta(BaseModel):

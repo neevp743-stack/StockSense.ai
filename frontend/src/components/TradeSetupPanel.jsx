@@ -3,7 +3,7 @@ import { ShieldAlert, Target, TrendingUp, TrendingDown, Layers, Activity, Dollar
 import { api } from '../api';
 import { formatPrice } from '../utils/formatters';
 
-export function TradeSetupPanel({ symbol }) {
+export function TradeSetupPanel({ symbol, showStats = false }) {
   const [setup, setSetup] = React.useState(null);
   const [backtest, setBacktest] = React.useState(null);
   const [paperPerf, setPaperPerf] = React.useState(null);
@@ -254,105 +254,107 @@ export function TradeSetupPanel({ symbol }) {
       </div>
 
       {/* Historical Setup Backtest & Live Paper Tracker Comparison */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-        {/* Historical Out-of-Sample Backtest Card */}
-        <div style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <BarChart2 size={16} color="var(--accent-cyan)" /> HISTORICAL SETUP BACKTEST
-            </span>
-            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Net Costs Deducted</span>
+      {showStats && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+          {/* Historical Out-of-Sample Backtest Card */}
+          <div style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <BarChart2 size={16} color="var(--accent-cyan)" /> HISTORICAL SETUP BACKTEST
+              </span>
+              <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Net Costs Deducted</span>
+            </div>
+
+            {backtest && !backtest.error ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem' }}>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Valid Setups: </span>
+                  <strong style={{ color: '#fff' }}>{backtest.number_of_trades}</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Win Rate: </span>
+                  <strong style={{ color: 'var(--up-green)' }}>{backtest.win_rate_pct}%</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Avg Net Return: </span>
+                  <strong style={{ color: backtest.average_net_return_pct >= 0 ? 'var(--up-green)' : 'var(--down-red)' }}>
+                    {backtest.average_net_return_pct}%
+                  </strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Profit Factor: </span>
+                  <strong style={{ color: 'var(--accent-cyan)' }}>{backtest.profit_factor}</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Target 1 Hit: </span>
+                  <strong style={{ color: '#fff' }}>{backtest.target_1_hit_rate_pct}%</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Stop Loss Hit: </span>
+                  <strong style={{ color: 'var(--down-red)' }}>{backtest.stop_loss_rate_pct}%</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Max Drawdown: </span>
+                  <strong style={{ color: 'var(--down-red)' }}>{backtest.maximum_drawdown_pct}%</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Ambiguous Candles: </span>
+                  <strong style={{ color: 'var(--risk-medium)' }}>{backtest.ambiguous_count}</strong>
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Backtest statistics loading or insufficient historical setups.</div>
+            )}
           </div>
 
-          {backtest && !backtest.error ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem' }}>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Valid Setups: </span>
-                <strong style={{ color: '#fff' }}>{backtest.number_of_trades}</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Win Rate: </span>
-                <strong style={{ color: 'var(--up-green)' }}>{backtest.win_rate_pct}%</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Avg Net Return: </span>
-                <strong style={{ color: backtest.average_net_return_pct >= 0 ? 'var(--up-green)' : 'var(--down-red)' }}>
-                  {backtest.average_net_return_pct}%
-                </strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Profit Factor: </span>
-                <strong style={{ color: 'var(--accent-cyan)' }}>{backtest.profit_factor}</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Target 1 Hit: </span>
-                <strong style={{ color: '#fff' }}>{backtest.target_1_hit_rate_pct}%</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Stop Loss Hit: </span>
-                <strong style={{ color: 'var(--down-red)' }}>{backtest.stop_loss_rate_pct}%</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Max Drawdown: </span>
-                <strong style={{ color: 'var(--down-red)' }}>{backtest.maximum_drawdown_pct}%</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Ambiguous Candles: </span>
-                <strong style={{ color: 'var(--risk-medium)' }}>{backtest.ambiguous_count}</strong>
-              </div>
+          {/* Live Paper Trading Tracker Card */}
+          <div style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={16} color="var(--up-green)" /> LIVE PAPER TRADING TRACKER
+              </span>
+              <span style={{ fontSize: '0.68rem', color: 'var(--accent-cyan)', fontWeight: 600 }}>LIVE FORWARD TEST</span>
             </div>
-          ) : (
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Backtest statistics loading or insufficient historical setups.</div>
-          )}
-        </div>
 
-        {/* Live Paper Trading Tracker Card */}
-        <div style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Clock size={16} color="var(--up-green)" /> LIVE PAPER TRADING TRACKER
-            </span>
-            <span style={{ fontSize: '0.68rem', color: 'var(--accent-cyan)', fontWeight: 600 }}>LIVE FORWARD TEST</span>
+            {paperPerf ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem' }}>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Total Logged: </span>
+                  <strong style={{ color: '#fff' }}>{paperPerf.total_predictions}</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Resolved Setups: </span>
+                  <strong style={{ color: '#fff' }}>{paperPerf.resolved_predictions}</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Paper Win Rate: </span>
+                  <strong style={{ color: 'var(--up-green)' }}>
+                    {paperPerf.resolved_predictions > 0 ? `${paperPerf.win_rate_pct}%` : 'INSUFFICIENT SAMPLE'}
+                  </strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Accuracy: </span>
+                  <strong style={{ color: 'var(--accent-cyan)' }}>
+                    {paperPerf.resolved_predictions > 0 ? `${paperPerf.accuracy_pct}%` : 'PENDING SETTLEMENT'}
+                  </strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Avg Realized Return: </span>
+                  <strong style={{ color: paperPerf.average_return_pct >= 0 ? 'var(--up-green)' : 'var(--down-red)' }}>
+                    {paperPerf.average_return_pct}%
+                  </strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text-muted)' }}>Pending Settlement: </span>
+                  <strong style={{ color: 'var(--risk-medium)' }}>{paperPerf.pending_predictions}</strong>
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Paper performance statistics loading...</div>
+            )}
           </div>
-
-          {paperPerf ? (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.8rem' }}>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Total Logged: </span>
-                <strong style={{ color: '#fff' }}>{paperPerf.total_predictions}</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Resolved Setups: </span>
-                <strong style={{ color: '#fff' }}>{paperPerf.resolved_predictions}</strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Paper Win Rate: </span>
-                <strong style={{ color: 'var(--up-green)' }}>
-                  {paperPerf.resolved_predictions > 0 ? `${paperPerf.win_rate_pct}%` : 'INSUFFICIENT SAMPLE'}
-                </strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Accuracy: </span>
-                <strong style={{ color: 'var(--accent-cyan)' }}>
-                  {paperPerf.resolved_predictions > 0 ? `${paperPerf.accuracy_pct}%` : 'PENDING SETTLEMENT'}
-                </strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Avg Realized Return: </span>
-                <strong style={{ color: paperPerf.average_return_pct >= 0 ? 'var(--up-green)' : 'var(--down-red)' }}>
-                  {paperPerf.average_return_pct}%
-                </strong>
-              </div>
-              <div>
-                <span style={{ color: 'var(--text-muted)' }}>Pending Settlement: </span>
-                <strong style={{ color: 'var(--risk-medium)' }}>{paperPerf.pending_predictions}</strong>
-              </div>
-            </div>
-          ) : (
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Paper performance statistics loading...</div>
-          )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

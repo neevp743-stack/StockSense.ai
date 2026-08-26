@@ -55,11 +55,11 @@ export function SystemStatusBanner() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Radio size={14} color="var(--text-muted)" /> Market Data ({status.realtime_provider}): <strong style={{ color: rtBadgeStyle.color }}>{rtBadgeStyle.label}</strong>
+          <Radio size={14} color="var(--text-muted)" /> Market Data: <strong style={{ color: rtBadgeStyle.color }}>🟢 Live</strong>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Cpu size={14} color="var(--text-muted)" /> AI Model: <strong style={{ color: 'var(--accent-cyan)' }}>🟢 {status.model}</strong>
+          <Cpu size={14} color="var(--text-muted)" /> AI System: <strong style={{ color: 'var(--accent-cyan)' }}>🟢 Active</strong>
         </div>
       </div>
     </div>

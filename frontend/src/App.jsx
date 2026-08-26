@@ -17,6 +17,9 @@ import { SystemStatusBanner } from './components/SystemStatusBanner';
 
 
 
+import { LoginRegister } from './components/LoginRegister';
+import { SettingsPage } from './components/SettingsPage';
+import { AdminDiagnosticsPage } from './components/AdminDiagnosticsPage';
 import { SplashScreen } from './components/SplashScreen';
 import { SearchModal } from './components/SearchModal';
 import { MobileNav } from './components/MobileNav';
@@ -35,6 +38,10 @@ const MarketsIntelligencePage = lazy(() => import('./components/MarketsIntellige
 const UserInformationPage = lazy(() => import('./components/UserInformationPage').then(m => ({ default: m.UserInformationPage })));
 
 export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('stocksense_token') || null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
   const [showSplash, setShowSplash] = useState(true);
   const [selectedAssetClass, setSelectedAssetClass] = useState('INDIAN_EQUITY');
   const [availableAssets, setAvailableAssets] = useState([]);
@@ -63,15 +70,47 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSearchOpen]);
 
+  // Auth global listener
   useEffect(() => {
+    const handleAuthError = () => {
+      setToken(null);
+      setUserProfile(null);
+      localStorage.removeItem('stocksense_token');
+    };
+    window.addEventListener('auth_error', handleAuthError);
+    return () => window.removeEventListener('auth_error', handleAuthError);
+  }, []);
+
+  // Fetch verified profile
+  useEffect(() => {
+    if (token) {
+      api.getAuthMe()
+        .then(res => {
+          const profile = res.data?.data || res.data;
+          setUserProfile(profile);
+          setAuthLoading(false);
+        })
+        .catch(() => {
+          localStorage.removeItem('stocksense_token');
+          setToken(null);
+          setUserProfile(null);
+          setAuthLoading(false);
+        });
+    } else {
+      setAuthLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
     loadAssetsForClass(selectedAssetClass);
-  }, [selectedAssetClass]);
+  }, [selectedAssetClass, token]);
 
   const symbolCacheRef = useRef({});
 
   // Preload stock data & predictions with Stale-While-Revalidate Client Caching
   useEffect(() => {
-    if (!selectedAsset) return;
+    if (!token || !selectedAsset) return;
 
     const controller = new AbortController();
     const { signal } = controller;
@@ -118,11 +157,12 @@ export default function App() {
       });
 
     return () => controller.abort();
-  }, [selectedAsset, selectedModel]);
+  }, [selectedAsset, selectedModel, token]);
 
   useEffect(() => {
+    if (!token) return;
     loadGlobalMetrics();
-  }, []);
+  }, [token]);
 
   const loadAssetsForClass = async (cls) => {
     try {
@@ -167,6 +207,18 @@ export default function App() {
     setActiveTab('dashboard');
   };
 
+  if (authLoading) {
+    return (
+      <div style={{ background: '#070a11', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--text-secondary)' }}>
+        <SplashScreen onFinish={() => {}} />
+      </div>
+    );
+  }
+
+  if (!token) {
+    return <LoginRegister onAuthSuccess={(t) => setToken(t)} />;
+  }
+
   return (
     <>
       {/* Smart Startup Splash Screen (~1.2s max, preloads data concurrently) */}
@@ -189,6 +241,7 @@ export default function App() {
           activeTab={activeTab}
           onSelectTab={setActiveTab}
           onOpenSearch={() => setIsSearchOpen(true)}
+          userRole={userProfile?.role || 'USER'}
         />
 
         {/* System Health Status Bar */}
@@ -247,34 +300,9 @@ export default function App() {
               <ExplanationCard explanations={predictionData?.explanations} />
             </div>
 
-            {/* Phase 14 AI Trade Setup Panel */}
+            {/* Phase 14 AI Trade Setup Panel - Stats hidden for normal users */}
             <div style={{ marginTop: '24px' }}>
-              <TradeSetupPanel symbol={selectedAsset} />
-            </div>
-
-            {/* Phase 16 Production Monitor & Live Validation */}
-            <div style={{ marginTop: '24px' }}>
-              <ProductionMonitor symbol={selectedAsset} />
-            </div>
-
-            {/* Phase 18 Shadow Forward Validation Monitor */}
-            <div style={{ marginTop: '24px' }}>
-              <Phase18ShadowMonitor symbol={selectedAsset} />
-            </div>
-
-            {/* Phase 19A Live Data Pipeline & Diagnostic Monitor */}
-            <div style={{ marginTop: '24px' }}>
-              <Phase19AMonitor symbol={selectedAsset} />
-            </div>
-
-            {/* Phase 19 Forward Decision Support Dashboard */}
-            <div style={{ marginTop: '24px' }}>
-              <Phase19DecisionDashboard />
-            </div>
-
-            {/* Phase 20 Production-Grade Model Research Dashboard */}
-            <div style={{ marginTop: '24px' }}>
-              <Phase20ResearchDashboard />
+              <TradeSetupPanel symbol={selectedAsset} showStats={false} />
             </div>
 
             {/* Phase 15 Research Pattern Analysis Card */}
@@ -284,8 +312,6 @@ export default function App() {
 
           </>
         )}
-
-
 
         {/* Lazy Loaded Market Universe & Research Tabs */}
         <Suspense fallback={<ChartSkeleton />}>
@@ -317,8 +343,12 @@ export default function App() {
             <MarketsIntelligencePage />
           )}
 
-          {(activeTab === 'account' || activeTab === 'profile') && (
-            <UserInformationPage />
+          {activeTab === 'settings' && (
+            <SettingsPage userToken={token} onLogout={() => { localStorage.removeItem('stocksense_token'); setToken(null); setUserProfile(null); }} />
+          )}
+
+          {activeTab === 'diagnostics' && userProfile?.role === 'ADMIN' && (
+            <AdminDiagnosticsPage symbol={selectedAsset} />
           )}
         </Suspense>
 
@@ -336,7 +366,7 @@ export default function App() {
         <footer style={{ marginTop: '50px', paddingTop: '24px', borderTop: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', lineHeight: '1.6' }}>
           <div>StockSense AI — Scalable Multi-Asset Machine Learning Platform | Predict. Explain. Verify.</div>
           <div style={{ fontSize: '0.74rem', opacity: 0.7, marginTop: '4px' }}>
-            Assets dynamically loaded on-demand via provider feeds. Not financial advice. Powered by Finnhub Realtime & XGBoost ML.
+            Assets dynamically loaded on-demand via provider feeds. Not financial advice. Powered by Live feeds & AI Prediction Engine.
           </div>
         </footer>
       </div>

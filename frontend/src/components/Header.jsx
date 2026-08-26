@@ -6,8 +6,22 @@ export function Header({
   assetClasses, selectedAssetClass, onSelectAssetClass,
   availableAssets, selectedAsset, onSelectAsset,
   onRefresh, isRefreshing, activeTab = 'dashboard', onSelectTab,
-  onOpenSearch
+  onOpenSearch, userRole = 'USER'
 }) {
+  const tabs = [
+    { id: 'dashboard', label: '📊 AI Cockpit' },
+    { id: 'intelligence', label: '🔥 Market Intel' },
+    { id: 'markets', label: '🌐 Market Universe' },
+    { id: 'live-research', label: '⚡ Live AI Research' },
+    { id: 'ablation', label: '🧪 Feature Study' },
+    { id: 'leaderboard', label: '🏆 Model Evaluation' },
+    { id: 'tracking', label: '📜 Resolution Tracking' },
+    { id: 'backtest', label: '⚡ Backtester' },
+    { id: 'settings', label: '⚙️ Settings' }
+  ];
+  if (userRole === 'ADMIN') {
+    tabs.push({ id: 'diagnostics', label: '🛡️ Diagnostics' });
+  }
   return (
     <header style={{ marginBottom: '20px' }}>
       {/* Top Navbar Row */}
@@ -116,8 +130,8 @@ export function Header({
               color: 'var(--accent-cyan)',
               cursor: 'pointer'
             }}
-            title="User Account & Settings Profile"
-            onClick={() => onSelectTab && onSelectTab('account')}
+            title="User Settings & Account Profile"
+            onClick={() => onSelectTab && onSelectTab('settings')}
           >
             <User size={18} />
           </div>
@@ -138,17 +152,7 @@ export function Header({
           scrollbarWidth: 'none'
         }}
       >
-        {[
-          { id: 'dashboard', label: '📊 Stock Intelligence' },
-          { id: 'intelligence', label: '🔥 Market Intel' },
-          { id: 'markets', label: '🌐 Market Universe' },
-          { id: 'live-research', label: '⚡ Live AI Research' },
-          { id: 'ablation', label: '🧪 Feature Study' },
-          { id: 'leaderboard', label: '🏆 Model Evaluation' },
-          { id: 'tracking', label: '📜 Resolution Tracking' },
-          { id: 'backtest', label: '⚡ Backtester' },
-          { id: 'account', label: '👤 Account' },
-        ].map(tab => (
+        {tabs.map(tab => (
           <button 
             key={tab.id}
             className={`btn-secondary ${activeTab === tab.id ? 'active' : ''}`}

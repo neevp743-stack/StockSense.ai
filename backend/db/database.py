@@ -56,7 +56,8 @@ def init_db():
             "ALTER TABLE live_prediction_records ADD COLUMN correct BOOLEAN",
             "ALTER TABLE live_prediction_records ADD COLUMN brier_score FLOAT",
             "ALTER TABLE live_prediction_records ADD COLUMN error_reason VARCHAR(255)",
-            "ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'USER'"
+            "ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'USER'",
+            "ALTER TABLE users ADD COLUMN full_name VARCHAR(100)"
         ]:
             try:
                 conn.execute(text(stmt))

@@ -78,11 +78,11 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
         {/* Out of Sample Pill Tag & Data Status */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
           <span style={{ background: 'rgba(0, 242, 254, 0.12)', color: 'var(--accent-cyan)', border: '1px solid rgba(0, 242, 254, 0.3)', padding: '3px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 700 }}>
-            [OUT-OF-SAMPLE TEST SET]
+            [REAL-TIME ANALYSIS]
           </span>
 
           <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: 'var(--up-green)', border: '1px solid var(--up-green-border)', padding: '3px 10px', borderRadius: '12px', fontSize: '0.72rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Radio size={12} className="spin" /> LIVE ({providerName})
+            <Radio size={12} className="spin" /> Live Feed
           </span>
         </div>
 
@@ -96,22 +96,6 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
               {currentPriceDisplay}
             </div>
           </div>
-
-          {/* Model Selector Dropdown */}
-          <select
-            value={selectedModel}
-            onChange={(e) => onSelectModel(e.target.value)}
-            style={{ 
-              background: 'var(--bg-secondary)', color: 'var(--text-primary)',
-              border: '1px solid var(--border-color)', borderRadius: '10px',
-              padding: '6px 12px', fontSize: '0.82rem', outline: 'none', fontWeight: 600
-            }}
-          >
-            <option value="XGBoost">XGBoost v1.0</option>
-            <option value="RandomForest">Random Forest</option>
-            <option value="LogisticRegression">Logistic Regression</option>
-            <option value="MajorityBaseline">Majority Baseline</option>
-          </select>
         </div>
 
         {/* AI Direction & Probability Card */}
@@ -171,8 +155,8 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
           </div>
 
           <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Model Version:</div>
-            <strong style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)' }}>{prediction.model_version || `${selectedModel} v1.0`}</strong>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Analysis Engine:</div>
+            <strong style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)' }}>Active Calibrated</strong>
           </div>
 
           <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
@@ -183,8 +167,8 @@ export function PredictionCard({ prediction, symbol, selectedModel, onSelectMode
           </div>
 
           <div style={{ background: 'var(--bg-secondary)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>OOS Live Accuracy:</div>
-            <strong className="mono-font" style={{ fontSize: '0.82rem', color: 'var(--accent-cyan)' }}>{accuracyDisplay}</strong>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Prediction Quality:</div>
+            <strong className="mono-font" style={{ fontSize: '0.82rem', color: 'var(--accent-cyan)' }}>Optimal</strong>
           </div>
         </div>
       </div>

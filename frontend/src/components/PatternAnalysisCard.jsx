@@ -15,7 +15,7 @@ export function PatternAnalysisCard({ symbol }) {
               Candlestick & Price Action Analysis
             </h3>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Phase 15 Statistical Feature Research — {symbol}
+              Price Action Analysis — {symbol}
             </span>
           </div>
         </div>
@@ -26,15 +26,15 @@ export function PatternAnalysisCard({ symbol }) {
           fontSize: '0.7rem',
           fontWeight: '700',
           letterSpacing: '0.5px',
-          background: 'rgba(234, 179, 8, 0.15)',
-          color: '#EAB308',
-          border: '1px solid rgba(234, 179, 8, 0.3)',
+          background: 'rgba(99, 102, 241, 0.15)',
+          color: '#6366F1',
+          border: '1px solid rgba(99, 102, 241, 0.3)',
           display: 'inline-flex',
           alignItems: 'center',
           gap: '4px'
         }}>
           <ShieldAlert size={12} />
-          RESEARCH EXPERIMENTAL
+          TECHNICAL SIGNAL
         </span>
       </div>
 
@@ -75,7 +75,7 @@ export function PatternAnalysisCard({ symbol }) {
       <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', background: 'rgba(255, 255, 255, 0.03)', padding: '10px 12px', borderRadius: '8px', border: '1px dashed var(--border-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <AlertTriangle size={14} style={{ flexShrink: 0, color: '#EAB308' }} />
         <span>
-          Phase 15 features evaluate structural price action. Production predictions remain powered by Phase 12 Calibrated XGBoost v1.0.
+          Price action analysis evaluates candlestick patterns and structural breaks to supplement AI predictions.
         </span>
       </div>
     </div>

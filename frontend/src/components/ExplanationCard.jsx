@@ -24,7 +24,7 @@ export function ExplanationCard({ explanations }) {
               Why is StockSense AI saying this?
             </h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Feature attribution calculated via dynamic <span className="mono-font">{explanations.method}</span>
+              Key indicators driving current prediction
             </p>
           </div>
 
@@ -39,44 +39,48 @@ export function ExplanationCard({ explanations }) {
 
         {isExpanded && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {factors.map((factor, idx) => {
-              const impact = factor.impact_value;
-              const isPositive = impact >= 0;
-              const barWidth = Math.min(100, Math.max(10, (Math.abs(impact) / maxImpact) * 100));
+            {(() => {
+              const sumWeights = factors.reduce((sum, f) => sum + Math.abs(f.impact_value), 0) || 1;
+              return factors.map((factor, idx) => {
+                const impact = factor.impact_value;
+                const isPositive = impact >= 0;
+                const barWidth = Math.min(100, Math.max(10, (Math.abs(impact) / maxImpact) * 100));
+                const pct = ((Math.abs(impact) / sumWeights) * 100).toFixed(1);
 
-              return (
-                <div key={idx} style={{ background: 'var(--bg-secondary)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', marginBottom: '6px' }}>
-                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                      {isPositive ? '+ ' : '− '}{factor.description}
-                    </span>
-                    <span className="mono-font" style={{ fontWeight: 700, color: isPositive ? 'var(--up-green)' : 'var(--down-red)' }}>
-                      {isPositive ? '+' : ''}{impact.toFixed(4)} SHAP
-                    </span>
-                  </div>
+                return (
+                  <div key={idx} style={{ background: 'var(--bg-secondary)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', marginBottom: '6px' }}>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {isPositive ? '▲ ' : '▼ '}{factor.description}
+                      </span>
+                      <span className="mono-font" style={{ fontWeight: 700, color: isPositive ? 'var(--up-green)' : 'var(--down-red)' }}>
+                        {pct}% Influence
+                      </span>
+                    </div>
 
-                  {/* Progress bar showing feature contribution */}
-                  <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div 
-                      style={{ 
-                        width: `${barWidth}%`, 
-                        background: isPositive ? 'var(--up-green)' : 'var(--down-red)',
-                        height: '100%',
-                        borderRadius: '3px',
-                        transition: 'width 0.5s'
-                      }} 
-                    />
+                    {/* Progress bar showing feature contribution */}
+                    <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div 
+                        style={{ 
+                          width: `${barWidth}%`, 
+                          background: isPositive ? 'var(--up-green)' : 'var(--down-red)',
+                          height: '100%',
+                          borderRadius: '3px',
+                          transition: 'width 0.5s'
+                        }} 
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              });
+            })()}
           </div>
         )}
       </div>
 
       <div style={{ marginTop: '16px', fontSize: '0.74rem', color: 'var(--text-muted)', lineHeight: '1.4', display: 'flex', alignItems: 'center', gap: '6px' }}>
         <Info size={14} color="var(--accent-cyan)" />
-        <span>Positive SHAP values push toward UP prediction; negative values push toward DOWN.</span>
+        <span>Positive factors support an upward price expectation; negative factors support a downward price expectation.</span>
       </div>
     </div>
   );

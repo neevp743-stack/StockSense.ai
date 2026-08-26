@@ -72,20 +72,38 @@ def mask_phone_number(phone_e164: str) -> str:
 
 # --- Auth & User CRUD ---
 
-def register_user(db: Session, username: str, email: str, password: str, role: str = "USER") -> UserRecord:
-    username_clean = username.strip().lower()
+def register_user(db: Session, username: Optional[str], email: str, password: str, role: str = "USER", full_name: Optional[str] = None, phone_number: Optional[str] = None) -> UserRecord:
+    import random
     email_clean = email.strip().lower()
     
+    if not username or len(username.strip()) == 0:
+        base_username = email_clean.split('@')[0]
+        base_username = re.sub(r'[^a-zA-Z0-9_]', '', base_username)
+        if not base_username:
+            base_username = "user"
+        username_clean = base_username.lower()
+        
+        attempts = 0
+        while attempts < 10:
+            existing = db.query(UserRecord).filter(UserRecord.username == username_clean).first()
+            if not existing:
+                break
+            username_clean = f"{base_username}_{random.randint(1000, 9999)}".lower()
+            attempts += 1
+    else:
+        username_clean = username.strip().lower()
+        
     existing_user = db.query(UserRecord).filter(
         (UserRecord.username == username_clean) | (UserRecord.email == email_clean)
     ).first()
     if existing_user:
         raise ValueError("USER_ALREADY_EXISTS: Username or email is already registered.")
-    
+        
     hashed = get_password_hash(password)
     user = UserRecord(
         username=username_clean,
         email=email_clean,
+        full_name=full_name.strip() if full_name else None,
         hashed_password=hashed,
         role=role.upper() if role.upper() in ["USER", "ADMIN"] else "USER"
     )
@@ -97,8 +115,25 @@ def register_user(db: Session, username: str, email: str, password: str, role: s
     prefs = UserPreferencesRecord(user_id=user.id)
     db.add(prefs)
     
+    # Normalize optional phone number if provided
+    phone_normalized = None
+    phone_masked = None
+    if phone_number and len(phone_number.strip()) > 0:
+        try:
+            phone_normalized = normalize_phone_e164(phone_number)
+            phone_masked = mask_phone_number(phone_normalized)
+        except Exception:
+            phone_normalized = phone_number.strip()
+            phone_masked = phone_normalized
+
     # Create default WhatsApp record
-    wa = UserWhatsAppVerificationRecord(user_id=user.id)
+    wa = UserWhatsAppVerificationRecord(
+        user_id=user.id,
+        phone_number_e164=phone_normalized,
+        phone_number_masked=phone_masked,
+        verification_status="UNVERIFIED",
+        alerts_enabled=False
+    )
     db.add(wa)
     db.commit()
     
@@ -126,6 +161,7 @@ def get_user_profile(db: Session, user_id: int) -> Dict[str, Any]:
         "user_id": user.id,
         "username": user.username,
         "email": user.email,
+        "full_name": user.full_name,
         "role": user.role,
         "created_at": user.created_at.isoformat() if user.created_at else None,
         "whatsapp": {
@@ -137,6 +173,7 @@ def get_user_profile(db: Session, user_id: int) -> Dict[str, Any]:
     }
 
 def get_user_preferences(db: Session, user_id: int) -> Dict[str, Any]:
+    import json
     prefs = db.query(UserPreferencesRecord).filter(UserPreferencesRecord.user_id == user_id).first()
     if not prefs:
         prefs = UserPreferencesRecord(user_id=user_id)
@@ -144,22 +181,50 @@ def get_user_preferences(db: Session, user_id: int) -> Dict[str, Any]:
         db.commit()
         db.refresh(prefs)
         
+    alerts_dict = {
+        "liquidity_sweep": True,
+        "bos": True,
+        "choch": True,
+        "fvg": True,
+        "order_block": True,
+        "confluence": True,
+        "confluence_threshold": 70,
+        "entry_alerts": True,
+        "tp_alerts": True,
+        "sl_alerts": True,
+        "price_alerts": True,
+        "regime_change": True,
+        "whatsapp": False
+    }
+    ai_settings_dict = {
+        "preferred_analysis_mode": "Balanced",
+        "signal_sensitivity": 50,
+        "risk_preference": "Medium"
+    }
+    
+    if prefs.alerts_json:
+        try:
+            data = json.loads(prefs.alerts_json)
+            if isinstance(data, dict):
+                if "alerts" in data:
+                    alerts_dict.update(data["alerts"])
+                if "ai_settings" in data:
+                    ai_settings_dict.update(data["ai_settings"])
+        except Exception:
+            pass
+        
     return {
         "theme": prefs.theme,
         "default_market": prefs.default_market,
         "default_timeframe": prefs.default_timeframe,
         "default_currency": prefs.default_currency,
         "notifications_enabled": prefs.notifications_enabled,
-        "alerts": {
-            "liquidity_sweep": True,
-            "confluence": True,
-            "price_alerts": True,
-            "regime_change": True,
-            "whatsapp": True
-        }
+        "alerts": alerts_dict,
+        "ai_settings": ai_settings_dict
     }
 
 def update_user_preferences(db: Session, user_id: int, updates: Dict[str, Any]) -> Dict[str, Any]:
+    import json
     prefs = db.query(UserPreferencesRecord).filter(UserPreferencesRecord.user_id == user_id).first()
     if not prefs:
         prefs = UserPreferencesRecord(user_id=user_id)
@@ -175,6 +240,29 @@ def update_user_preferences(db: Session, user_id: int, updates: Dict[str, Any]) 
         prefs.default_currency = str(updates["default_currency"])
     if "notifications_enabled" in updates:
         prefs.notifications_enabled = bool(updates["notifications_enabled"])
+        
+    # Serialize alerts & ai_settings
+    current_data = {}
+    if prefs.alerts_json:
+        try:
+            current_data = json.loads(prefs.alerts_json)
+            if not isinstance(current_data, dict):
+                current_data = {}
+        except Exception:
+            pass
+            
+    if "alerts" in updates and isinstance(updates["alerts"], dict):
+        if "alerts" not in current_data:
+            current_data["alerts"] = {}
+        current_data["alerts"].update(updates["alerts"])
+        
+    if "ai_settings" in updates and isinstance(updates["ai_settings"], dict):
+        if "ai_settings" not in current_data:
+            current_data["ai_settings"] = {}
+        current_data["ai_settings"].update(updates["ai_settings"])
+        
+    if "alerts" in updates or "ai_settings" in updates:
+        prefs.alerts_json = json.dumps(current_data)
         
     prefs.updated_at = datetime.utcnow()
     db.commit()

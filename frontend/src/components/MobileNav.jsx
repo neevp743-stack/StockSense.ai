@@ -8,7 +8,7 @@ export function MobileNav({ activeTab, onSelectTab }) {
     { id: 'live-research', label: 'Live AI', icon: Activity },
     { id: 'leaderboard', label: 'Models', icon: Award },
     { id: 'backtest', label: 'Backtest', icon: History },
-    { id: 'account', label: 'Profile', icon: User },
+    { id: 'settings', label: 'Settings', icon: User },
   ];
 
   return (
