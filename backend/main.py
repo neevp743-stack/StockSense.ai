@@ -2262,12 +2262,56 @@ def get_admin_diagnostics(
             "production_models_checked": 128
         }
     }
-    
+
+    try:
+        from backend.services.production_watchtower_service import production_watchtower
+        diagnostics["production_watchtower"] = production_watchtower.get_status_summary(db)
+    except Exception as e:
+        diagnostics["production_watchtower"] = None
+
     return {
         "success": True,
         "data": diagnostics,
         "meta": build_response_meta(request)
     }
+
+
+# ==============================================================================
+# STOCKSENSE AI — PRODUCTION WATCHTOWER & UPTIME MONITORING ENDPOINTS
+# ==============================================================================
+from backend.services.production_watchtower_service import production_watchtower
+
+
+@app.api_route("/api/watchtower", methods=["GET", "POST"], tags=["Watchtower"])
+@app.get("/api/watchtower/cron", tags=["Watchtower"])
+def trigger_watchtower_cron(request: Request, db: Session = Depends(get_db)):
+    """
+    Vercel Cron serverless trigger endpoint for Production Watchtower.
+    Validates optional CRON_SECRET header or query parameter if configured.
+    """
+    expected_secret = os.getenv("CRON_SECRET", "").strip()
+    if expected_secret:
+        auth_header = request.headers.get("Authorization", "")
+        token = request.query_params.get("token", "")
+        auth_valid = (
+            auth_header == f"Bearer {expected_secret}" or
+            token == expected_secret
+        )
+        if not auth_valid:
+            raise HTTPException(
+                status_code=401,
+                detail={"code": "UNAUTHORIZED", "message": "Invalid or missing CRON_SECRET authorization."}
+            )
+
+    target_url = request.query_params.get("target_url")
+    return production_watchtower.run_check(db=db, target_url=target_url)
+
+
+@app.get("/api/watchtower/status", tags=["Watchtower"])
+def get_watchtower_status(db: Session = Depends(get_db)):
+    """GET /api/watchtower/status - Telemetry summary for Production Watchtower."""
+    return production_watchtower.get_status_summary(db)
+
 
 
 

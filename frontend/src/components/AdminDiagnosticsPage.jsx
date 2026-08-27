@@ -121,6 +121,62 @@ export function AdminDiagnosticsPage({ symbol = 'RELIANCE' }) {
             </div>
           </div>
 
+          {/* Production Watchtower & Uptime Monitoring Card */}
+          <div className="glass-card" style={{ padding: '20px', border: '1px solid rgba(0, 242, 254, 0.2)' }}>
+            <h3 className="heading-font" style={cardTitleStyle}>
+              <Activity size={16} color="var(--accent-cyan)" /> StockSense AI Watchtower &amp; Uptime Monitoring
+            </h3>
+            {diagnostics.production_watchtower ? (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+                <div style={diagRowStyle}>
+                  <span>Backend Status</span>
+                  <strong style={{
+                    color: diagnostics.production_watchtower.backend_status === 'HEALTHY' ? 'var(--up-green)' :
+                           diagnostics.production_watchtower.backend_status === 'DEGRADED' ? 'var(--risk-medium)' : 'var(--down-red)'
+                  }}>
+                    {diagnostics.production_watchtower.backend_status}
+                  </strong>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Monitoring Status</span>
+                  <span className="mono-font" style={{ color: 'var(--accent-cyan)' }}>{diagnostics.production_watchtower.monitoring_status || 'ACTIVE'}</span>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Last Check</span>
+                  <span style={{ fontSize: '0.74rem' }}>{diagnostics.production_watchtower.last_check ? new Date(diagnostics.production_watchtower.last_check).toLocaleTimeString() : 'N/A'}</span>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Last Successful Check</span>
+                  <span style={{ fontSize: '0.74rem' }}>{diagnostics.production_watchtower.last_successful_check ? new Date(diagnostics.production_watchtower.last_successful_check).toLocaleTimeString() : 'N/A'}</span>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Current Latency</span>
+                  <span className="mono-font">{diagnostics.production_watchtower.current_latency_ms} ms</span>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Consecutive Failures</span>
+                  <span className="mono-font" style={{ color: diagnostics.production_watchtower.consecutive_failures > 0 ? 'var(--down-red)' : 'var(--text-secondary)' }}>
+                    {diagnostics.production_watchtower.consecutive_failures}
+                  </span>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Total Checks / Failures</span>
+                  <span className="mono-font">{diagnostics.production_watchtower.total_checks} / {diagnostics.production_watchtower.total_failures}</span>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Last Outage</span>
+                  <span style={{ fontSize: '0.74rem' }}>{diagnostics.production_watchtower.last_outage ? new Date(diagnostics.production_watchtower.last_outage).toLocaleString() : 'None'}</span>
+                </div>
+                <div style={diagRowStyle}>
+                  <span>Last Recovery</span>
+                  <span style={{ fontSize: '0.74rem' }}>{diagnostics.production_watchtower.last_recovery ? new Date(diagnostics.production_watchtower.last_recovery).toLocaleString() : 'None'}</span>
+                </div>
+              </div>
+            ) : (
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Watchtower Telemetry Standby.</div>
+            )}
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
             
             {/* Coinbase WebSocket Telemetry */}

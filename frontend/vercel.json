@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/watchtower/cron",
+      "schedule": "*/5 * * * *"
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

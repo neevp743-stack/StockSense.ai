@@ -1,0 +1,34 @@
+name: StockSense AI — Production Watchtower & Uptime Monitoring
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  watchtower-check:
+    name: Execute Production Watchtower Heartbeat Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Authenticated Watchtower Heartbeat Request
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          TARGET_URL="https://stocksense-ai-backend-sdyo.onrender.com/api/watchtower/cron"
+          echo "Executing StockSense AI Watchtower Heartbeat Check against Render Backend..."
+          
+          if [ -n "$CRON_SECRET" ]; then
+            RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 10 -H "Authorization: Bearer $CRON_SECRET" "$TARGET_URL" || echo "FAILED")
+          else
+            RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 10 "$TARGET_URL" || echo "FAILED")
+          fi
+          
+          HTTP_STATUS=$(echo "$RESPONSE" | tail -n 1)
+          echo "Watchtower Check Completed with HTTP Status: $HTTP_STATUS"
+          
+          # Mask output to avoid printing sensitive telemetry or secrets
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "Watchtower State: HEALTHY / ACTIVE"
+          else
+            echo "Watchtower Warning: Non-200 HTTP Response ($HTTP_STATUS). State Machine processing..."
+          fi
