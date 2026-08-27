@@ -1,75 +1,98 @@
 import React, { useEffect, useState } from 'react';
-import { TrendingUp, TrendingDown, Radio } from 'lucide-react';
+import { TrendingUp, TrendingDown, Radio, Info } from 'lucide-react';
 import { api } from '../api';
 
-const INITIAL_INDICES = [
-  { symbol: 'NIFTY 50', price: '24,820.40', change: '+0.42%', isPos: true },
-  { symbol: 'SENSEX', price: '81,350.10', change: '+0.31%', isPos: true },
-  { symbol: 'NASDAQ', price: '21,180.25', change: '-0.18%', isPos: false },
-  { symbol: 'BTC/USD', price: '$94,250.00', change: '+1.21%', isPos: true },
-  { symbol: 'S&P 500', price: '5,920.80', change: '+0.15%', isPos: true },
+const TICKER_CONFIG = [
+  { symbol: 'NIFTY 50', apiKey: 'NIFTY 50', navTarget: 'RELIANCE' },
+  { symbol: 'SENSEX', apiKey: 'SENSEX', navTarget: 'RELIANCE' },
+  { symbol: 'NASDAQ', apiKey: 'NASDAQ', navTarget: 'AAPL' },
+  { symbol: 'BTC/USD', apiKey: 'BTC-USD', navTarget: 'BTC-USD' },
+  { symbol: 'S&P 500', apiKey: 'S&P 500', navTarget: 'AAPL' },
+  { symbol: 'XAU/USD', apiKey: 'XAUUSD', navTarget: 'XAUUSD' },
+  { symbol: 'RELIANCE', apiKey: 'RELIANCE', navTarget: 'RELIANCE' }
 ];
 
 export function TopMarketBar({ onSelectTicker }) {
-  const [indices, setIndices] = useState(INITIAL_INDICES);
-  const [providerStatus, setProviderStatus] = useState("UNAVAILABLE");
+  const [tickerData, setTickerData] = useState({});
+  const [overallStatus, setOverallStatus] = useState("CHECKING");
 
-  useEffect(() => {
-    const fetchStatus = async () => {
+  const fetchTickerData = async () => {
+    const recvTime = new Date().toISOString();
+    const nextData = {};
+
+    let hasLiveFeed = false;
+
+    await Promise.all(TICKER_CONFIG.map(async (item) => {
       try {
-        const res = await api.getPhase19AStatus();
-        const healthRes = await api.getProviderHealth?.().catch(() => null);
+        const res = await api.getRealtimeQuote(item.apiKey);
+        const data = res?.data || res;
         
-        const provState = healthRes?.data?.state || healthRes?.data?.status;
-        if (provState) {
-          setProviderStatus(provState.toUpperCase());
-        } else if (res?.data?.data_status) {
-          setProviderStatus(res.data.data_status.toUpperCase());
+        if (data && data.price !== undefined && data.price !== null) {
+          const sourceTs = data.timestamp || data.time || recvTime;
+          const sourceDate = new Date(sourceTs);
+          const recvDate = new Date(recvTime);
+          const ageSeconds = Math.max(0, Math.round((recvDate.getTime() - sourceDate.getTime()) / 1000));
+          const isLive = data.data_status === 'LIVE' || data.data_status === 'READY';
+          if (isLive) hasLiveFeed = true;
+
+          nextData[item.symbol] = {
+            available: true,
+            price: typeof data.price === 'number' ? data.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : String(data.price),
+            change: data.change_percent ? `${data.change_percent >= 0 ? '+' : ''}${data.change_percent.toFixed(2)}%` : (data.change ? String(data.change) : '0.00%'),
+            isPos: data.change_percent !== undefined ? data.change_percent >= 0 : true,
+            provider: data.provider || 'API_ROUTER',
+            sourceTimestamp: sourceTs,
+            receivedTimestamp: recvTime,
+            freshnessAgeSeconds: ageSeconds,
+            status: isLive ? 'LIVE' : (data.data_status || 'STALE')
+          };
+        } else {
+          nextData[item.symbol] = {
+            available: false,
+            price: 'NO LIVE DATA',
+            change: 'N/A',
+            isPos: false,
+            provider: 'UNAVAILABLE',
+            sourceTimestamp: 'N/A',
+            receivedTimestamp: recvTime,
+            freshnessAgeSeconds: 0,
+            status: 'NO LIVE DATA'
+          };
         }
       } catch (err) {
-        setProviderStatus("UNAVAILABLE");
+        nextData[item.symbol] = {
+          available: false,
+          price: 'NO LIVE DATA',
+          change: 'N/A',
+          isPos: false,
+          provider: 'UNAVAILABLE',
+          sourceTimestamp: 'N/A',
+          receivedTimestamp: recvTime,
+          freshnessAgeSeconds: 0,
+          status: 'NO LIVE DATA'
+        };
       }
-    };
+    }));
 
-    fetchStatus();
-    const intervalId = setInterval(fetchStatus, 15000);
+    setTickerData(nextData);
+    setOverallStatus(hasLiveFeed ? "LIVE" : "DEGRADED");
+  };
+
+  useEffect(() => {
+    fetchTickerData();
+    const intervalId = setInterval(fetchTickerData, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
-  // Subtle real-time jitter simulation for non-WS indices to keep bar feeling alive
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndices(prev => prev.map(item => {
-        if (Math.random() > 0.6) {
-          const delta = (Math.random() * 0.04 - 0.02);
-          const currentVal = parseFloat(item.change.replace(/[^\d.-]/g, ''));
-          const newVal = (currentVal + delta).toFixed(2);
-          const isPos = parseFloat(newVal) >= 0;
-          return {
-            ...item,
-            change: `${isPos ? '+' : ''}${newVal}%`,
-            isPos
-          };
-        }
-        return item;
-      }));
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   let statusColor = "var(--down-red)";
-  let statusText = "UNAVAILABLE ● NO FEED";
+  let statusText = "NO LIVE DATA ● FEED DOWN";
 
-  if (providerStatus === "PROVIDER_CONNECTED" || providerStatus === "LIVE") {
+  if (overallStatus === "LIVE") {
     statusColor = "var(--up-green)";
-    statusText = "REALTIME ● LIVE";
-  } else if (providerStatus === "PROVIDER_REST_ONLY") {
-    statusColor = "#38bdf8";
-    statusText = "LIVE DATA ● REST";
-  } else if (providerStatus === "PROVIDER_DEGRADED" || providerStatus === "DELAYED" || providerStatus === "STALE") {
+    statusText = "REALTIME ● LIVE DATA";
+  } else if (overallStatus === "DEGRADED") {
     statusColor = "#f59e0b";
-    statusText = "DEGRADED ● FEED";
+    statusText = "PARTIAL FEED ● DEGRADED";
   }
 
   return (
@@ -89,43 +112,72 @@ export function TopMarketBar({ onSelectTicker }) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', flexShrink: 0 }}>
-        <Radio size={12} color={statusColor} className={providerStatus === "LIVE" ? "spin" : ""} />
+        <Radio size={12} color={statusColor} className={overallStatus === "LIVE" ? "spin" : ""} />
         <span style={{ fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>MARKET TICKER</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexGrow: 1 }}>
-        {indices.map((idx, i) => (
-          <div 
-            key={i} 
-            onClick={() => onSelectTicker && onSelectTicker(idx.symbol.includes('BTC') ? 'BTC-USD' : (idx.symbol.includes('NIFTY') ? 'RELIANCE' : 'AAPL'))}
-            style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '6px',
-              cursor: 'pointer',
-              padding: '2px 8px',
-              borderRadius: '6px',
-              transition: 'background 0.2s'
-            }}
-            className="hover-bg"
-          >
-            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{idx.symbol}</span>
-            <span className="mono-font" style={{ color: 'var(--text-secondary)' }}>{idx.price}</span>
-            <span 
-              className="mono-font" 
+        {TICKER_CONFIG.map((config) => {
+          const t = tickerData[config.symbol] || {
+            available: false,
+            price: 'NO LIVE DATA',
+            change: 'N/A',
+            isPos: false,
+            provider: 'UNAVAILABLE',
+            sourceTimestamp: 'N/A',
+            receivedTimestamp: 'N/A',
+            freshnessAgeSeconds: 0,
+            status: 'NO LIVE DATA'
+          };
+
+          const tooltipTxt = `Provider: ${t.provider} | Source TS: ${t.sourceTimestamp} | Recv TS: ${t.receivedTimestamp} | Freshness: ${t.freshnessAgeSeconds}s | Status: ${t.status}`;
+
+          return (
+            <div 
+              key={config.symbol} 
+              onClick={() => onSelectTicker && onSelectTicker(config.navTarget)}
+              title={tooltipTxt}
               style={{ 
-                color: idx.isPos ? 'var(--up-green)' : 'var(--down-red)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '2px',
-                fontWeight: 600
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                cursor: 'pointer',
+                padding: '2px 8px',
+                borderRadius: '6px',
+                transition: 'background 0.2s'
               }}
+              className="hover-bg"
             >
-              {idx.isPos ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-              {idx.change}
-            </span>
-          </div>
-        ))}
+              <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{config.symbol}</span>
+              
+              {t.available ? (
+                <>
+                  <span className="mono-font" style={{ color: 'var(--text-secondary)' }}>{t.price}</span>
+                  <span 
+                    className="mono-font" 
+                    style={{ 
+                      color: t.isPos ? 'var(--up-green)' : 'var(--down-red)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '2px',
+                      fontWeight: 600
+                    }}
+                  >
+                    {t.isPos ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                    {t.change}
+                  </span>
+                  <span style={{ fontSize: '0.65rem', color: t.status === 'LIVE' ? 'var(--up-green)' : '#f59e0b', padding: '1px 4px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                    {t.provider} ({t.freshnessAgeSeconds}s)
+                  </span>
+                </>
+              ) : (
+                <span className="mono-font" style={{ color: 'var(--down-red)', fontSize: '0.74rem', fontWeight: 600 }}>
+                  NO LIVE DATA
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <div style={{ color: statusColor, fontSize: '0.74rem', flexShrink: 0 }} className="mono-font">

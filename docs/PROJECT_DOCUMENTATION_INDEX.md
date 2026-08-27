@@ -23,6 +23,7 @@ Welcome to the central documentation index for **StockSense AI**. This repositor
 - [`SECURITY_AND_COMPLIANCE_SPEC.md`](file:///c:/Users/neevp/OneDrive/Desktop/Stock%20Sense%20Ai/docs/SECURITY_AND_COMPLIANCE_SPEC.md) — Secret key safety, CORS policies, and RBAC security rules.
 
 ### 5. Market Intelligence & Performance Reports
+- [`MARKET_TICKER_AUDIT_REPORT.md`](file:///c:/Users/neevp/OneDrive/Desktop/Stock%20Sense%20Ai/docs/MARKET_TICKER_AUDIT_REPORT.md) — Market Ticker audit report, end-to-end tracing, and NO LIVE DATA telemetry.
 - [`MARKET_INTELLIGENCE_TELEMETRY.md`](file:///c:/Users/neevp/OneDrive/Desktop/Stock%20Sense%20Ai/docs/MARKET_INTELLIGENCE_TELEMETRY.md) — Real-time market data providers, Coinbase WS stream telemetry, and Twelve Data REST router.
 - [`PHASE21_9_1_PRODUCTION_OUTAGE_REPORT.md`](file:///c:/Users/neevp/OneDrive/Desktop/Stock%20Sense%20Ai/backend/research/phase21/PHASE21_9_1_PRODUCTION_OUTAGE_REPORT.md) — Memory leak forensics, SQLite WAL concurrency, and lifecycles.
 - [`PHASE21_9_PRODUCTION_VERIFICATION.md`](file:///c:/Users/neevp/OneDrive/Desktop/Stock%20Sense%20Ai/backend/research/phase21/PHASE21_9_PRODUCTION_VERIFICATION.md) — Production endpoint benchmarks and 99.49% backend compute speedups.
