@@ -460,11 +460,14 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
         return cached_pred
 
 
+    logger.info(f"[DATA] symbol={symbol_clean} rows={len(df_raw)}")
     df_feat = compute_features_and_target(df_raw)
     if df_feat.empty:
+        logger.warning(f"[FEATURES] Insufficient feature data for symbol={symbol_clean}")
         raise HTTPException(status_code=400, detail="Insufficient feature data.")
 
     latest_row = df_feat.iloc[[-1]]
+    logger.info(f"[FEATURES] symbol={symbol_clean} columns={len(latest_row.columns)}")
     as_of_d = latest_row["date"].iloc[0]
     if hasattr(as_of_d, "date"):
         as_of_d = as_of_d.date()
@@ -477,8 +480,7 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
             pipe = ModelPipeline.load_model(symbol_clean, "XGBoost")
 
     if not pipe or not pipe.is_trained:
-        # Graceful heuristic technical fallback so API returns immediately without blocking on training
-
+        logger.warning(f"[MODEL] No trained model found for symbol={symbol_clean}")
         rsi_val = float(latest_row.get("rsi", [50.0])[0]) if "rsi" in latest_row else 50.0
         prob_up = 0.55 if rsi_val > 50 else 0.45
         predicted_dir = 1 if prob_up >= 0.50 else 0
@@ -523,6 +525,7 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
     preds, probs = pipe.predict(latest_row)
     prob_up = float(probs[0])
     predicted_dir = int(preds[0])
+    logger.info(f"[PREDICTION] symbol={symbol_clean} model={pipe.model_name} predicted_dir={predicted_dir} prob_up={prob_up:.4f}")
 
     # Risk Assessor
     brier = pipe.metrics.get("brier_score", None)
