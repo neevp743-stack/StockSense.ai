@@ -1,5 +1,10 @@
+import os
+import sys
 import time
 import json
+
+sys.path.insert(0, os.getcwd())
+
 from fastapi.testclient import TestClient
 from backend.main import app
 
@@ -17,11 +22,11 @@ def run_benchmarks():
         ("GET", "/api/assets/RELIANCE/technical-analysis"),
     ]
 
-    print("=" * 60)
-    print("STOCKSENSE AI — API PERFORMANCE BENCHMARK")
-    print("=" * 60)
-    print(f"{'Endpoint':<45} | {'Cold (ms)':<10} | {'Warm (ms)':<10}")
-    print("-" * 71)
+    print("=" * 60, flush=True)
+    print("STOCKSENSE AI — API PERFORMANCE BENCHMARK", flush=True)
+    print("=" * 60, flush=True)
+    print(f"{'Endpoint':<45} | {'Cold (ms)':<10} | {'Warm (ms)':<10}", flush=True)
+    print("-" * 71, flush=True)
 
     results = {}
     for method, path in endpoints:
@@ -43,9 +48,9 @@ def run_benchmarks():
             "status_code": res_warm.status_code
         }
 
-        print(f"{path:<45} | {cold_ms:<10.2f} | {warm_ms:<10.2f}")
+        print(f"{path:<45} | {cold_ms:<10.2f} | {warm_ms:<10.2f}", flush=True)
 
-    print("=" * 60)
+    print("=" * 60, flush=True)
     return results
 
 if __name__ == "__main__":

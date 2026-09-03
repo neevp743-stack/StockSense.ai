@@ -1,7 +1,10 @@
 import os
 import json
 import asyncio
+import logging
 from datetime import datetime, timedelta, date
+
+logger = logging.getLogger("stocksense")
 
 from typing import List, Dict, Any, Optional
 
@@ -469,7 +472,12 @@ def get_stock_prediction(symbol: str, model_name: str = "XGBoost", db: Session =
     latest_row = df_feat.iloc[[-1]]
     logger.info(f"[FEATURES] symbol={symbol_clean} columns={len(latest_row.columns)}")
     as_of_d = latest_row["date"].iloc[0]
-    if hasattr(as_of_d, "date"):
+    if isinstance(as_of_d, str):
+        try:
+            as_of_d = datetime.strptime(as_of_d[:10], "%Y-%m-%d").date()
+        except Exception:
+            as_of_d = date.today()
+    elif hasattr(as_of_d, "date"):
         as_of_d = as_of_d.date()
 
     # Load requested model or fallback

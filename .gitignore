@@ -27,6 +27,8 @@ frontend/dist-ssr/
 backend/stocksense.db
 stocksense.db
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 

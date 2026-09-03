@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 def categorize_risk_and_signal(prob_up: float, brier_score: Optional[float] = None) -> Dict[str, Any]:
     """
