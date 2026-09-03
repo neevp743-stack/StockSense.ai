@@ -42,10 +42,17 @@ class YFinanceProvider(MarketDataProvider):
         provider_ticker = asset_info["provider_symbol"] if asset_info else symbol
 
         try:
-            ticker = yf.Ticker(provider_ticker)
-            df = ticker.history(period=period, interval=interval)
-            if df.empty:
+            # 1. Fast download with explicit timeout
+            df = yf.download(provider_ticker, period=period, interval=interval, progress=False, timeout=10)
+            if df is None or df.empty:
+                ticker = yf.Ticker(provider_ticker)
+                df = ticker.history(period=period, interval=interval, timeout=10)
+
+            if df is None or df.empty:
                 return pd.DataFrame()
+
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
 
             df = df.reset_index()
             # Standardize date column
