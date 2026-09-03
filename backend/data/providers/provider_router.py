@@ -92,8 +92,9 @@ class ProviderRouter:
             except Exception as e:
                 logger.error(f"Twelve Data provider error for {sym_clean}: {e}")
 
-        # 2. Primary Provider (Finnhub REST)
-        if self.primary_provider.is_configured():
+        # 2. Primary Provider (Finnhub REST for Equities)
+        is_crypto = mapping.get("asset_class") == "CRYPTO" or sym_clean.endswith("-USD") or sym_clean.startswith("BTC") or sym_clean.startswith("ETH") or sym_clean.startswith("SOL")
+        if not is_crypto and self.primary_provider.is_configured():
             try:
                 q_primary = self.primary_provider.get_quote(sym_clean)
                 if q_primary.get("price") is not None and float(q_primary.get("price", 0)) > 0:
