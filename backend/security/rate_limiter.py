@@ -14,7 +14,13 @@ class RateLimiter:
         self.history: Dict[str, List[float]] = defaultdict(list)
 
     def check(self, request: Request, endpoint_key: str = "default"):
-        client_ip = request.client.host if request.client else "unknown"
+        forwarded = request.headers.get("X-Forwarded-For")
+        if forwarded:
+            client_ip = forwarded.split(",")[0].strip()
+        elif request.client:
+            client_ip = request.client.host
+        else:
+            client_ip = "unknown"
         key = f"{client_ip}:{endpoint_key}"
         now = time.time()
         
